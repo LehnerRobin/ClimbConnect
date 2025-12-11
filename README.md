@@ -23,7 +23,7 @@ Das Projekt wird gemäß den Anforderungen der HTL im Scrum-Prozess umgesetzt
 ### **Backend – .NET 8 Minimal API**
 - REST API-Endpunkte für Areas, Routes, Progress, Appointments, Comments, Reports  
 - EF Core mit InMemory-Datenbank für den MVP  
-- API-Spezifikation unter `/docs/api-spec.md`  
+- API-Spezifikation 
 - Swagger/OpenAPI für automatische Dokumentation  
 
 ### **Frontend – Angular**
@@ -32,7 +32,7 @@ Das Projekt wird gemäß den Anforderungen der HTL im Scrum-Prozess umgesetzt
 - Routing, Shared Modules, Responsive Layout  
 
 ### **Datenbank**
-- ER-Diagramm in `/docs/database/`  
+- ER-Diagramm
 - Tabellenentwurf + Felder  
 - Seed-Daten für Testzwecke  
 
