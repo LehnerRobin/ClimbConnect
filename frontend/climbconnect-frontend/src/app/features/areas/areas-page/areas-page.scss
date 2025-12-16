@@ -1,2 +1,11 @@
-ul { padding-left: 18px; }
-li { margin-bottom: 12px; }
+.area-list {
+  list-style: none;
+  padding: 0;
+}
+
+.area-card {
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
