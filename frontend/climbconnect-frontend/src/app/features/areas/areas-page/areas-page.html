@@ -18,6 +18,22 @@
 </ul>
 <h1>Areas (API Test)</h1>
 
+<section>
+  <h2>Areas (API Test)</h2>
+
+  <p *ngIf="loading">Lade Daten...</p>
+  <p *ngIf="error">{{ error }}</p>
+
+  <ul *ngIf="!loading && !error">
+    <li *ngFor="let a of areas">
+      <b>{{ a.name }}</b> (id: {{ a.id }})
+    </li>
+  </ul>
+
+  <button (click)="loadAreas()">Reload API</button>
+</section>
+
+
 <ul>
   <li *ngFor="let a of areas">
     {{ a.id }} - {{ a.title }}
