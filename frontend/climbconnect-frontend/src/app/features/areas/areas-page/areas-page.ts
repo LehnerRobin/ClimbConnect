@@ -1,13 +1,20 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AreasApiService } from '../areas-api.service';
 
 @Component({
   selector: 'app-areas-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule],
   templateUrl: './areas-page.html',
-  styleUrl: './areas-page.scss',
 })
 export class AreasPage {
+  areas: any[] = [];
 
+  constructor(private api: AreasApiService) {
+    this.api.getAreas().subscribe((data: any[]) => {
+      this.areas = data.slice(0, 5);
+      console.log('API areas:', this.areas);
+    });
+  }
 }
