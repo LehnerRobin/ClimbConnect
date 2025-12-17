@@ -12,5 +12,8 @@ export class AreaDetailPage {
   private route = inject(ActivatedRoute);
 
   id = this.route.snapshot.paramMap.get('id');
+
+
+
 }
 
