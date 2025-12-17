@@ -1,6 +1,11 @@
-<a routerLink="/areas">← Zurück zu Areas</a>
+<p><a routerLink="/areas">← zurück</a></p>
 
-<h2>Area Detail</h2>
-<p><strong>ID:</strong> {{ id }}</p>
+<p *ngIf="loading">Lade...</p>
+<p *ngIf="error">{{ error }}</p>
 
-<p>Hier kommt später die echte Detailansicht (API).</p>
+<div *ngIf="!loading && area">
+  <h2>{{ area.name }}</h2>
+  <p *ngIf="area.description">{{ area.description }}</p>
+  <p *ngIf="!area.description"><i>Keine Beschreibung vorhanden</i></p>
+</div>
+
