@@ -1,5 +1,6 @@
-<h2>Areas</h2>
+<h1>Areas</h1>
 
+<!-- FIXE AREAS -->
 <ul class="area-list">
   <li class="area-card">
     <a routerLink="/areas/1"><strong>Linz Umgebung</strong></a>
@@ -16,27 +17,22 @@
     <p>Klettern mit Seeblick</p>
   </li>
 </ul>
-<h1>Areas (API Test)</h1>
 
-<section>
-  <h2>Areas (API Test)</h2>
+<hr />
 
-  <p *ngIf="loading">Lade Daten...</p>
-  <p *ngIf="error">{{ error }}</p>
+<!-- API AREAS -->
+<h2>Areas (API)</h2>
 
-  <ul *ngIf="!loading && !error">
-    <li *ngFor="let a of areas">
-      <b>{{ a.name }}</b> (id: {{ a.id }})
-    </li>
-  </ul>
-
+<div class="toolbar">
   <button (click)="loadAreas()">Reload API</button>
-</section>
+  <span *ngIf="loading" class="muted">Lade Daten…</span>
+</div>
 
+<p *ngIf="error" class="error">{{ error }}</p>
 
-<ul>
-  <li *ngFor="let a of areas">
-    {{ a.id }} - {{ a.name }}
-
+<ul class="area-list" *ngIf="!loading && !error">
+  <li class="area-card" *ngFor="let a of areas">
+    <strong>{{ a.name }}</strong>
+    <p>ID: {{ a.id }}</p>
   </li>
 </ul>

@@ -1,11 +1,77 @@
+:host {
+  display: block;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+h2 {
+  margin-top: 32px;
+  margin-bottom: 12px;
+}
+
 .area-list {
   list-style: none;
   padding: 0;
+  display: grid;
+  gap: 14px;
 }
 
 .area-card {
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.area-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.area-card a {
+  text-decoration: none;
+  color: #111;
+  font-size: 18px;
+}
+
+.area-card p {
+  margin: 6px 0 0;
+  color: #555;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: #f7f7f7;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #eee;
+}
+
+.muted {
+  color: #666;
+}
+
+.error {
+  color: #b00020;
+  font-weight: 600;
 }
