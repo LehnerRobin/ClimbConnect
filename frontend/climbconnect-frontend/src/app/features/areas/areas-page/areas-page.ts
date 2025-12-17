@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AreasApiService } from '../areas-api.service';
+import { AreasApiService } from '../areas-api';
+
 
 @Component({
   selector: 'app-areas-page',
