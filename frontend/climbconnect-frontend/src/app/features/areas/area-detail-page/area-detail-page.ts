@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AreasApiService, AreaDetail } from '../areas-api.service';
 
+
 @Component({
   selector: 'app-area-detail-page',
   standalone: true,
