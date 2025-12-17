@@ -4,7 +4,7 @@
 <p *ngIf="error">{{ error }}</p>
 
 <div *ngIf="!loading && area">
-  <h2>{{ area.name }}</h2>
+  <h2>{{ area.title }}</h2>
   <p *ngIf="area.description">{{ area.description }}</p>
   <p *ngIf="!area.description"><i>Keine Beschreibung vorhanden</i></p>
 </div>
