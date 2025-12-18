@@ -1,38 +1,14 @@
-# ClimbConnect  
-Webanwendung zur Erfassung und Analyse von Kletterfortschritten in den Klettergebieten Oberösterreichs
+# ClimbConnect.API
 
----
+Dieses Projekt enthält das Backend als ASP.NET Core Minimal API.
 
-## 🚀 Überblick
+## Struktur
+- `Program.cs` – Minimal API Setup (Swagger, Health, etc.)
+- `appsettings.json` – Konfiguration
+- `Models/` – Entities/DTOs (falls vorhanden)
 
-**ClimbConnect** ist eine Webanwendung, mit der Kletterer:
+## Starten
+In Visual Studio: Starten (F5)
 
-- ihre Fortschritte pro Route dokumentieren  
-- Kommentare & Safety-Reports erfassen  
-- Termine je Gebiet einsehen und sich anmelden  
-- Gebiets- und Routeninformationen abrufen  
-- Statistiken über ihren Fortschritt anzeigen lassen  
-
-Das Projekt wird gemäß den Anforderungen der HTL im Scrum-Prozess umgesetzt  
-(**User Stories**, **Akzeptanzkriterien**, **Sprint Planning**, **Sprint Review**, **Backlog Management**).
-
----
-
-## 🧩 Architekturüberblick
-
-### **Backend – .NET 8 Minimal API**
-- REST API-Endpunkte für Areas, Routes, Progress, Appointments, Comments, Reports  
-- EF Core mit InMemory-Datenbank für den MVP  
-- API-Spezifikation 
-- Swagger/OpenAPI für automatische Dokumentation  
-
-### **Frontend – Angular**
-- Komponentenlogik für Areas, Routes, Profile, Appointments, Progress  
-- Services zur API-Kommunikation  
-- Routing, Shared Modules, Responsive Layout  
-
-### **Datenbank**
-- ER-Diagramm
-- Tabellenentwurf + Felder  
-- Seed-Daten für Testzwecke  
-
+Swagger: `/swagger`  
+Health: `/api/health`
