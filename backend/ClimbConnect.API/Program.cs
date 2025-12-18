@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using ClimbConnect.API.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,13 +45,26 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+app.MapPost("/api/pings", async (AppDbContext db) =>
+{
+    var ping = new Ping();
+    db.Pings.Add(ping);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/pings/{ping.Id}", ping);
+})
+.WithName("CreatePing");
+
 
 app.Run();
 
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public DbSet<Ping> Pings => Set<Ping>();
 }
+
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
