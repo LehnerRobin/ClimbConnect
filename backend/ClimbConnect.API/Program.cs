@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ClimbConnect.API.Models;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Swagger (Swashbuckle)
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -14,23 +13,30 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// Swagger UI (fürs Schul-Setup ruhig immer aktiv lassen)
+// Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-// Health Endpoint (für Issue #6 / Sub-Issue #30)
-app.MapGet("/api/health", () => Results.Ok(new { status = "ok" }))
+
+// --------------------
+// HEALTH
+// --------------------
+app.MapGet("/api/health", () =>
+    Results.Ok(new { status = "ok" }))
    .WithName("Health");
 
 
-// Optional: Template-Endpoint (kannst du behalten)
+// --------------------
+// WEATHER (Demo)
+// --------------------
 app.MapGet("/weatherforecast", () =>
 {
     var summaries = new[]
     {
-        "Freezing","Bracing","Chilly","Cool","Mild","Warm","Balmy","Hot","Sweltering","Scorching"
+        "Freezing","Bracing","Chilly","Cool","Mild",
+        "Warm","Balmy","Hot","Sweltering","Scorching"
     };
 
     var forecast = Enumerable.Range(1, 5).Select(index =>
@@ -45,9 +51,14 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+
+// --------------------
+// PINGS (DB-Test)
+// --------------------
 app.MapPost("/api/pings", async (AppDbContext db) =>
 {
     var ping = new Ping();
+
     db.Pings.Add(ping);
     await db.SaveChangesAsync();
 
@@ -56,17 +67,83 @@ app.MapPost("/api/pings", async (AppDbContext db) =>
 .WithName("CreatePing");
 
 
+// --------------------
+// AREAS (ISSUE #7)
+// --------------------
+
+// Alle Areas
+app.MapGet("/api/areas", async (AppDbContext db) =>
+{
+    var areas = await db.Areas
+        .OrderBy(a => a.Name)
+        .ToListAsync();
+
+    return Results.Ok(areas);
+})
+.WithName("GetAreas")
+.WithTags("Areas");
+
+
+// Area nach ID
+app.MapGet("/api/areas/{id:int}", async (int id, AppDbContext db) =>
+{
+    var area = await db.Areas.FindAsync(id);
+
+    return area is null
+        ? Results.NotFound()
+        : Results.Ok(area);
+})
+.WithName("GetAreaById")
+.WithTags("Areas");
+
+
+// Area anlegen
+app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(dto.Name))
+        return Results.BadRequest(new { error = "Name is required" });
+
+    var area = new Area
+    {
+        Name = dto.Name.Trim(),
+        Location = string.IsNullOrWhiteSpace(dto.Location)
+            ? null
+            : dto.Location.Trim()
+    };
+
+    db.Areas.Add(area);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/areas/{area.Id}", area);
+})
+.WithName("CreateArea")
+.WithTags("Areas");
+
+
 app.Run();
 
+
+// --------------------
+// DB CONTEXT
+// --------------------
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options) { }
 
     public DbSet<Ping> Pings => Set<Ping>();
+    public DbSet<Area> Areas => Set<Area>();
 }
 
 
-public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+// --------------------
+// RECORDS
+// --------------------
+public record WeatherForecast(
+    DateOnly Date,
+    int TemperatureC,
+    string? Summary)
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public int TemperatureF =>
+        32 + (int)(TemperatureC / 0.5556);
 }
