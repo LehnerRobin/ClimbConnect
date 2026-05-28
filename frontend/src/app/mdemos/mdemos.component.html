@@ -1,0 +1,30 @@
+<h2>M-Demos</h2>
+
+<div class="container mt-3">
+
+    <h1>MDemo Overview</h1>
+
+    <button class="btn btn-info mb-3" (click)="addMDemo()">Add new Demo</button>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (mdemo of mdemos; track mdemo; let idx = $index) {
+            <tr>
+                <td>{{mdemo.name}}</td>
+                <td><button class="btn btn-info btn-sm" (click)="showMDemo(mdemo)">Detail</button></td>
+                <td><button class="btn btn-info btn-sm" (click)="editMDemo(mdemo)">Edit</button></td>
+                <td><button class="btn btn-danger btn-sm" (click)="deleteMDemo(mdemo)">Delete</button></td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>

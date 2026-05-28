@@ -1,0 +1,22 @@
+<h2>MDemos</h2>
+
+@if (mdemo != null) {
+
+    <div class="container mt-3">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Name</td>
+                    <td>{{mdemo.name}}</td>
+                </tr>
+                <tr>
+                    <td>fDemoId</td>
+                    <td>{{mdemo.fDemoId}}</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+} @else {
+    <p>No mdemo selected</p>
+}

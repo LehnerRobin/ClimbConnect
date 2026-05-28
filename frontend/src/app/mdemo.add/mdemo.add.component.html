@@ -1,0 +1,28 @@
+<div class="container mt-3">
+    <h2>Add Demo</h2>
+    <form>
+        <div class="form-group">
+            <label for="mDemoName">Demo-Name</label>
+            <input class="form-control" id="mDemoName" name="mDemoName" required [(ngModel)]="mDemoNameVal" #mDemoName="ngModel" placeholder="Enter name">
+            @if(mDemoName?.invalid && (mDemoName?.dirty || mDemoName?.touched)) {
+            <div class="alert alert-danger">
+                @if (mDemoName?.errors?.['required']) {
+                <div>
+                    Name is required.
+                </div>
+                }
+                @if (mDemoName?.errors?.['nameInvalid']) {
+                <div>
+                    This is not a valid name.
+                </div>
+                }
+            </div>
+            }
+        </div>
+
+        <button [disabled]="mDemoName?.invalid" 
+            (click)="onAddMDemo()"
+            type="submit" class="btn btn-primary">Submit</button>
+
+    </form>
+</div>

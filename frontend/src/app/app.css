@@ -1,0 +1,31 @@
+/* CSS Type Selector (https://developer.mozilla.org/en-US/docs/Web/CSS/Type_selectors) */
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 10px;
+  overflow: hidden;
+  background-color: blue;
+  color: white;
+}
+
+/* CSS Descendant Combinator (https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_combinator) */
+ul li {
+  /* float CSS property (https://developer.mozilla.org/en-US/docs/Web/CSS/float) */
+  float: left;
+  margin-right: 10px;
+}
+/*
+  CSS :first-child pseudo-class (https://developer.mozilla.org/en-US/docs/Web/CSS/:first-child)
+  CSS :not() pseudo-class (https://developer.mozilla.org/en-US/docs/Web/CSS/:not)
+*/
+
+/* CSS Descendant Combinator (https://developer.mozilla.org/en-US/docs/Web/CSS/Descendant_combinator) */
+ul li a {
+  color: white;
+}
+
+.bottom{
+  bottom: 1%;
+  position: absolute;
+  width: 720px;
+}

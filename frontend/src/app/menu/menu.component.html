@@ -1,0 +1,19 @@
+<nav class="menu">
+  <div class="developer-status"><strong>Keycloak Events:</strong> {{ keycloakStatus }}</div>
+
+  <div class="actions">
+    <a routerLink="/" class="action-item">Home</a>
+    <a routerLink="/mdemos" class="action-item" *kaHasRoles="['myUserRole']">MDemos</a>
+    <a routerLink="/admin" class="action-item" *kaHasRoles="['myAdminRole']">Admin</a>
+    <a routerLink="/profile" class="action-item" *kaHasRoles="['view-profile']">Profile</a>
+
+    @if (this.keycloak.hasResourceRole('view-profile') || this.keycloak.hasRealmRole('view-profile')) {
+      <a routerLink="/profile" class="action-item" >My Profile</a>
+    }
+    @if (!authenticated) {
+      <button class="action-item" (click)="login()">Login</button>
+    } @else {
+      <button class="action-item" (click)="logout()">Logout</button>
+    }
+  </div>
+</nav>

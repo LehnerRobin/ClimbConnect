@@ -1,0 +1,24 @@
+<div class="container mt-3">
+    <h2>Update MDemo</h2>
+    <button class="btn btn-primary" onclick="history.back()">Back</button>
+    <form>
+        <div class="form-group">
+            <label for="mdemoId"></label>
+            <input class="form-control" id="mdemoId" name="mdemoId" [(ngModel)]="mdemoIdVal" #mdemoId="ngModel" readonly>
+            <label for="mdemoName"></label>
+            <input class="form-control" id="mdemoName" name="mdemoName" required [(ngModel)]="mdemoNameVal" #mdemoName="ngModel" placeholder="Enter name">
+            @if(mdemoName?.invalid && (mdemoName?.touched || mdemoName?.dirty)) {
+            <div class="alert alert-danger">
+                @if (mdemoName?.errors?.['required']) {
+                    <div>Name is required</div>
+                }
+                @if (mdemoName?.errors?.['nameInvalid']) {
+                    <div>Enter a valid name</div>
+                }
+            </div>
+            }
+        </div>
+        <button [disabled]="mdemoName?.invalid"
+            (click)="onUpdateMDemo()" class="btn btn-primary">Submit</button>
+    </form>
+</div>
