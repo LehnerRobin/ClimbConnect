@@ -1,19 +1,60 @@
 <nav class="menu">
-  <div class="developer-status"><strong>Keycloak Events:</strong> {{ keycloakStatus }}</div>
+
+  <div class="logo">
+    ClimbConnect
+  </div>
+
+  <div class="developer-status">
+    <strong>Keycloak Events:</strong>
+    {{ keycloakStatus }}
+  </div>
 
   <div class="actions">
-    <a routerLink="/" class="action-item">Home</a>
-    <a routerLink="/mdemos" class="action-item" *kaHasRoles="['myUserRole']">MDemos</a>
-    <a routerLink="/admin" class="action-item" *kaHasRoles="['myAdminRole']">Admin</a>
-    <a routerLink="/profile" class="action-item" *kaHasRoles="['view-profile']">Profile</a>
 
-    @if (this.keycloak.hasResourceRole('view-profile') || this.keycloak.hasRealmRole('view-profile')) {
-      <a routerLink="/profile" class="action-item" >My Profile</a>
+    <a routerLink="/" class="action-item">
+      Home
+    </a>
+
+    <a routerLink="/areas" class="action-item">
+      Areas
+    </a>
+
+    <a routerLink="/appointments" class="action-item">
+      Appointments
+    </a>
+
+    @if (authenticated) {
+      <a routerLink="/profile" class="action-item">
+        Profile
+      </a>
     }
+
+    @if (this.keycloak.hasRealmRole('myAdminRole')) {
+      <a routerLink="/admin" class="action-item">
+        Admin
+      </a>
+    }
+
+    @if (this.keycloak.hasRealmRole('myUserRole')) {
+      <a routerLink="/mdemos" class="action-item">
+        MDemos
+      </a>
+    }
+
     @if (!authenticated) {
-      <button class="action-item" (click)="login()">Login</button>
+
+      <button class="action-item login-btn" (click)="login()">
+        Login
+      </button>
+
     } @else {
-      <button class="action-item" (click)="logout()">Logout</button>
+
+      <button class="action-item logout-btn" (click)="logout()">
+        Logout
+      </button>
+
     }
+
   </div>
+
 </nav>
