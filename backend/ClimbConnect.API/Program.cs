@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ClimbConnect.API.Models;
+using ClimbConnect.API.Dtos;
+using Route = ClimbConnect.API.Models.Route;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,7 +66,8 @@ app.MapPost("/api/pings", async (AppDbContext db) =>
 
     return Results.Created($"/api/pings/{ping.Id}", ping);
 })
-.WithName("CreatePing");
+.WithName("CreatePing")
+.WithTags("Pings");
 
 
 // --------------------
@@ -120,6 +123,45 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
 .WithTags("Areas");
 
 
+// --------------------
+// ROUTES (ISSUE #8)
+// --------------------
+
+// Route anlegen
+app.MapPost("/api/routes", async (RouteCreateDto dto, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(dto.Name))
+        return Results.BadRequest(new { error = "Name is required" });
+
+    var route = new Route
+    {
+        Name = dto.Name.Trim(),
+        Grade = string.IsNullOrWhiteSpace(dto.Grade) ? null : dto.Grade.Trim(),
+        Sector = string.IsNullOrWhiteSpace(dto.Sector) ? null : dto.Sector.Trim()
+    };
+
+    db.Routes.Add(route);
+    await db.SaveChangesAsync();
+
+    return Results.Created($"/api/routes/{route.Id}", route);
+})
+.WithName("CreateRoute")
+.WithTags("Routes");
+
+
+// Route Detail
+app.MapGet("/api/routes/{id:int}", async (int id, AppDbContext db) =>
+{
+    var route = await db.Routes.FindAsync(id);
+
+    return route is null
+        ? Results.NotFound()
+        : Results.Ok(route);
+})
+.WithName("GetRouteById")
+.WithTags("Routes");
+
+
 app.Run();
 
 
@@ -133,6 +175,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Ping> Pings => Set<Ping>();
     public DbSet<Area> Areas => Set<Area>();
+    public DbSet<Route> Routes => Set<Route>();
 }
 
 
