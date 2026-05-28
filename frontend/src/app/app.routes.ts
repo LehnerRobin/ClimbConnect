@@ -9,8 +9,10 @@ import { createAuthGuard } from 'keycloak-angular';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { canActivateAuthRole } from './guards/auth-role.guard';
+import { AreasPageComponent } from './features/areas/areas-page/areas-page.component';
 
 export const routes: Routes = [
+  { path: 'areas',  component: AreasPageComponent},
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },  
   { path: 'mdemos', component: MDemosComponent, canActivate: [canActivateAuthRole],   data: { role: 'myUserRole'}, },
