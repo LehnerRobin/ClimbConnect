@@ -1,0 +1,75 @@
+name: Backend(ClimbConnect) Docker (for LeoCloud)
+
+env:
+  ContainerName: climbconnectapi
+  CloudNameSpace: student-r-lehner
+  AppPrefix: climbconnectapi
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "backend/**"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend/ClimbConnect.API
+          file: ./backend/ClimbConnect.API/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.ContainerName }}:latest
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: delete --ignore-not-found -n ${{ env.CloudNameSpace }} deployment ${{ env.AppPrefix }}
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: delete --ignore-not-found -n ${{ env.CloudNameSpace }} service ${{ env.AppPrefix }}-svc
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: delete --ignore-not-found -n ${{ env.CloudNameSpace }} ingress ${{ env.AppPrefix }}-ingress
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: delete --ignore-not-found -n ${{ env.CloudNameSpace }} pod -l app=${{ env.AppPrefix }}
+
+      - uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+        with:
+          args: create -f ./LeoCloud/backend-leocloud-${{ env.CloudNameSpace }}-${{ env.AppPrefix }}.yaml
