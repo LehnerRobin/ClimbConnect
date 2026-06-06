@@ -177,6 +177,86 @@ app.MapGet("/api/routes/{id:int}", async (int id, AppDbContext db) =>
 .WithTags("Routes");
 
 
+// --------------------
+// PROGRESS
+// --------------------
+// GET /api/progress/me?userId={id}
+// TODO: userId aus JWT-Token lesen sobald Keycloak-Auth aktiv ist
+app.MapGet("/api/progress/me", async (int userId, AppDbContext db) =>
+{
+    var entries = await db.Progresses
+        .Where(p => p.UserId == userId)
+        .Include(p => p.Route)
+        .OrderByDescending(p => p.Date)
+        .ToListAsync();
+
+    return Results.Ok(entries);
+})
+.WithName("GetMyProgress")
+.WithTags("Progress");
+
+app.MapPost("/api/progress", async (ProgressCreateDto dto, AppDbContext db) =>
+{
+    var validStatuses = new[] { "Attempted", "Completed", "Flashed", "Onsight" };
+    if (!validStatuses.Contains(dto.Status))
+        return Results.BadRequest(new { error = $"Status must be one of: {string.Join(", ", validStatuses)}" });
+
+    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
+        return Results.BadRequest(new { error = "User not found" });
+
+    if (!await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
+        return Results.BadRequest(new { error = "Route not found" });
+
+    var progress = new Progress
+    {
+        UserId   = dto.UserId,
+        RouteId  = dto.RouteId,
+        Status   = dto.Status,
+        Attempts = dto.Attempts,
+        Notes    = string.IsNullOrWhiteSpace(dto.Notes) ? null : dto.Notes.Trim(),
+        Date     = dto.Date
+    };
+
+    db.Progresses.Add(progress);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/progress/{progress.Id}", progress);
+})
+.WithName("CreateProgress")
+.WithTags("Progress");
+
+app.MapPut("/api/progress/{id:int}", async (int id, ProgressUpdateDto dto, AppDbContext db) =>
+{
+    var progress = await db.Progresses.FindAsync(id);
+    if (progress is null) return Results.NotFound();
+
+    var validStatuses = new[] { "Attempted", "Completed", "Flashed", "Onsight" };
+    if (!validStatuses.Contains(dto.Status))
+        return Results.BadRequest(new { error = $"Status must be one of: {string.Join(", ", validStatuses)}" });
+
+    progress.Status   = dto.Status;
+    progress.Attempts = dto.Attempts;
+    progress.Notes    = string.IsNullOrWhiteSpace(dto.Notes) ? null : dto.Notes.Trim();
+    progress.Date     = dto.Date;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(progress);
+})
+.WithName("UpdateProgress")
+.WithTags("Progress");
+
+app.MapDelete("/api/progress/{id:int}", async (int id, AppDbContext db) =>
+{
+    var progress = await db.Progresses.FindAsync(id);
+    if (progress is null) return Results.NotFound();
+
+    db.Progresses.Remove(progress);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.WithName("DeleteProgress")
+.WithTags("Progress");
+
+
 app.Run();
 
 
