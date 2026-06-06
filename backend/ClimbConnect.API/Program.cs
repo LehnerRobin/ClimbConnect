@@ -177,6 +177,146 @@ app.MapGet("/api/routes/{id:int}", async (int id, AppDbContext db) =>
 .WithTags("Routes");
 
 
+// --------------------
+// COMMENTS
+// --------------------
+app.MapGet("/api/areas/{id:int}/comments", async (int id, AppDbContext db) =>
+{
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+
+    var comments = await db.Comments
+        .Where(c => c.AreaId == id)
+        .Include(c => c.User)
+        .OrderByDescending(c => c.CreatedAtUtc)
+        .ToListAsync();
+
+    return Results.Ok(comments);
+})
+.WithName("GetCommentsByArea")
+.WithTags("Comments");
+
+app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto, AppDbContext db) =>
+{
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+    if (string.IsNullOrWhiteSpace(dto.Text))
+        return Results.BadRequest(new { error = "Text is required" });
+    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
+        return Results.BadRequest(new { error = "User not found" });
+
+    var comment = new Comment
+    {
+        UserId = dto.UserId,
+        AreaId = id,
+        Text   = dto.Text.Trim()
+    };
+
+    db.Comments.Add(comment);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/areas/{id}/comments", comment);
+})
+.WithName("CreateCommentForArea")
+.WithTags("Comments");
+
+app.MapGet("/api/routes/{id:int}/comments", async (int id, AppDbContext db) =>
+{
+    if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
+
+    var comments = await db.Comments
+        .Where(c => c.RouteId == id)
+        .Include(c => c.User)
+        .OrderByDescending(c => c.CreatedAtUtc)
+        .ToListAsync();
+
+    return Results.Ok(comments);
+})
+.WithName("GetCommentsByRoute")
+.WithTags("Comments");
+
+app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto, AppDbContext db) =>
+{
+    if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
+    if (string.IsNullOrWhiteSpace(dto.Text))
+        return Results.BadRequest(new { error = "Text is required" });
+    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
+        return Results.BadRequest(new { error = "User not found" });
+
+    var comment = new Comment
+    {
+        UserId  = dto.UserId,
+        RouteId = id,
+        Text    = dto.Text.Trim()
+    };
+
+    db.Comments.Add(comment);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/routes/{id}/comments", comment);
+})
+.WithName("CreateCommentForRoute")
+.WithTags("Comments");
+
+
+// --------------------
+// REPORTS
+// --------------------
+app.MapPost("/api/reports", async (ReportCreateDto dto, AppDbContext db) =>
+{
+    if (string.IsNullOrWhiteSpace(dto.Text))
+        return Results.BadRequest(new { error = "Text is required" });
+    if (dto.AreaId is null && dto.RouteId is null)
+        return Results.BadRequest(new { error = "Either AreaId or RouteId is required" });
+    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
+        return Results.BadRequest(new { error = "User not found" });
+    if (dto.AreaId is not null && !await db.Areas.AnyAsync(a => a.Id == dto.AreaId))
+        return Results.BadRequest(new { error = "Area not found" });
+    if (dto.RouteId is not null && !await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
+        return Results.BadRequest(new { error = "Route not found" });
+
+    var report = new Report
+    {
+        UserId   = dto.UserId,
+        AreaId   = dto.AreaId,
+        RouteId  = dto.RouteId,
+        Text     = dto.Text.Trim(),
+        PhotoUrl = string.IsNullOrWhiteSpace(dto.PhotoUrl) ? null : dto.PhotoUrl.Trim(),
+        Status   = "Open"
+    };
+
+    db.Reports.Add(report);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/reports/{report.Id}", report);
+})
+.WithName("CreateReport")
+.WithTags("Reports");
+
+app.MapGet("/api/reports", async (AppDbContext db) =>
+{
+    var reports = await db.Reports
+        .Include(r => r.User)
+        .OrderByDescending(r => r.CreatedAtUtc)
+        .ToListAsync();
+
+    return Results.Ok(reports);
+})
+.WithName("GetReports")
+.WithTags("Reports");
+
+app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbContext db) =>
+{
+    var report = await db.Reports.FindAsync(id);
+    if (report is null) return Results.NotFound();
+
+    var validStatuses = new[] { "Open", "Resolved" };
+    if (!validStatuses.Contains(status))
+        return Results.BadRequest(new { error = "Status must be 'Open' or 'Resolved'" });
+
+    report.Status = status;
+    await db.SaveChangesAsync();
+    return Results.Ok(report);
+})
+.WithName("UpdateReportStatus")
+.WithTags("Reports");
+
+
 app.Run();
 
 
