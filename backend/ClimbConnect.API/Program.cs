@@ -177,6 +177,89 @@ app.MapGet("/api/routes/{id:int}", async (int id, AppDbContext db) =>
 .WithTags("Routes");
 
 
+// --------------------
+// APPOINTMENTS
+// --------------------
+app.MapGet("/api/areas/{id:int}/appointments", async (int id, AppDbContext db) =>
+{
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+
+    var appointments = await db.Appointments
+        .Where(a => a.AreaId == id)
+        .Include(a => a.AppointmentUsers)
+        .OrderBy(a => a.Date)
+        .ToListAsync();
+
+    return Results.Ok(appointments);
+})
+.WithName("GetAppointmentsByArea")
+.WithTags("Appointments");
+
+app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreateDto dto, AppDbContext db) =>
+{
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+    if (string.IsNullOrWhiteSpace(dto.Title))
+        return Results.BadRequest(new { error = "Title is required" });
+    if (!await db.Users.AnyAsync(u => u.Id == dto.CreatedByUserId))
+        return Results.BadRequest(new { error = "User not found" });
+
+    var appointment = new Appointment
+    {
+        AreaId           = id,
+        CreatedByUserId  = dto.CreatedByUserId,
+        Title            = dto.Title.Trim(),
+        Date             = dto.Date,
+        MeetingPoint     = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim(),
+        Description      = string.IsNullOrWhiteSpace(dto.Description)   ? null : dto.Description.Trim()
+    };
+
+    db.Appointments.Add(appointment);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/appointments/{appointment.Id}", appointment);
+})
+.WithName("CreateAppointment")
+.WithTags("Appointments");
+
+app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSubscribeDto dto, AppDbContext db) =>
+{
+    if (!await db.Appointments.AnyAsync(a => a.Id == id)) return Results.NotFound();
+    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
+        return Results.BadRequest(new { error = "User not found" });
+
+    var alreadySubscribed = await db.AppointmentUsers
+        .AnyAsync(au => au.AppointmentId == id && au.UserId == dto.UserId);
+    if (alreadySubscribed)
+        return Results.Conflict(new { error = "Already subscribed" });
+
+    var subscription = new AppointmentUser
+    {
+        AppointmentId = id,
+        UserId        = dto.UserId,
+        Comment       = string.IsNullOrWhiteSpace(dto.Comment) ? null : dto.Comment.Trim()
+    };
+
+    db.AppointmentUsers.Add(subscription);
+    await db.SaveChangesAsync();
+    return Results.Created($"/api/appointments/{id}/subscribe", subscription);
+})
+.WithName("SubscribeToAppointment")
+.WithTags("Appointments");
+
+app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, int userId, AppDbContext db) =>
+{
+    var subscription = await db.AppointmentUsers
+        .FirstOrDefaultAsync(au => au.AppointmentId == id && au.UserId == userId);
+
+    if (subscription is null) return Results.NotFound();
+
+    db.AppointmentUsers.Remove(subscription);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.WithName("UnsubscribeFromAppointment")
+.WithTags("Appointments");
+
+
 app.Run();
 
 
