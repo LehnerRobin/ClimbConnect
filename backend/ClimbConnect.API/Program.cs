@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using ClimbConnect.API.Models;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Services;
-using Keycloak.AuthServices.Authentication;
-using Keycloak.AuthServices.Authorization;
-using Keycloak.AuthServices.Common;
 using Route = ClimbConnect.API.Models.Route;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,25 +17,28 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    var kc = builder.Configuration.GetKeycloakOptions<KeycloakAuthenticationOptions>()!;
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ClimbConnect API", Version = "v1" });
 
-    c.AddSecurityDefinition("oidc", new OpenApiSecurityScheme
+    // JWT Bearer in Swagger einbinden
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name             = "oauth2",
-        Type             = SecuritySchemeType.OpenIdConnect,
-        OpenIdConnectUrl = new Uri(kc.OpenIdConnectUrl!)
+        Name         = "Authorization",
+        Type         = SecuritySchemeType.Http,
+        Scheme       = "bearer",
+        BearerFormat = "JWT",
+        In           = ParameterLocation.Header,
+        Description  = "JWT Token eingeben: Bearer {token}"
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oidc" }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             },
             Array.Empty<string>()
         }
     });
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ClimbConnect API", Version = "v1" });
 });
 
 // --------------------
@@ -44,15 +47,31 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddCors();
 
 // --------------------
-// KEYCLOAK AUTH
+// JWT AUTH (eigenes System, ersetzt Keycloak für jetzt)
 // --------------------
-builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
-builder.Services
-    .AddAuthorization()
-    .AddKeycloakAuthorization(builder.Configuration)
-    .AddAuthorizationBuilder()
-    .AddPolicy("Admin", b => b.RequireResourceRoles("admin"))
-    .AddPolicy("User",  b => b.RequireResourceRoles("user"));
+builder.Services.AddSingleton<JwtService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer           = true,
+            ValidateAudience         = true,
+            ValidateLifetime         = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer              = builder.Configuration["Jwt:Issuer"],
+            ValidAudience            = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey         = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("admin"));
+    options.AddPolicy("User",  policy => policy.RequireRole("user", "admin"));
+});
 
 // --------------------
 // SQLITE
@@ -75,20 +94,8 @@ var app = builder.Build();
 // --------------------
 // SWAGGER UI
 // --------------------
-app.UseSwagger(options =>
-{
-    options.PreSerializeFilters.Add((doc, request) =>
-    {
-        if (request.Host.Value!.Contains(".cloud.htl-leonding.ac.at"))
-        {
-            doc.Servers =
-            [
-                new OpenApiServer { Url = $"{request.Scheme}s://{request.Host.Value}/climbconnectapi" }
-            ];
-        }
-    });
-});
-app.UseSwaggerUI(options => options.OAuthClientId("climbconnect-ui"));
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
@@ -108,6 +115,54 @@ using (var scope = app.Services.CreateScope())
 app.MapGet("/api/health", () =>
     Results.Ok(new { status = "ok" }))
    .WithName("Health");
+
+
+// --------------------
+// AUTH
+// --------------------
+app.MapPost("/api/auth/register", async (RegisterDto dto, AppDbContext db, JwtService jwt) =>
+{
+    if (string.IsNullOrWhiteSpace(dto.Username) || string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
+        return Results.BadRequest(new { error = "Username, Email und Passwort sind erforderlich" });
+
+    if (dto.Password.Length < 8)
+        return Results.BadRequest(new { error = "Passwort muss mindestens 8 Zeichen lang sein" });
+
+    if (await db.Users.AnyAsync(u => u.Email == dto.Email.ToLower()))
+        return Results.Conflict(new { error = "E-Mail bereits vergeben" });
+
+    if (await db.Users.AnyAsync(u => u.Username == dto.Username))
+        return Results.Conflict(new { error = "Username bereits vergeben" });
+
+    var user = new User
+    {
+        Username     = dto.Username.Trim(),
+        Email        = dto.Email.ToLower().Trim(),
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+        Role         = "user"
+    };
+
+    db.Users.Add(user);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new { token = jwt.GenerateToken(user), user.Id, user.Username, user.Email, user.Role });
+})
+.WithName("Register")
+.WithTags("Auth");
+
+app.MapPost("/api/auth/login", async (LoginDto dto, AppDbContext db, JwtService jwt) =>
+{
+    if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
+        return Results.BadRequest(new { error = "E-Mail und Passwort sind erforderlich" });
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email.ToLower());
+    if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+        return Results.Unauthorized();
+
+    return Results.Ok(new { token = jwt.GenerateToken(user), user.Id, user.Username, user.Email, user.Role });
+})
+.WithName("Login")
+.WithTags("Auth");
 
 
 // --------------------
@@ -633,146 +688,6 @@ app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbCo
     if (report is null) return Results.NotFound();
     if (!new[] { "Open", "Resolved" }.Contains(status))
         return Results.BadRequest(new { error = "Status muss 'Open' oder 'Resolved' sein" });
-    report.Status = status;
-    await db.SaveChangesAsync();
-    return Results.Ok(report);
-})
-.WithName("UpdateReportStatus")
-.WithTags("Reports");
-
-
-// --------------------
-// COMMENTS
-// --------------------
-app.MapGet("/api/areas/{id:int}/comments", async (int id, AppDbContext db) =>
-{
-    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
-
-    var comments = await db.Comments
-        .Where(c => c.AreaId == id)
-        .Include(c => c.User)
-        .OrderByDescending(c => c.CreatedAtUtc)
-        .ToListAsync();
-
-    return Results.Ok(comments);
-})
-.WithName("GetCommentsByArea")
-.WithTags("Comments");
-
-app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto, AppDbContext db) =>
-{
-    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
-    if (string.IsNullOrWhiteSpace(dto.Text))
-        return Results.BadRequest(new { error = "Text is required" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User not found" });
-
-    var comment = new Comment
-    {
-        UserId = dto.UserId,
-        AreaId = id,
-        Text   = dto.Text.Trim()
-    };
-
-    db.Comments.Add(comment);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/areas/{id}/comments", comment);
-})
-.WithName("CreateCommentForArea")
-.WithTags("Comments");
-
-app.MapGet("/api/routes/{id:int}/comments", async (int id, AppDbContext db) =>
-{
-    if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
-
-    var comments = await db.Comments
-        .Where(c => c.RouteId == id)
-        .Include(c => c.User)
-        .OrderByDescending(c => c.CreatedAtUtc)
-        .ToListAsync();
-
-    return Results.Ok(comments);
-})
-.WithName("GetCommentsByRoute")
-.WithTags("Comments");
-
-app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto, AppDbContext db) =>
-{
-    if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
-    if (string.IsNullOrWhiteSpace(dto.Text))
-        return Results.BadRequest(new { error = "Text is required" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User not found" });
-
-    var comment = new Comment
-    {
-        UserId  = dto.UserId,
-        RouteId = id,
-        Text    = dto.Text.Trim()
-    };
-
-    db.Comments.Add(comment);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/routes/{id}/comments", comment);
-})
-.WithName("CreateCommentForRoute")
-.WithTags("Comments");
-
-
-// --------------------
-// REPORTS
-// --------------------
-app.MapPost("/api/reports", async (ReportCreateDto dto, AppDbContext db) =>
-{
-    if (string.IsNullOrWhiteSpace(dto.Text))
-        return Results.BadRequest(new { error = "Text is required" });
-    if (dto.AreaId is null && dto.RouteId is null)
-        return Results.BadRequest(new { error = "Either AreaId or RouteId is required" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User not found" });
-    if (dto.AreaId is not null && !await db.Areas.AnyAsync(a => a.Id == dto.AreaId))
-        return Results.BadRequest(new { error = "Area not found" });
-    if (dto.RouteId is not null && !await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
-        return Results.BadRequest(new { error = "Route not found" });
-
-    var report = new Report
-    {
-        UserId   = dto.UserId,
-        AreaId   = dto.AreaId,
-        RouteId  = dto.RouteId,
-        Text     = dto.Text.Trim(),
-        PhotoUrl = string.IsNullOrWhiteSpace(dto.PhotoUrl) ? null : dto.PhotoUrl.Trim(),
-        Status   = "Open"
-    };
-
-    db.Reports.Add(report);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/reports/{report.Id}", report);
-})
-.WithName("CreateReport")
-.WithTags("Reports");
-
-app.MapGet("/api/reports", async (AppDbContext db) =>
-{
-    var reports = await db.Reports
-        .Include(r => r.User)
-        .OrderByDescending(r => r.CreatedAtUtc)
-        .ToListAsync();
-
-    return Results.Ok(reports);
-})
-.WithName("GetReports")
-.WithTags("Reports");
-
-app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbContext db) =>
-{
-    var report = await db.Reports.FindAsync(id);
-    if (report is null) return Results.NotFound();
-
-    var validStatuses = new[] { "Open", "Resolved" };
-    if (!validStatuses.Contains(status))
-        return Results.BadRequest(new { error = "Status must be 'Open' or 'Resolved'" });
-
     report.Status = status;
     await db.SaveChangesAsync();
     return Results.Ok(report);
