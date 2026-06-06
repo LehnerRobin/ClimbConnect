@@ -1,18 +1,31 @@
 namespace ClimbConnect.API.Models;
 
+/// <summary>
+/// Repräsentiert eine Kletterroute innerhalb eines Sektors (Area → Sector → Route).
+/// Der Grad wird intern immer in der französischen Skala gespeichert.
+/// </summary>
 public class Route
 {
     public int Id { get; set; }
-    public int AreaId { get; set; }
+
+    /// <summary>Fremdschlüssel zum übergeordneten Sektor.</summary>
+    public int SectorId { get; set; }
+
     public string Name { get; set; } = string.Empty;
-    public string? Grade { get; set; }        // UIAA, z.B. "6b", "7a+"
-    public string? Sector { get; set; }
+
+    /// <summary>Grad in der französischen Skala, z.B. "6b", "7a+".</summary>
+    public string? Grade { get; set; }
+
     public int? LengthMeters { get; set; }
-    public string? Style { get; set; }        // z.B. "Sport", "Trad"
+
+    /// <summary>Klettersti, z.B. "Sport", "Trad".</summary>
+    public string? Style { get; set; }
+
     public string? Description { get; set; }
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
-    public Area Area { get; set; } = null!;
+    // Navigation
+    public Sector Sector { get; set; } = null!;
     public ICollection<Progress> Progresses { get; set; } = [];
     public ICollection<Comment> Comments { get; set; } = [];
     public ICollection<Report> Reports { get; set; } = [];

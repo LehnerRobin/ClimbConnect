@@ -1,6 +1,6 @@
 namespace ClimbConnect.API.Dtos;
 
-public record RouteCreateDto(
+public record RouteUpdateDto(
     string Name,
     string? Grade,
     int? LengthMeters,
