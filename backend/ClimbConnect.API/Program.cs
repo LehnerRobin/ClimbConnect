@@ -134,8 +134,8 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
 
     var area = new Area
     {
-        Name     = dto.Name.Trim(),
-        Location = string.IsNullOrWhiteSpace(dto.Location) ? null : dto.Location.Trim()
+        Name        = dto.Name.Trim(),
+        Location    = string.IsNullOrWhiteSpace(dto.Location) ? null : dto.Location.Trim()
     };
 
     db.Areas.Add(area);
@@ -145,17 +145,62 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
 .WithName("CreateArea")
 .WithTags("Areas");
 
+app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext db) =>
+{
+    var area = await db.Areas.FindAsync(id);
+    if (area is null) return Results.NotFound();
+    if (string.IsNullOrWhiteSpace(dto.Name))
+        return Results.BadRequest(new { error = "Name is required" });
+
+    area.Name        = dto.Name.Trim();
+    area.Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim();
+    area.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
+
+    await db.SaveChangesAsync();
+    return Results.Ok(area);
+})
+.WithName("UpdateArea")
+.WithTags("Areas");
+
+app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db) =>
+{
+    var area = await db.Areas.FindAsync(id);
+    if (area is null) return Results.NotFound();
+
+    db.Areas.Remove(area);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.WithName("DeleteArea")
+.WithTags("Areas");
+
 
 // --------------------
 // ROUTES
 // --------------------
-app.MapPost("/api/routes", async (RouteCreateDto dto, AppDbContext db) =>
+app.MapGet("/api/areas/{id:int}/routes", async (int id, AppDbContext db) =>
 {
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+
+    var routes = await db.Routes
+        .Where(r => r.AreaId == id)
+        .OrderBy(r => r.Sector).ThenBy(r => r.Name)
+        .ToListAsync();
+
+    return Results.Ok(routes);
+})
+.WithName("GetRoutesByArea")
+.WithTags("Routes");
+
+app.MapPost("/api/areas/{id:int}/routes", async (int id, RouteCreateDto dto, AppDbContext db) =>
+{
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Name))
         return Results.BadRequest(new { error = "Name is required" });
 
     var route = new Route
     {
+        AreaId = id,
         Name   = dto.Name.Trim(),
         Grade  = string.IsNullOrWhiteSpace(dto.Grade)  ? null : dto.Grade.Trim(),
         Sector = string.IsNullOrWhiteSpace(dto.Sector) ? null : dto.Sector.Trim()
@@ -174,6 +219,38 @@ app.MapGet("/api/routes/{id:int}", async (int id, AppDbContext db) =>
     return route is null ? Results.NotFound() : Results.Ok(route);
 })
 .WithName("GetRouteById")
+.WithTags("Routes");
+
+app.MapPut("/api/routes/{id:int}", async (int id, RouteUpdateDto dto, AppDbContext db) =>
+{
+    var route = await db.Routes.FindAsync(id);
+    if (route is null) return Results.NotFound();
+    if (string.IsNullOrWhiteSpace(dto.Name))
+        return Results.BadRequest(new { error = "Name is required" });
+
+    route.Name        = dto.Name.Trim();
+    route.Grade       = string.IsNullOrWhiteSpace(dto.Grade)       ? null : dto.Grade.Trim();
+    route.Sector      = string.IsNullOrWhiteSpace(dto.Sector)      ? null : dto.Sector.Trim();
+    route.LengthMeters = dto.LengthMeters;
+    route.Style       = string.IsNullOrWhiteSpace(dto.Style)       ? null : dto.Style.Trim();
+    route.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
+
+    await db.SaveChangesAsync();
+    return Results.Ok(route);
+})
+.WithName("UpdateRoute")
+.WithTags("Routes");
+
+app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db) =>
+{
+    var route = await db.Routes.FindAsync(id);
+    if (route is null) return Results.NotFound();
+
+    db.Routes.Remove(route);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.WithName("DeleteRoute")
 .WithTags("Routes");
 
 
