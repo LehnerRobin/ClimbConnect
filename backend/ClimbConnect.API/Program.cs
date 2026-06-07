@@ -768,6 +768,100 @@ app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbCo
 .WithTags("Reports");
 
 
+// --------------------
+// USER STATISTIKEN
+// --------------------
+app.MapGet("/api/users/{id:int}/stats", async (int id, string? scale, AppDbContext db) =>
+{
+    if (!await db.Users.AnyAsync(u => u.Id == id)) return Results.NotFound();
+
+    var progresses = await db.Progresses
+        .Where(p => p.UserId == id)
+        .Include(p => p.Route)
+            .ThenInclude(r => r.Sector)
+                .ThenInclude(s => s.Area)
+        .ToListAsync();
+
+    // Gekletterte Routen (alles außer Projekt)
+    var ascents   = progresses.Where(p => p.Status != "Projekt").ToList();
+    var projects  = progresses.Where(p => p.Status == "Projekt").ToList();
+
+    // Lieblingsgebiet: Gebiet mit den meisten Begehungen
+    var favoriteArea = ascents
+        .GroupBy(p => p.Route.Sector.Area.Name)
+        .OrderByDescending(g => g.Count())
+        .Select(g => g.Key)
+        .FirstOrDefault();
+
+    // Grad-Entwicklung: höchster Rotpunkt-/Flash-/Onsight-Grad pro Monat
+    var targetScale = scale ?? "french";
+    var gradeProgression = ascents
+        .Where(p => p.Route.Grade != null)
+        .GroupBy(p => new { p.Date.Year, p.Date.Month })
+        .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+        .Select(g =>
+        {
+            var best = g.OrderByDescending(p => GradeConversionService.Rank(p.Route.Grade)).First();
+            return new
+            {
+                Month = $"{g.Key.Year:0000}-{g.Key.Month:00}",
+                Grade = GradeConversionService.Convert(best.Route.Grade, targetScale)
+            };
+        })
+        .ToList();
+
+    return Results.Ok(new
+    {
+        TotalClimbed     = ascents.Count,
+        OpenProjects     = projects.Count,
+        FavoriteArea     = favoriteArea,
+        GradeProgression = gradeProgression
+    });
+})
+.WithName("GetUserStats")
+.WithTags("Users");
+
+
+// --------------------
+// OEFFENTLICHE PROFILE
+// --------------------
+app.MapGet("/api/users/{id:int}/profile", async (int id, string? scale, AppDbContext db) =>
+{
+    var user = await db.Users.FindAsync(id);
+    if (user is null) return Results.NotFound();
+
+    var targetScale = scale ?? "french";
+
+    // Letzte 10 Begehungen (kein Projekt)
+    var recentAscents = await db.Progresses
+        .Where(p => p.UserId == id && p.Status != "Projekt")
+        .Include(p => p.Route)
+            .ThenInclude(r => r.Sector)
+                .ThenInclude(s => s.Area)
+        .OrderByDescending(p => p.Date)
+        .Take(10)
+        .Select(p => new
+        {
+            RouteName = p.Route.Name,
+            Grade     = GradeConversionService.Convert(p.Route.Grade, targetScale),
+            Area      = p.Route.Sector.Area.Name,
+            p.Date,
+            p.Status
+        })
+        .ToListAsync();
+
+    return Results.Ok(new
+    {
+        user.Id,
+        user.Username,
+        MemberSince   = user.CreatedAtUtc.ToString("yyyy-MM-dd"),
+        RecentAscents = recentAscents
+    });
+})
+.WithName("GetUserProfile")
+.WithTags("Users");
+
+
 app.Run();
 
 
