@@ -92,6 +92,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var app = builder.Build();
 
 // --------------------
+// GLOBALES ERROR-HANDLING
+// --------------------
+app.UseExceptionHandler(errApp => errApp.Run(async ctx =>
+{
+    ctx.Response.StatusCode  = 500;
+    ctx.Response.ContentType = "application/json";
+    await ctx.Response.WriteAsJsonAsync(new { error = "Ein unerwarteter Fehler ist aufgetreten." });
+}));
+
+// --------------------
 // SWAGGER UI
 // --------------------
 app.UseSwagger();
