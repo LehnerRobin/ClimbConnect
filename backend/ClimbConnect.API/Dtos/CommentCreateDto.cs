@@ -1,3 +1,4 @@
 namespace ClimbConnect.API.Dtos;
 
-public record CommentCreateDto(int UserId, string Text);
+/// <summary>Daten für einen neuen Kommentar. PhotoUrl ist optional.</summary>
+public record CommentCreateDto(string Text, string? PhotoUrl = null);
