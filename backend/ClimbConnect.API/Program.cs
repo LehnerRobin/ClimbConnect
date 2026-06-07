@@ -12,6 +12,13 @@ using Route = ClimbConnect.API.Models.Route;
 var builder = WebApplication.CreateBuilder(args);
 
 // --------------------
+// LOGGING
+// --------------------
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+// --------------------
 // SWAGGER
 // --------------------
 builder.Services.AddEndpointsApiExplorer();
@@ -45,6 +52,17 @@ builder.Services.AddSwaggerGen(c =>
 // CORS
 // --------------------
 builder.Services.AddCors();
+
+// --------------------
+// HTTP LOGGING
+// --------------------
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestMethod
+                          | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPath
+                          | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponseStatusCode
+                          | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.Duration;
+});
 
 // --------------------
 // JWT AUTH (eigenes System, ersetzt Keycloak für jetzt)
@@ -111,6 +129,9 @@ app.UseHttpsRedirection();
 app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseAuthentication();
 app.UseAuthorization();
+
+// HTTP-Request-Logging
+app.UseHttpLogging();
 
 // Migrations bei App-Start automatisch anwenden
 using (var scope = app.Services.CreateScope())
