@@ -38,6 +38,30 @@ public static class GradeConversionService
     };
 
     /// <summary>
+    /// Sortierreihenfolge für französische Grade (niedriger = einfacher).
+    /// Wird für die Grad-Entwicklung im Stats-Endpoint verwendet.
+    /// </summary>
+    private static readonly List<string> GradeOrder =
+    [
+        "4", "4+", "5", "5a", "5b", "5+", "5c",
+        "6a", "6a+", "6b", "6b+", "6c", "6c+",
+        "7a", "7a+", "7b", "7b+", "7c", "7c+",
+        "8a", "8a+", "8b", "8b+", "8c", "8c+",
+        "9a", "9a+", "9b", "9b+", "9c"
+    ];
+
+    /// <summary>
+    /// Gibt den numerischen Rang eines Grads zurück — höher = schwerer.
+    /// Gibt -1 zurück wenn der Grad unbekannt ist.
+    /// </summary>
+    public static int Rank(string? frenchGrade)
+    {
+        if (string.IsNullOrWhiteSpace(frenchGrade)) return -1;
+        var idx = GradeOrder.IndexOf(frenchGrade.ToLower().Trim());
+        return idx;
+    }
+
+    /// <summary>
     /// Konvertiert einen französischen Grad in die gewünschte Skala.
     /// </summary>
     /// <param name="frenchGrade">Grad in der französischen Skala, z.B. "6b".</param>
