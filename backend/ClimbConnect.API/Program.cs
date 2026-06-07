@@ -102,10 +102,10 @@ app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseAuthentication();
 app.UseAuthorization();
 
-// DB-Schema anlegen (ohne Migrations)
+// Migrations bei App-Start automatisch anwenden
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureCreated();
+    scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.Migrate();
 }
 
 
