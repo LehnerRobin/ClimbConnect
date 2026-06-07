@@ -229,7 +229,8 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
     return Results.Created($"/api/areas/{area.Id}", area);
 })
 .WithName("CreateArea")
-.WithTags("Areas");
+.WithTags("Areas")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext db) =>
 {
@@ -246,7 +247,8 @@ app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext
     return Results.Ok(area);
 })
 .WithName("UpdateArea")
-.WithTags("Areas");
+.WithTags("Areas")
+.RequireAuthorization("Admin");
 
 app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -257,7 +259,8 @@ app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteArea")
-.WithTags("Areas");
+.WithTags("Areas")
+.RequireAuthorization("Admin");
 
 
 // --------------------
@@ -304,7 +307,8 @@ app.MapPost("/api/areas/{id:int}/sectors", async (int id, SectorCreateDto dto, A
     return Results.Created($"/api/sectors/{sector.Id}", sector);
 })
 .WithName("CreateSector")
-.WithTags("Sectors");
+.WithTags("Sectors")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/sectors/{id:int}", async (int id, SectorUpdateDto dto, AppDbContext db) =>
 {
@@ -320,7 +324,8 @@ app.MapPut("/api/sectors/{id:int}", async (int id, SectorUpdateDto dto, AppDbCon
     return Results.Ok(sector);
 })
 .WithName("UpdateSector")
-.WithTags("Sectors");
+.WithTags("Sectors")
+.RequireAuthorization("Admin");
 
 app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -331,7 +336,8 @@ app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteSector")
-.WithTags("Sectors");
+.WithTags("Sectors")
+.RequireAuthorization("Admin");
 
 
 // --------------------
@@ -399,7 +405,8 @@ app.MapPost("/api/sectors/{id:int}/routes", async (int id, RouteCreateDto dto, A
     return Results.Created($"/api/routes/{route.Id}", route);
 })
 .WithName("CreateRoute")
-.WithTags("Routes");
+.WithTags("Routes")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/routes/{id:int}", async (int id, RouteUpdateDto dto, AppDbContext db) =>
 {
@@ -418,7 +425,8 @@ app.MapPut("/api/routes/{id:int}", async (int id, RouteUpdateDto dto, AppDbConte
     return Results.Ok(route);
 })
 .WithName("UpdateRoute")
-.WithTags("Routes");
+.WithTags("Routes")
+.RequireAuthorization("Admin");
 
 app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -429,7 +437,8 @@ app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteRoute")
-.WithTags("Routes");
+.WithTags("Routes")
+.RequireAuthorization("Admin");
 
 
 // --------------------
