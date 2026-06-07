@@ -4,12 +4,21 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 using ClimbConnect.API.Models;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Services;
+using ClimbConnect.API.Data;
 using Route = ClimbConnect.API.Models.Route;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// --------------------
+// LOGGING
+// --------------------
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 // --------------------
 // SWAGGER
@@ -45,6 +54,17 @@ builder.Services.AddSwaggerGen(c =>
 // CORS
 // --------------------
 builder.Services.AddCors();
+
+// --------------------
+// HTTP LOGGING
+// --------------------
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestMethod
+                          | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestPath
+                          | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponseStatusCode
+                          | Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.Duration;
+});
 
 // --------------------
 // JWT AUTH (eigenes System, ersetzt Keycloak für jetzt)
@@ -92,6 +112,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var app = builder.Build();
 
 // --------------------
+// GLOBALES ERROR-HANDLING
+// --------------------
+app.UseExceptionHandler(errApp => errApp.Run(async ctx =>
+{
+    ctx.Response.StatusCode  = 500;
+    ctx.Response.ContentType = "application/json";
+    await ctx.Response.WriteAsJsonAsync(new { error = "Ein unerwarteter Fehler ist aufgetreten." });
+}));
+
+// --------------------
 // SWAGGER UI
 // --------------------
 app.UseSwagger();
@@ -102,10 +132,15 @@ app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseAuthentication();
 app.UseAuthorization();
 
-// DB-Schema anlegen (ohne Migrations)
+// HTTP-Request-Logging
+app.UseHttpLogging();
+
+// Migrations bei App-Start automatisch anwenden + Seed-Daten einspielen
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.EnsureCreated();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    await SeedData.InitAsync(db);
 }
 
 
@@ -198,7 +233,8 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
     return Results.Created($"/api/areas/{area.Id}", area);
 })
 .WithName("CreateArea")
-.WithTags("Areas");
+.WithTags("Areas")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext db) =>
 {
@@ -215,7 +251,8 @@ app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext
     return Results.Ok(area);
 })
 .WithName("UpdateArea")
-.WithTags("Areas");
+.WithTags("Areas")
+.RequireAuthorization("Admin");
 
 app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -226,7 +263,8 @@ app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteArea")
-.WithTags("Areas");
+.WithTags("Areas")
+.RequireAuthorization("Admin");
 
 
 // --------------------
@@ -273,7 +311,8 @@ app.MapPost("/api/areas/{id:int}/sectors", async (int id, SectorCreateDto dto, A
     return Results.Created($"/api/sectors/{sector.Id}", sector);
 })
 .WithName("CreateSector")
-.WithTags("Sectors");
+.WithTags("Sectors")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/sectors/{id:int}", async (int id, SectorUpdateDto dto, AppDbContext db) =>
 {
@@ -289,7 +328,8 @@ app.MapPut("/api/sectors/{id:int}", async (int id, SectorUpdateDto dto, AppDbCon
     return Results.Ok(sector);
 })
 .WithName("UpdateSector")
-.WithTags("Sectors");
+.WithTags("Sectors")
+.RequireAuthorization("Admin");
 
 app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -300,7 +340,8 @@ app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteSector")
-.WithTags("Sectors");
+.WithTags("Sectors")
+.RequireAuthorization("Admin");
 
 
 // --------------------
@@ -368,7 +409,8 @@ app.MapPost("/api/sectors/{id:int}/routes", async (int id, RouteCreateDto dto, A
     return Results.Created($"/api/routes/{route.Id}", route);
 })
 .WithName("CreateRoute")
-.WithTags("Routes");
+.WithTags("Routes")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/routes/{id:int}", async (int id, RouteUpdateDto dto, AppDbContext db) =>
 {
@@ -387,7 +429,8 @@ app.MapPut("/api/routes/{id:int}", async (int id, RouteUpdateDto dto, AppDbConte
     return Results.Ok(route);
 })
 .WithName("UpdateRoute")
-.WithTags("Routes");
+.WithTags("Routes")
+.RequireAuthorization("Admin");
 
 app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -398,14 +441,18 @@ app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db) =>
     return Results.NoContent();
 })
 .WithName("DeleteRoute")
-.WithTags("Routes");
+.WithTags("Routes")
+.RequireAuthorization("Admin");
 
 
 // --------------------
 // PROGRESS
 // --------------------
-app.MapGet("/api/progress/me", async (int userId, AppDbContext db) =>
+app.MapGet("/api/progress/me", async (ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var entries = await db.Progresses
         .Where(p => p.UserId == userId)
         .Include(p => p.Route)
@@ -414,10 +461,14 @@ app.MapGet("/api/progress/me", async (int userId, AppDbContext db) =>
     return Results.Ok(entries);
 })
 .WithName("GetMyProgress")
-.WithTags("Progress");
+.WithTags("Progress")
+.RequireAuthorization("User");
 
-app.MapPost("/api/progress", async (ProgressCreateDto dto, AppDbContext db) =>
+app.MapPost("/api/progress", async (ProgressCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var validStatuses = new[] { "Projekt", "Rotpunkt", "Flash", "Onsight" };
     var validStyles   = new[] { "Toprope", "Vorstieg" };
 
@@ -425,14 +476,12 @@ app.MapPost("/api/progress", async (ProgressCreateDto dto, AppDbContext db) =>
         return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", validStatuses)} sein" });
     if (!validStyles.Contains(dto.ClimbingStyle))
         return Results.BadRequest(new { error = $"ClimbingStyle muss einer von: {string.Join(", ", validStyles)} sein" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User nicht gefunden" });
     if (!await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
         return Results.BadRequest(new { error = "Route nicht gefunden" });
 
     var progress = new Progress
     {
-        UserId                 = dto.UserId,
+        UserId                 = userId,
         RouteId                = dto.RouteId,
         Status                 = dto.Status,
         ClimbingStyle          = dto.ClimbingStyle,
@@ -447,12 +496,17 @@ app.MapPost("/api/progress", async (ProgressCreateDto dto, AppDbContext db) =>
     return Results.Created($"/api/progress/{progress.Id}", progress);
 })
 .WithName("CreateProgress")
-.WithTags("Progress");
+.WithTags("Progress")
+.RequireAuthorization("User");
 
-app.MapPut("/api/progress/{id:int}", async (int id, ProgressUpdateDto dto, AppDbContext db) =>
+app.MapPut("/api/progress/{id:int}", async (int id, ProgressUpdateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var progress = await db.Progresses.FindAsync(id);
     if (progress is null) return Results.NotFound();
+    if (progress.UserId != userId) return Results.Forbid();
 
     var validStatuses = new[] { "Projekt", "Rotpunkt", "Flash", "Onsight" };
     var validStyles   = new[] { "Toprope", "Vorstieg" };
@@ -474,18 +528,25 @@ app.MapPut("/api/progress/{id:int}", async (int id, ProgressUpdateDto dto, AppDb
     return Results.Ok(progress);
 })
 .WithName("UpdateProgress")
-.WithTags("Progress");
+.WithTags("Progress")
+.RequireAuthorization("User");
 
-app.MapDelete("/api/progress/{id:int}", async (int id, AppDbContext db) =>
+app.MapDelete("/api/progress/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var progress = await db.Progresses.FindAsync(id);
     if (progress is null) return Results.NotFound();
+    if (progress.UserId != userId) return Results.Forbid();
+
     db.Progresses.Remove(progress);
     await db.SaveChangesAsync();
     return Results.NoContent();
 })
 .WithName("DeleteProgress")
-.WithTags("Progress");
+.WithTags("Progress")
+.RequireAuthorization("User");
 
 
 // --------------------
@@ -505,18 +566,18 @@ app.MapGet("/api/areas/{id:int}/appointments", async (int id, AppDbContext db) =
 .WithName("GetAppointmentsByArea")
 .WithTags("Appointments");
 
-app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreateDto dto, AppDbContext db) =>
+app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
     if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Title))
         return Results.BadRequest(new { error = "Title is required" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.CreatedByUserId))
-        return Results.BadRequest(new { error = "User nicht gefunden" });
 
     var appointment = new Appointment
     {
         AreaId          = id,
-        CreatedByUserId = dto.CreatedByUserId,
+        CreatedByUserId = userId,
         Title           = dto.Title.Trim(),
         Date            = dto.Date,
         MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim(),
@@ -529,18 +590,20 @@ app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreate
     return Results.Created($"/api/appointments/{appointment.Id}", appointment);
 })
 .WithName("CreateAppointment")
-.WithTags("Appointments");
+.WithTags("Appointments")
+.RequireAuthorization("User");
 
-app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSubscribeDto dto, AppDbContext db) =>
+app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSubscribeDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var appointment = await db.Appointments
         .Include(a => a.AppointmentUsers)
         .FirstOrDefaultAsync(a => a.Id == id);
     if (appointment is null) return Results.NotFound();
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User nicht gefunden" });
 
-    if (appointment.AppointmentUsers.Any(au => au.UserId == dto.UserId))
+    if (appointment.AppointmentUsers.Any(au => au.UserId == userId))
         return Results.Conflict(new { error = "Bereits angemeldet" });
 
     if (appointment.MaxParticipants.HasValue &&
@@ -550,7 +613,7 @@ app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSu
     var subscription = new AppointmentUser
     {
         AppointmentId = id,
-        UserId        = dto.UserId,
+        UserId        = userId,
         Comment       = string.IsNullOrWhiteSpace(dto.Comment) ? null : dto.Comment.Trim()
     };
     db.AppointmentUsers.Add(subscription);
@@ -558,10 +621,14 @@ app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSu
     return Results.Created($"/api/appointments/{id}/subscribe", subscription);
 })
 .WithName("SubscribeToAppointment")
-.WithTags("Appointments");
+.WithTags("Appointments")
+.RequireAuthorization("User");
 
-app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, int userId, AppDbContext db) =>
+app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var subscription = await db.AppointmentUsers
         .FirstOrDefaultAsync(au => au.AppointmentId == id && au.UserId == userId);
     if (subscription is null) return Results.NotFound();
@@ -570,7 +637,8 @@ app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, int userId,
     return Results.NoContent();
 })
 .WithName("UnsubscribeFromAppointment")
-.WithTags("Appointments");
+.WithTags("Appointments")
+.RequireAuthorization("User");
 
 
 // --------------------
@@ -589,21 +657,22 @@ app.MapGet("/api/areas/{id:int}/comments", async (int id, AppDbContext db) =>
 .WithName("GetCommentsByArea")
 .WithTags("Comments");
 
-app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto, AppDbContext db) =>
+app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
     if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Text))
         return Results.BadRequest(new { error = "Text is required" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User nicht gefunden" });
 
-    var comment = new Comment { UserId = dto.UserId, AreaId = id, Text = dto.Text.Trim() };
+    var comment = new Comment { UserId = userId, AreaId = id, Text = dto.Text.Trim() };
     db.Comments.Add(comment);
     await db.SaveChangesAsync();
     return Results.Created($"/api/areas/{id}/comments", comment);
 })
 .WithName("CreateCommentForArea")
-.WithTags("Comments");
+.WithTags("Comments")
+.RequireAuthorization("User");
 
 app.MapGet("/api/routes/{id:int}/comments", async (int id, AppDbContext db) =>
 {
@@ -618,28 +687,32 @@ app.MapGet("/api/routes/{id:int}/comments", async (int id, AppDbContext db) =>
 .WithName("GetCommentsByRoute")
 .WithTags("Comments");
 
-app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto, AppDbContext db) =>
+app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
     if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Text))
         return Results.BadRequest(new { error = "Text is required" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User nicht gefunden" });
 
-    var comment = new Comment { UserId = dto.UserId, RouteId = id, Text = dto.Text.Trim() };
+    var comment = new Comment { UserId = userId, RouteId = id, Text = dto.Text.Trim() };
     db.Comments.Add(comment);
     await db.SaveChangesAsync();
     return Results.Created($"/api/routes/{id}/comments", comment);
 })
 .WithName("CreateCommentForRoute")
-.WithTags("Comments");
+.WithTags("Comments")
+.RequireAuthorization("User");
 
 
 // --------------------
 // REPORTS
 // --------------------
-app.MapPost("/api/reports", async (ReportCreateDto dto, AppDbContext db) =>
+app.MapPost("/api/reports", async (ReportCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
     var validSeverities = new[] { "Low", "Medium", "High" };
     if (!validSeverities.Contains(dto.Severity))
         return Results.BadRequest(new { error = "Severity muss Low, Medium oder High sein" });
@@ -647,8 +720,6 @@ app.MapPost("/api/reports", async (ReportCreateDto dto, AppDbContext db) =>
         return Results.BadRequest(new { error = "Text is required" });
     if (dto.AreaId is null && dto.RouteId is null)
         return Results.BadRequest(new { error = "AreaId oder RouteId muss angegeben werden" });
-    if (!await db.Users.AnyAsync(u => u.Id == dto.UserId))
-        return Results.BadRequest(new { error = "User nicht gefunden" });
     if (dto.AreaId is not null && !await db.Areas.AnyAsync(a => a.Id == dto.AreaId))
         return Results.BadRequest(new { error = "Area nicht gefunden" });
     if (dto.RouteId is not null && !await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
@@ -656,7 +727,7 @@ app.MapPost("/api/reports", async (ReportCreateDto dto, AppDbContext db) =>
 
     var report = new Report
     {
-        UserId   = dto.UserId,
+        UserId   = userId,
         AreaId   = dto.AreaId,
         RouteId  = dto.RouteId,
         Text     = dto.Text.Trim(),
@@ -669,7 +740,8 @@ app.MapPost("/api/reports", async (ReportCreateDto dto, AppDbContext db) =>
     return Results.Created($"/api/reports/{report.Id}", report);
 })
 .WithName("CreateReport")
-.WithTags("Reports");
+.WithTags("Reports")
+.RequireAuthorization("User");
 
 app.MapGet("/api/reports", async (AppDbContext db) =>
 {
