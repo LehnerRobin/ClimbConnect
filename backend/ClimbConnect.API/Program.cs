@@ -135,6 +135,18 @@ app.UseAuthorization();
 // HTTP-Request-Logging
 app.UseHttpLogging();
 
+// Statische Dateien für hochgeladene Bilder (erreichbar unter /uploads/...)
+var uploadsPath = Path.Combine(
+    AppDomain.CurrentDomain.GetData("DataDirectory") as string
+        ?? AppDomain.CurrentDomain.BaseDirectory,
+    "uploads");
+Directory.CreateDirectory(uploadsPath);
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+    RequestPath  = "/uploads"
+});
+
 // Migrations bei App-Start automatisch anwenden + Seed-Daten einspielen
 using (var scope = app.Services.CreateScope())
 {
@@ -150,6 +162,37 @@ using (var scope = app.Services.CreateScope())
 app.MapGet("/api/health", () =>
     Results.Ok(new { status = "ok" }))
    .WithName("Health");
+
+
+// --------------------
+// UPLOAD
+// --------------------
+app.MapPost("/api/upload", async (IFormFile file, HttpContext ctx) =>
+{
+    var allowed = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+    if (!allowed.Contains(file.ContentType))
+        return Results.BadRequest(new { error = "Nur JPG, PNG, WebP und GIF sind erlaubt." });
+
+    if (file.Length > 5 * 1024 * 1024)
+        return Results.BadRequest(new { error = "Maximale Dateigröße ist 5 MB." });
+
+    var ext      = Path.GetExtension(file.FileName).ToLower();
+    var fileName = $"{Guid.NewGuid()}{ext}";
+    var savePath = Path.Combine(
+        AppDomain.CurrentDomain.GetData("DataDirectory") as string
+            ?? AppDomain.CurrentDomain.BaseDirectory,
+        "uploads", fileName);
+
+    await using var stream = File.Create(savePath);
+    await file.CopyToAsync(stream);
+
+    var url = $"/uploads/{fileName}";
+    return Results.Ok(new { url });
+})
+.WithName("UploadImage")
+.WithTags("Upload")
+.RequireAuthorization("User")
+.DisableAntiforgery();
 
 
 // --------------------
@@ -665,7 +708,13 @@ app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto,
     if (string.IsNullOrWhiteSpace(dto.Text))
         return Results.BadRequest(new { error = "Text is required" });
 
-    var comment = new Comment { UserId = userId, AreaId = id, Text = dto.Text.Trim() };
+    var comment = new Comment
+    {
+        UserId   = userId,
+        AreaId   = id,
+        Text     = dto.Text.Trim(),
+        PhotoUrl = string.IsNullOrWhiteSpace(dto.PhotoUrl) ? null : dto.PhotoUrl.Trim()
+    };
     db.Comments.Add(comment);
     await db.SaveChangesAsync();
     return Results.Created($"/api/areas/{id}/comments", comment);
@@ -695,7 +744,13 @@ app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto
     if (string.IsNullOrWhiteSpace(dto.Text))
         return Results.BadRequest(new { error = "Text is required" });
 
-    var comment = new Comment { UserId = userId, RouteId = id, Text = dto.Text.Trim() };
+    var comment = new Comment
+    {
+        UserId   = userId,
+        RouteId  = id,
+        Text     = dto.Text.Trim(),
+        PhotoUrl = string.IsNullOrWhiteSpace(dto.PhotoUrl) ? null : dto.PhotoUrl.Trim()
+    };
     db.Comments.Add(comment);
     await db.SaveChangesAsync();
     return Results.Created($"/api/routes/{id}/comments", comment);
