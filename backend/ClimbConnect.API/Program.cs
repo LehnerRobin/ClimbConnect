@@ -93,6 +93,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("User",  policy => policy.RequireRole("user", "admin"));
 });
 
+// Zirkuläre Referenzen bei JSON-Serialisierung ignorieren
+builder.Services.ConfigureHttpJsonOptions(opts =>
+    opts.SerializerOptions.ReferenceHandler =
+        System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
 // --------------------
 // SQLITE
 // --------------------
@@ -118,6 +123,16 @@ app.UseExceptionHandler(errApp => errApp.Run(async ctx =>
 {
     ctx.Response.StatusCode  = 500;
     ctx.Response.ContentType = "application/json";
+
+    var ex = ctx.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
+
+    // In Development: echten Fehler zurückgeben (hilft beim Debuggen)
+    if (app.Environment.IsDevelopment() && ex is not null)
+    {
+        await ctx.Response.WriteAsJsonAsync(new { error = ex.Message, detail = ex.StackTrace });
+        return;
+    }
+
     await ctx.Response.WriteAsJsonAsync(new { error = "Ein unerwarteter Fehler ist aufgetreten." });
 }));
 
