@@ -147,6 +147,11 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath  = "/uploads"
 });
 
+// Data-Ordner sicherstellen (SQLite braucht das Verzeichnis)
+var dataDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+Directory.CreateDirectory(dataDir);
+AppDomain.CurrentDomain.SetData("DataDirectory", AppDomain.CurrentDomain.BaseDirectory);
+
 // Migrations bei App-Start automatisch anwenden + Seed-Daten einspielen
 using (var scope = app.Services.CreateScope())
 {
