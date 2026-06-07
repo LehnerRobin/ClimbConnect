@@ -7,6 +7,7 @@ using System.Text;
 using ClimbConnect.API.Models;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Services;
+using ClimbConnect.API.Data;
 using Route = ClimbConnect.API.Models.Route;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -133,10 +134,12 @@ app.UseAuthorization();
 // HTTP-Request-Logging
 app.UseHttpLogging();
 
-// Migrations bei App-Start automatisch anwenden
+// Migrations bei App-Start automatisch anwenden + Seed-Daten einspielen
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.Migrate();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    await SeedData.InitAsync(db);
 }
 
 
