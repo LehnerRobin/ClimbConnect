@@ -278,9 +278,31 @@ app.MapPost("/api/auth/login", async (LoginDto dto, AppDbContext db, JwtService 
 // AREAS (Admin: POST/PUT/DELETE, alle: GET)
 // --------------------
 app.MapGet("/api/areas", async (AppDbContext db) =>
-    Results.Ok(await db.Areas.OrderBy(a => a.Name).ToListAsync()))
-   .WithName("GetAreas")
-   .WithTags("Areas");
+{
+    var today = DateTime.UtcNow.Date;
+    var tomorrow = today.AddDays(1);
+
+    var areas = await db.Areas.OrderBy(a => a.Name).ToListAsync();
+
+    // Für jedes Gebiet: wie viele Leute sind heute dort, wie viele kommen geplant
+    var todayAppointments = await db.Appointments
+        .Where(a => a.Date >= today && a.Date < tomorrow)
+        .Include(a => a.AppointmentUsers)
+        .ToListAsync();
+
+    var result = areas.Select(a => new
+    {
+        a.Id, a.Name, a.Location, a.Description, a.CreatedAtUtc,
+        TodayVisitors  = todayAppointments
+            .Where(ap => ap.AreaId == a.Id)
+            .Sum(ap => ap.AppointmentUsers.Count),
+        TodayAppointments = todayAppointments.Count(ap => ap.AreaId == a.Id)
+    });
+
+    return Results.Ok(result);
+})
+.WithName("GetAreas")
+.WithTags("Areas");
 
 app.MapGet("/api/areas/{id:int}", async (int id, AppDbContext db) =>
 {
@@ -635,6 +657,65 @@ app.MapGet("/api/areas/{id:int}/appointments", async (int id, AppDbContext db) =
 .WithName("GetAppointmentsByArea")
 .WithTags("Appointments");
 
+app.MapGet("/api/appointments/{id:int}", async (int id, string? scale, AppDbContext db) =>
+{
+    var appointment = await db.Appointments
+        .Include(a => a.AppointmentUsers)
+            .ThenInclude(au => au.User)
+                .ThenInclude(u => u.Progresses)
+                    .ThenInclude(p => p.Route)
+        .FirstOrDefaultAsync(a => a.Id == id);
+    if (appointment is null) return Results.NotFound();
+
+    var targetScale = scale ?? "french";
+
+    // Durchschnittsgrad: bester Rotpunkt-Grad jedes Teilnehmers → Durchschnitt
+    var participantGrades = appointment.AppointmentUsers
+        .Select(au =>
+        {
+            var bestRank = au.User.Progresses
+                .Where(p => p.Status is "Rotpunkt" or "Flash" or "Onsight" && p.Route.Grade != null)
+                .Select(p => GradeConversionService.Rank(p.Route.Grade))
+                .DefaultIfEmpty(-1)
+                .Max();
+            return bestRank;
+        })
+        .Where(r => r >= 0)
+        .ToList();
+
+    string? avgGrade = null;
+    if (participantGrades.Count > 0)
+    {
+        var avgRank = (int)Math.Round(participantGrades.Average());
+        var allGrades = GradeConversionService.GetAllGrades();
+        var frenchGrade = avgRank >= 0 && avgRank < allGrades.Count ? allGrades[avgRank] : null;
+        avgGrade = GradeConversionService.Convert(frenchGrade, targetScale);
+    }
+
+    return Results.Ok(new
+    {
+        appointment.Id,
+        appointment.AreaId,
+        appointment.CreatedByUserId,
+        appointment.Title,
+        appointment.Date,
+        appointment.MeetingPoint,
+        appointment.Description,
+        appointment.MinParticipants,
+        appointment.MaxParticipants,
+        ParticipantCount   = appointment.AppointmentUsers.Count,
+        AverageGrade       = avgGrade,
+        Participants       = appointment.AppointmentUsers.Select(au => new
+        {
+            au.UserId,
+            au.User.Username,
+            au.Comment
+        })
+    });
+})
+.WithName("GetAppointmentById")
+.WithTags("Appointments");
+
 app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
     if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
@@ -942,6 +1023,52 @@ app.MapGet("/api/users/{id:int}/profile", async (int id, string? scale, AppDbCon
     });
 })
 .WithName("GetUserProfile")
+.WithTags("Users");
+
+
+// --------------------
+// COMMUNITY-GRAD
+// --------------------
+app.MapGet("/api/routes/{id:int}/community-grade", async (int id, string? scale, AppDbContext db) =>
+{
+    if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
+
+    var grades = await db.Progresses
+        .Where(p => p.RouteId == id && p.SubjectiveGrade != null)
+        .Select(p => p.SubjectiveGrade!)
+        .ToListAsync();
+
+    if (grades.Count == 0)
+        return Results.Ok(new { CommunityGrade = (string?)null, VoteCount = 0 });
+
+    // Durchschnitt über den numerischen Rang berechnen
+    var targetScale = scale ?? "french";
+    var avgRank     = (int)Math.Round(grades.Select(GradeConversionService.Rank).Where(r => r >= 0).DefaultIfEmpty(-1).Average());
+    var allGrades   = GradeConversionService.GetAllGrades();
+    var frenchGrade = avgRank >= 0 && avgRank < allGrades.Count ? allGrades[avgRank] : null;
+
+    return Results.Ok(new
+    {
+        CommunityGrade = GradeConversionService.Convert(frenchGrade, targetScale),
+        VoteCount      = grades.Count
+    });
+})
+.WithName("GetCommunityGrade")
+.WithTags("Routes");
+
+
+// --------------------
+// USER-LISTE
+// --------------------
+app.MapGet("/api/users", async (AppDbContext db) =>
+{
+    var users = await db.Users
+        .OrderBy(u => u.Username)
+        .Select(u => new { u.Id, u.Username, MemberSince = u.CreatedAtUtc.ToString("yyyy-MM-dd") })
+        .ToListAsync();
+    return Results.Ok(users);
+})
+.WithName("GetUsers")
 .WithTags("Users");
 
 
