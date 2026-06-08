@@ -288,8 +288,9 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
 
     var area = new Area
     {
-        Name     = dto.Name.Trim(),
-        Location = string.IsNullOrWhiteSpace(dto.Location) ? null : dto.Location.Trim()
+        Name        = dto.Name.Trim(),
+        Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim(),
+        Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim()
     };
     db.Areas.Add(area);
     await db.SaveChangesAsync();
@@ -947,7 +948,6 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<Ping>            Pings            => Set<Ping>();
     public DbSet<Area>            Areas            => Set<Area>();
     public DbSet<Sector>          Sectors          => Set<Sector>();
     public DbSet<Route>           Routes           => Set<Route>();
@@ -964,13 +964,4 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<AppointmentUser>()
             .HasKey(au => new { au.AppointmentId, au.UserId });
     }
-}
-
-
-// --------------------
-// RECORDS
-// --------------------
-public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

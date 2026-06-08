@@ -4,11 +4,6 @@
     ClimbConnect
   </div>
 
-  <div class="developer-status">
-    <strong>Keycloak Events:</strong>
-    {{ keycloakStatus }}
-  </div>
-
   <div class="actions">
 
     <a routerLink="/" class="action-item">
@@ -17,10 +12,6 @@
 
     <a routerLink="/areas" class="action-item">
       Areas
-    </a>
-
-    <a routerLink="/appointments" class="action-item">
-      Appointments
     </a>
 
     @if (authenticated) {
@@ -35,24 +26,14 @@
       </a>
     }
 
-    @if (this.keycloak.hasRealmRole('myUserRole')) {
-      <a routerLink="/mdemos" class="action-item">
-        MDemos
-      </a>
-    }
-
     @if (!authenticated) {
-
       <button class="action-item login-btn" (click)="login()">
         Login
       </button>
-
     } @else {
-
       <button class="action-item logout-btn" (click)="logout()">
         Logout
       </button>
-
     }
 
   </div>
