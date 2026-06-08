@@ -53,7 +53,15 @@ builder.Services.AddSwaggerGen(c =>
 // --------------------
 // CORS
 // --------------------
-builder.Services.AddCors();
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(allowedOrigins)
+              .AllowAnyHeader()
+              .AllowAnyMethod()));
 
 // --------------------
 // HTTP LOGGING
@@ -137,13 +145,16 @@ app.UseExceptionHandler(errApp => errApp.Run(async ctx =>
 }));
 
 // --------------------
-// SWAGGER UI
+// SWAGGER UI (nur in Development)
 // --------------------
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
-app.UseCors(b => b.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -827,7 +838,8 @@ app.MapGet("/api/reports", async (AppDbContext db) =>
     return Results.Ok(reports);
 })
 .WithName("GetReports")
-.WithTags("Reports");
+.WithTags("Reports")
+.RequireAuthorization("Admin");
 
 app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbContext db) =>
 {
@@ -840,7 +852,8 @@ app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbCo
     return Results.Ok(report);
 })
 .WithName("UpdateReportStatus")
-.WithTags("Reports");
+.WithTags("Reports")
+.RequireAuthorization("Admin");
 
 
 // --------------------
