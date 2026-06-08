@@ -51,6 +51,11 @@ public static class GradeConversionService
     ];
 
     /// <summary>
+    /// Gibt die komplette sortierte Liste aller französischen Grade zurück (für Rang → Grade Konvertierung).
+    /// </summary>
+    public static List<string> GetAllGrades() => GradeOrder;
+
+    /// <summary>
     /// Gibt den numerischen Rang eines Grads zurück — höher = schwerer.
     /// Gibt -1 zurück wenn der Grad unbekannt ist.
     /// </summary>
