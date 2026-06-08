@@ -295,7 +295,7 @@ app.MapGet("/api/areas/{id:int}", async (int id, AppDbContext db) =>
 app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
 {
     if (string.IsNullOrWhiteSpace(dto.Name))
-        return Results.BadRequest(new { error = "Name is required" });
+        return Results.BadRequest(new { error = "Name ist erforderlich" });
 
     var area = new Area
     {
@@ -316,7 +316,7 @@ app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext
     var area = await db.Areas.FindAsync(id);
     if (area is null) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Name))
-        return Results.BadRequest(new { error = "Name is required" });
+        return Results.BadRequest(new { error = "Name ist erforderlich" });
 
     area.Name        = dto.Name.Trim();
     area.Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim();
@@ -373,7 +373,7 @@ app.MapPost("/api/areas/{id:int}/sectors", async (int id, SectorCreateDto dto, A
 {
     if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Name))
-        return Results.BadRequest(new { error = "Name is required" });
+        return Results.BadRequest(new { error = "Name ist erforderlich" });
 
     var sector = new Sector
     {
@@ -394,7 +394,7 @@ app.MapPut("/api/sectors/{id:int}", async (int id, SectorUpdateDto dto, AppDbCon
     var sector = await db.Sectors.FindAsync(id);
     if (sector is null) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Name))
-        return Results.BadRequest(new { error = "Name is required" });
+        return Results.BadRequest(new { error = "Name ist erforderlich" });
 
     sector.Name        = dto.Name.Trim();
     sector.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
@@ -468,7 +468,7 @@ app.MapPost("/api/sectors/{id:int}/routes", async (int id, RouteCreateDto dto, A
 {
     if (!await db.Sectors.AnyAsync(s => s.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Name))
-        return Results.BadRequest(new { error = "Name is required" });
+        return Results.BadRequest(new { error = "Name ist erforderlich" });
 
     var route = new Route
     {
@@ -492,7 +492,7 @@ app.MapPut("/api/routes/{id:int}", async (int id, RouteUpdateDto dto, AppDbConte
     var route = await db.Routes.FindAsync(id);
     if (route is null) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Name))
-        return Results.BadRequest(new { error = "Name is required" });
+        return Results.BadRequest(new { error = "Name ist erforderlich" });
 
     route.Name        = dto.Name.Trim();
     route.Grade       = string.IsNullOrWhiteSpace(dto.Grade)       ? null : dto.Grade.Trim().ToLower();
@@ -544,13 +544,10 @@ app.MapPost("/api/progress", async (ProgressCreateDto dto, ClaimsPrincipal user,
     if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
         return Results.Unauthorized();
 
-    var validStatuses = new[] { "Projekt", "Rotpunkt", "Flash", "Onsight" };
-    var validStyles   = new[] { "Toprope", "Vorstieg" };
-
-    if (!validStatuses.Contains(dto.Status))
-        return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", validStatuses)} sein" });
-    if (!validStyles.Contains(dto.ClimbingStyle))
-        return Results.BadRequest(new { error = $"ClimbingStyle muss einer von: {string.Join(", ", validStyles)} sein" });
+    if (!ProgressConst.Statuses.Contains(dto.Status))
+        return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", ProgressConst.Statuses)} sein" });
+    if (!ProgressConst.Styles.Contains(dto.ClimbingStyle))
+        return Results.BadRequest(new { error = $"Begehungsart muss einer von: {string.Join(", ", ProgressConst.Styles)} sein" });
     if (!await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
         return Results.BadRequest(new { error = "Route nicht gefunden" });
 
@@ -583,13 +580,10 @@ app.MapPut("/api/progress/{id:int}", async (int id, ProgressUpdateDto dto, Claim
     if (progress is null) return Results.NotFound();
     if (progress.UserId != userId) return Results.Forbid();
 
-    var validStatuses = new[] { "Projekt", "Rotpunkt", "Flash", "Onsight" };
-    var validStyles   = new[] { "Toprope", "Vorstieg" };
-
-    if (!validStatuses.Contains(dto.Status))
-        return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", validStatuses)} sein" });
-    if (!validStyles.Contains(dto.ClimbingStyle))
-        return Results.BadRequest(new { error = $"ClimbingStyle muss einer von: {string.Join(", ", validStyles)} sein" });
+    if (!ProgressConst.Statuses.Contains(dto.Status))
+        return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", ProgressConst.Statuses)} sein" });
+    if (!ProgressConst.Styles.Contains(dto.ClimbingStyle))
+        return Results.BadRequest(new { error = $"Begehungsart muss einer von: {string.Join(", ", ProgressConst.Styles)} sein" });
 
     progress.Status                 = dto.Status;
     progress.ClimbingStyle          = dto.ClimbingStyle;
@@ -647,7 +641,7 @@ app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreate
         return Results.Unauthorized();
     if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Title))
-        return Results.BadRequest(new { error = "Title is required" });
+        return Results.BadRequest(new { error = "Titel ist erforderlich" });
 
     var appointment = new Appointment
     {
@@ -738,7 +732,7 @@ app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto,
         return Results.Unauthorized();
     if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Text))
-        return Results.BadRequest(new { error = "Text is required" });
+        return Results.BadRequest(new { error = "Text ist erforderlich" });
 
     var comment = new Comment
     {
@@ -774,7 +768,7 @@ app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto
         return Results.Unauthorized();
     if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
     if (string.IsNullOrWhiteSpace(dto.Text))
-        return Results.BadRequest(new { error = "Text is required" });
+        return Results.BadRequest(new { error = "Text ist erforderlich" });
 
     var comment = new Comment
     {
@@ -804,7 +798,7 @@ app.MapPost("/api/reports", async (ReportCreateDto dto, ClaimsPrincipal user, Ap
     if (!validSeverities.Contains(dto.Severity))
         return Results.BadRequest(new { error = "Severity muss Low, Medium oder High sein" });
     if (string.IsNullOrWhiteSpace(dto.Text))
-        return Results.BadRequest(new { error = "Text is required" });
+        return Results.BadRequest(new { error = "Text ist erforderlich" });
     if (dto.AreaId is null && dto.RouteId is null)
         return Results.BadRequest(new { error = "AreaId oder RouteId muss angegeben werden" });
     if (dto.AreaId is not null && !await db.Areas.AnyAsync(a => a.Id == dto.AreaId))
@@ -952,6 +946,16 @@ app.MapGet("/api/users/{id:int}/profile", async (int id, string? scale, AppDbCon
 
 
 app.Run();
+
+
+// --------------------
+// KONSTANTEN
+// --------------------
+static class ProgressConst
+{
+    public static readonly string[] Statuses = ["Projekt", "Rotpunkt", "Flash", "Onsight"];
+    public static readonly string[] Styles   = ["Toprope", "Vorstieg"];
+}
 
 
 // --------------------
