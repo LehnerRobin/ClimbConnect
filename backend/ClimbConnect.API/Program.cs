@@ -561,6 +561,23 @@ app.MapGet("/api/progress/me", async (ClaimsPrincipal user, AppDbContext db) =>
 .WithTags("Progress")
 .RequireAuthorization("User");
 
+app.MapGet("/api/progress/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
+    var progress = await db.Progresses
+        .Include(p => p.Route)
+        .FirstOrDefaultAsync(p => p.Id == id);
+    if (progress is null) return Results.NotFound();
+    if (progress.UserId != userId) return Results.Forbid();
+
+    return Results.Ok(progress);
+})
+.WithName("GetProgressById")
+.WithTags("Progress")
+.RequireAuthorization("User");
+
 app.MapPost("/api/progress", async (ProgressCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
 {
     if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
@@ -662,33 +679,32 @@ app.MapGet("/api/appointments/{id:int}", async (int id, string? scale, AppDbCont
     var appointment = await db.Appointments
         .Include(a => a.AppointmentUsers)
             .ThenInclude(au => au.User)
-                .ThenInclude(u => u.Progresses)
-                    .ThenInclude(p => p.Route)
         .FirstOrDefaultAsync(a => a.Id == id);
     if (appointment is null) return Results.NotFound();
 
-    var targetScale = scale ?? "french";
+    var targetScale    = scale ?? "french";
+    var participantIds = appointment.AppointmentUsers.Select(au => au.UserId).ToList();
 
-    // Durchschnittsgrad: bester Rotpunkt-Grad jedes Teilnehmers → Durchschnitt
-    var participantGrades = appointment.AppointmentUsers
-        .Select(au =>
-        {
-            var bestRank = au.User.Progresses
-                .Where(p => p.Status is "Rotpunkt" or "Flash" or "Onsight" && p.Route.Grade != null)
-                .Select(p => GradeConversionService.Rank(p.Route.Grade))
-                .DefaultIfEmpty(-1)
-                .Max();
-            return bestRank;
-        })
+    // Besten Grad pro Teilnehmer direkt per DB-Query — kein vollständiges Progresses-Load
+    var bestGradePerUser = await db.Progresses
+        .Where(p => participantIds.Contains(p.UserId)
+                 && p.Status != "Projekt"
+                 && p.Route.Grade != null)
+        .Select(p => new { p.UserId, p.Route.Grade })
+        .ToListAsync();
+
+    var participantRanks = bestGradePerUser
+        .GroupBy(p => p.UserId)
+        .Select(g => g.Max(p => GradeConversionService.Rank(p.Grade)))
         .Where(r => r >= 0)
         .ToList();
 
     string? avgGrade = null;
-    if (participantGrades.Count > 0)
+    if (participantRanks.Count > 0)
     {
-        var avgRank = (int)Math.Round(participantGrades.Average());
-        var allGrades = GradeConversionService.GetAllGrades();
-        var frenchGrade = avgRank >= 0 && avgRank < allGrades.Count ? allGrades[avgRank] : null;
+        var avgRank    = (int)Math.Round(participantRanks.Average());
+        var allGrades  = GradeConversionService.GetAllGrades();
+        var frenchGrade = avgRank < allGrades.Count ? allGrades[avgRank] : null;
         avgGrade = GradeConversionService.Convert(frenchGrade, targetScale);
     }
 
@@ -703,9 +719,9 @@ app.MapGet("/api/appointments/{id:int}", async (int id, string? scale, AppDbCont
         appointment.Description,
         appointment.MinParticipants,
         appointment.MaxParticipants,
-        ParticipantCount   = appointment.AppointmentUsers.Count,
-        AverageGrade       = avgGrade,
-        Participants       = appointment.AppointmentUsers.Select(au => new
+        ParticipantCount = appointment.AppointmentUsers.Count,
+        AverageGrade     = avgGrade,
+        Participants     = appointment.AppointmentUsers.Select(au => new
         {
             au.UserId,
             au.User.Username,
@@ -790,6 +806,23 @@ app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, ClaimsPrinc
 .WithTags("Appointments")
 .RequireAuthorization("User");
 
+app.MapDelete("/api/appointments/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
+    var appointment = await db.Appointments.FindAsync(id);
+    if (appointment is null) return Results.NotFound();
+    if (appointment.CreatedByUserId != userId) return Results.Forbid();
+
+    db.Appointments.Remove(appointment);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.WithName("DeleteAppointment")
+.WithTags("Appointments")
+.RequireAuthorization("User");
+
 
 // --------------------
 // COMMENTS
@@ -863,6 +896,23 @@ app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto
     return Results.Created($"/api/routes/{id}/comments", comment);
 })
 .WithName("CreateCommentForRoute")
+.WithTags("Comments")
+.RequireAuthorization("User");
+
+app.MapDelete("/api/comments/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
+    var comment = await db.Comments.FindAsync(id);
+    if (comment is null) return Results.NotFound();
+    if (comment.UserId != userId) return Results.Forbid();
+
+    db.Comments.Remove(comment);
+    await db.SaveChangesAsync();
+    return Results.NoContent();
+})
+.WithName("DeleteComment")
 .WithTags("Comments")
 .RequireAuthorization("User");
 
