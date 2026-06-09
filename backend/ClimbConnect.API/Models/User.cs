@@ -6,7 +6,7 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
-    public string Role { get; set; } = "User";    // "User" | "Admin"
+    public string Role { get; set; } = "user";    // "user" | "admin"
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     public ICollection<Progress> Progresses { get; set; } = [];

@@ -643,12 +643,15 @@ app.MapDelete("/api/progress/{id:int}", async (int id, ClaimsPrincipal user, App
 // --------------------
 // APPOINTMENTS
 // --------------------
-app.MapGet("/api/areas/{id:int}/appointments", async (int id, AppDbContext db) =>
+app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, AppDbContext db) =>
 {
     if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
 
+    // Standardmäßig nur zukünftige Termine; mit ?all=true auch vergangene
+    var cutoff = (all == true) ? DateTime.MinValue : DateTime.UtcNow;
+
     var appointments = await db.Appointments
-        .Where(a => a.AreaId == id)
+        .Where(a => a.AreaId == id && a.Date >= cutoff)
         .Include(a => a.AppointmentUsers)
         .OrderBy(a => a.Date)
         .ToListAsync();

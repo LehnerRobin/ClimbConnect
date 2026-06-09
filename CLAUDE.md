@@ -103,8 +103,8 @@ Lies diese Dateien bevor du mit der Implementierung beginnst:
 
 ## Stack
 
-- Backend: .NET 8 Minimal API, C#, EF Core, PostgreSQL
-- Auth: Keycloak (Rollen: Admin, User)
+- Backend: .NET 8 Minimal API, C#, EF Core, SQLite
+- Auth: JWT (eigenes System), Keycloak vorbereitet aber noch nicht aktiv
 - Frontend: Angular (anderer Kollege zuständig)
 - CI/CD: GitHub Actions
 - Grades: intern französische Skala, Konversion zu UIAA und Amerikanisch
