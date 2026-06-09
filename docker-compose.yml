@@ -6,7 +6,7 @@ services:
     ports:
       - "5004:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Data Source=/app/Data/ClimbConnect.db;
       - Jwt__Key=ClimbConnect-SuperSecret-Key-MinLength-32-Chars!
       - Jwt__Issuer=climbconnect-api
