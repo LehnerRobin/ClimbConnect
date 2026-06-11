@@ -6,8 +6,9 @@ import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { AreasPageComponent } from './features/areas/areas-page.component';
 import { LoginComponent } from './features/auth/login/login.component';
-import { canActivateAuthRole } from './guards/auth-role.guard';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { canActivateAuthRole } from './guards/auth-role.guard';
+
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 
@@ -15,9 +16,9 @@ export const routes: Routes = [
 
   { path: 'areas', component: AreasPageComponent },
 
-  { path: 'admin', component: AdminComponent },
+  { path: 'admin', component: AdminComponent, canActivate: [canActivateAuthRole] },
 
-  { path: 'profile', component: UserProfileComponent },
+  { path: 'profile', component: UserProfileComponent, canActivate: [canActivateAuthRole] },
 
   { path: 'forbidden', component: ForbiddenComponent },
   { path: 'login', component: LoginComponent },

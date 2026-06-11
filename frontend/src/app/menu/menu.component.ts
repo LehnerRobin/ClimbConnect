@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -10,18 +11,17 @@ import { RouterModule } from '@angular/router';
 })
 export class MenuComponent {
 
-  authenticated = false;
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  constructor() {
-    this.authenticated = !!localStorage.getItem('token');
-  }
-
-  login(): void {
-    console.log('Navigate to login page');
+  get authenticated(): boolean {
+    return this.authService.isAuthenticated();
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    this.authenticated = false;
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
