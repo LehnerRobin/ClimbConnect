@@ -19,11 +19,11 @@
     </a>
 
     @if (!authenticated) {
-      <button class="action-item" (click)="login()">
+      <button class="action-item login-btn" (click)="login()">
         Login
       </button>
     } @else {
-      <button class="action-item" (click)="logout()">
+      <button class="action-item logout-btn" (click)="logout()">
         Logout
       </button>
     }

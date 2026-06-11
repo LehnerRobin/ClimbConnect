@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: climbconnectapi
+  namespace: student-r-lehner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: climbconnectapi
+  template:
+    metadata:
+      labels:
+        app: climbconnectapi
+    spec:
+      containers:
+      - name: climbconnectapi
+        image: robinlehner/climbconnectapi:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: Production
+        - name: Keycloak__AuthServerUrl
+          value: "https://auth.cloud.htl-leonding.ac.at"
+        - name: Keycloak__Realm
+          value: "climbconnect"
+        volumeMounts:
+        - name: data
+          mountPath: /app/Data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: climbconnectapi-database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: climbconnectapi-svc
+  namespace: student-r-lehner
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: climbconnectapi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: climbconnectapi-ingress
+  namespace: student-r-lehner
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: r-lehner.cloud.htl-leonding.ac.at
+    http:
+      paths:
+      - path: /climbconnectapi(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: climbconnectapi-svc
+            port:
+              number: 80
