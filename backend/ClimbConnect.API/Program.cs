@@ -813,6 +813,35 @@ app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, ClaimsPrinc
 .WithTags("Appointments")
 .RequireAuthorization("User");
 
+app.MapPut("/api/appointments/{id:int}", async (int id, AppointmentUpdateDto dto, ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
+    var appointment = await db.Appointments.FindAsync(id);
+    if (appointment is null) return Results.NotFound();
+
+    // Nur Ersteller oder Admin darf bearbeiten
+    if (appointment.CreatedByUserId != userId && !user.IsInRole("admin"))
+        return Results.Forbid();
+
+    if (string.IsNullOrWhiteSpace(dto.Title))
+        return Results.BadRequest(new { error = "Titel ist erforderlich" });
+
+    appointment.Title           = dto.Title.Trim();
+    appointment.Date            = dto.Date;
+    appointment.MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim();
+    appointment.Description     = string.IsNullOrWhiteSpace(dto.Description)   ? null : dto.Description.Trim();
+    appointment.MinParticipants = dto.MinParticipants;
+    appointment.MaxParticipants = dto.MaxParticipants;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(appointment);
+})
+.WithName("UpdateAppointment")
+.WithTags("Appointments")
+.RequireAuthorization("User");
+
 app.MapDelete("/api/appointments/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
 {
     if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
@@ -820,7 +849,10 @@ app.MapDelete("/api/appointments/{id:int}", async (int id, ClaimsPrincipal user,
 
     var appointment = await db.Appointments.FindAsync(id);
     if (appointment is null) return Results.NotFound();
-    if (appointment.CreatedByUserId != userId) return Results.Forbid();
+
+    // Nur Ersteller oder Admin darf löschen
+    if (appointment.CreatedByUserId != userId && !user.IsInRole("admin"))
+        return Results.Forbid();
 
     db.Appointments.Remove(appointment);
     await db.SaveChangesAsync();
