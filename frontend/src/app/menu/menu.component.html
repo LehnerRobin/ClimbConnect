@@ -19,13 +19,21 @@
     </a>
 
     @if (!authenticated) {
-      <button class="action-item login-btn" (click)="login()">
+
+      <a routerLink="/login" class="action-item">
         Login
-      </button>
+      </a>
+
+      <a routerLink="/register" class="action-item">
+        Register
+      </a>
+
     } @else {
+
       <button class="action-item logout-btn" (click)="logout()">
         Logout
       </button>
+
     }
 
   </div>
