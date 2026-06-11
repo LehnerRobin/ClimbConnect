@@ -1,4 +1,4 @@
-<h2>Anmelden</h2>
+<h2>Login</h2>
 
 <input
   #email
@@ -10,6 +10,11 @@
   type="password"
   placeholder="Passwort">
 
-<button (click)="login(email.value, password.value)">
-  Anmelden
+<button
+  (click)="login(email.value, password.value)">
+  Login
 </button>
+
+@if (errorMessage) {
+  <p>{{ errorMessage }}</p>
+}
