@@ -5,7 +5,7 @@ import { AdminComponent } from './admin/admin.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { AreasPageComponent } from './features/areas/areas-page.component';
-
+import { LoginComponent } from './features/auth/login/login.component';
 import { canActivateAuthRole } from './guards/auth-role.guard';
 
 export const routes: Routes = [
@@ -20,6 +20,7 @@ export const routes: Routes = [
   { path: 'profile', component: UserProfileComponent },
 
   { path: 'forbidden', component: ForbiddenComponent },
+  { path: 'login', component: LoginComponent },
 
   { path: '**', redirectTo: '/home' }
 ];
