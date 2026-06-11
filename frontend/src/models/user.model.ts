@@ -1,5 +1,14 @@
 export interface User {
-  name: string;
-  email?: string;
-  username?: string;
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  id: number;
+  username: string;
+  email: string;
+  role: string;
 }

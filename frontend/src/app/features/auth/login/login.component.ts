@@ -25,10 +25,7 @@ export class LoginComponent {
     }
 
     this.authService.login(email, password).subscribe({
-      next: (response: any) => {
-
-        localStorage.setItem('token', response.token);
-
+      next: () => {
         this.router.navigate(['/home']);
       },
 
