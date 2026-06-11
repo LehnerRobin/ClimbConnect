@@ -15,5 +15,6 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 USER root
-RUN mkdir -p /app/Data && chmod -R 777 /app/Data
+RUN mkdir -p /app/Data /app/uploads && chmod -R 777 /app/Data /app/uploads
+USER $APP_UID
 ENTRYPOINT ["dotnet", "ClimbConnect.API.dll"]

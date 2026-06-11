@@ -587,6 +587,8 @@ app.MapPost("/api/progress", async (ProgressCreateDto dto, ClaimsPrincipal user,
         return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", ProgressConst.Statuses)} sein" });
     if (!ProgressConst.Styles.Contains(dto.ClimbingStyle))
         return Results.BadRequest(new { error = $"Begehungsart muss einer von: {string.Join(", ", ProgressConst.Styles)} sein" });
+    if (dto.Attempts < 1)
+        return Results.BadRequest(new { error = "Anzahl Versuche muss mindestens 1 sein" });
     if (!await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
         return Results.BadRequest(new { error = "Route nicht gefunden" });
 
@@ -623,6 +625,8 @@ app.MapPut("/api/progress/{id:int}", async (int id, ProgressUpdateDto dto, Claim
         return Results.BadRequest(new { error = $"Status muss einer von: {string.Join(", ", ProgressConst.Statuses)} sein" });
     if (!ProgressConst.Styles.Contains(dto.ClimbingStyle))
         return Results.BadRequest(new { error = $"Begehungsart muss einer von: {string.Join(", ", ProgressConst.Styles)} sein" });
+    if (dto.Attempts < 1)
+        return Results.BadRequest(new { error = "Anzahl Versuche muss mindestens 1 sein" });
 
     progress.Status                 = dto.Status;
     progress.ClimbingStyle          = dto.ClimbingStyle;
@@ -970,19 +974,47 @@ app.MapGet("/api/reports", async (AppDbContext db) =>
 .WithTags("Reports")
 .RequireAuthorization("Admin");
 
-app.MapPut("/api/reports/{id:int}/status", async (int id, string status, AppDbContext db) =>
+app.MapPut("/api/reports/{id:int}/status", async (int id, ReportStatusUpdateDto dto, AppDbContext db) =>
 {
     var report = await db.Reports.FindAsync(id);
     if (report is null) return Results.NotFound();
-    if (!new[] { "Open", "Resolved" }.Contains(status))
+    if (!new[] { "Open", "Resolved" }.Contains(dto.Status))
         return Results.BadRequest(new { error = "Status muss 'Open' oder 'Resolved' sein" });
-    report.Status = status;
+    report.Status = dto.Status;
     await db.SaveChangesAsync();
     return Results.Ok(report);
 })
 .WithName("UpdateReportStatus")
 .WithTags("Reports")
 .RequireAuthorization("Admin");
+
+// Sicherheitsmeldungen zu einem Gebiet (für alle User sichtbar, nur offene)
+app.MapGet("/api/areas/{id:int}/reports", async (int id, AppDbContext db) =>
+{
+    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+    var reports = await db.Reports
+        .Where(r => r.AreaId == id && r.Status == "Open")
+        .OrderByDescending(r => r.CreatedAtUtc)
+        .Select(r => new { r.Id, r.Text, r.Severity, r.PhotoUrl, r.CreatedAtUtc })
+        .ToListAsync();
+    return Results.Ok(reports);
+})
+.WithName("GetReportsByArea")
+.WithTags("Reports");
+
+// Sicherheitsmeldungen zu einer Route (für alle User sichtbar, nur offene)
+app.MapGet("/api/routes/{id:int}/reports", async (int id, AppDbContext db) =>
+{
+    if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
+    var reports = await db.Reports
+        .Where(r => r.RouteId == id && r.Status == "Open")
+        .OrderByDescending(r => r.CreatedAtUtc)
+        .Select(r => new { r.Id, r.Text, r.Severity, r.PhotoUrl, r.CreatedAtUtc })
+        .ToListAsync();
+    return Results.Ok(reports);
+})
+.WithName("GetReportsByRoute")
+.WithTags("Reports");
 
 
 // --------------------

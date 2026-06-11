@@ -12,10 +12,13 @@ public static class GradeConversionService
     /// </summary>
     private static readonly Dictionary<string, (string Uiaa, string American)> GradeMap = new()
     {
-        { "4",   ("IV",    "5.6")  },
-        { "4+",  ("IV+",   "5.7")  },
-        { "5",   ("V",     "5.8")  },
-        { "5+",  ("V+",    "5.9")  },
+        { "4",   ("IV",    "5.6")   },
+        { "4+",  ("IV+",   "5.7")   },
+        { "5",   ("V",     "5.8")   },
+        { "5a",  ("V-",    "5.7")   },
+        { "5b",  ("V",     "5.8")   },
+        { "5+",  ("V+",    "5.9")   },
+        { "5c",  ("V+",    "5.9")   },
         { "6a",  ("VI",    "5.10a") },
         { "6a+", ("VI+",   "5.10b") },
         { "6b",  ("VII-",  "5.10c") },
@@ -35,6 +38,10 @@ public static class GradeConversionService
         { "8c",  ("XI",    "5.14a") },
         { "8c+", ("XI+",   "5.14b") },
         { "9a",  ("XII-",  "5.15a") },
+        { "9a+", ("XII",   "5.15b") },
+        { "9b",  ("XII+",  "5.15c") },
+        { "9b+", ("XII+",  "5.15d") },
+        { "9c",  ("XIII-", "5.16a") },
     };
 
     /// <summary>

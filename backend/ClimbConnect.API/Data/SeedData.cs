@@ -12,7 +12,7 @@ public static class SeedData
 {
     public static async Task InitAsync(AppDbContext db)
     {
-        if (await db.Users.AnyAsync()) return;
+        if (await db.Users.AnyAsync(u => u.Email == "admin@climbconnect.at")) return;
 
         // ---- USER ----
         var admin = new User

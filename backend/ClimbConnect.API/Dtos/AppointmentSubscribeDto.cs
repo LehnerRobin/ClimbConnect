@@ -1,3 +1,3 @@
 namespace ClimbConnect.API.Dtos;
 
-public record AppointmentSubscribeDto(int UserId, string? Comment);
+public record AppointmentSubscribeDto(string? Comment);
