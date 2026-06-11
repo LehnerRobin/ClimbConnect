@@ -1,18 +1,83 @@
-<div class="section">
-  <header>
-    <h1>Welcome, {{ user?.name }}</h1>
-    <p class="description">
-      This page is protected by an Auth Guard and uses the <code>*kaHasRoles</code> structural directive to restrict
-      access based on user roles.
-    </p>
-  </header>
+<h2>My Profile</h2>
 
-  <main>
-    <section class="profile-card">
-      <h2>Profile Details</h2>
-      <p><strong>Name:</strong> {{ user?.name }}</p>
-      <p><strong>Email:</strong> {{ user?.email }}</p>
-      <p><strong>Username:</strong> {{ user?.username }}</p>
-    </section>
-  </main>
+<div class="profile-card">
+
+  <h3>Profile Information</h3>
+
+  <label>Bio</label><br>
+  <textarea [(ngModel)]="user.bio"></textarea>
+
+  <br><br>
+
+  <label>Preferred Grade Scale</label><br>
+  <select [(ngModel)]="user.preferredGradeScale">
+    <option value="UIAA">UIAA</option>
+    <option value="French">French</option>
+    <option value="American">American</option>
+  </select>
+
+  <br><br>
+
+  <label>Average Grade</label><br>
+  <input
+    type="text"
+    [(ngModel)]="user.averageGrade">
+
+  <br><br>
+
+  <button>
+    Save Profile
+  </button>
+
+</div>
+
+<div class="profile-card">
+
+  <h3>Statistics</h3>
+
+  <p>Ascents: -</p>
+  <p>Projects: -</p>
+  <p>Favorite Area: -</p>
+
+</div><h2>My Profile</h2>
+
+<div class="profile-card">
+
+  <h3>Profile Information</h3>
+
+  <label>Bio</label><br>
+  <textarea [(ngModel)]="user.bio"></textarea>
+
+  <br><br>
+
+  <label>Preferred Grade Scale</label><br>
+  <select [(ngModel)]="user.preferredGradeScale">
+    <option value="UIAA">UIAA</option>
+    <option value="French">French</option>
+    <option value="American">American</option>
+  </select>
+
+  <br><br>
+
+  <label>Average Grade</label><br>
+  <input
+    type="text"
+    [(ngModel)]="user.averageGrade">
+
+  <br><br>
+
+  <button>
+    Save Profile
+  </button>
+
+</div>
+
+<div class="profile-card">
+
+  <h3>Statistics</h3>
+
+  <p>Ascents: -</p>
+  <p>Projects: -</p>
+  <p>Favorite Area: -</p>
+
 </div>
