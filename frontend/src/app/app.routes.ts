@@ -26,7 +26,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'profile',
+    path: 'profile',  
     component: UserProfileComponent,
     canActivate: [canActivateAuthRole]
   },

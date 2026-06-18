@@ -6,27 +6,208 @@
 
   @if (loading) {
 
-    <p>Gebiet wird geladen...</p>
+    <div class="loading-box">
+      Gebiet wird geladen...
+    </div>
 
   } @else if (errorMessage) {
 
-    <p class="error">{{ errorMessage }}</p>
+    <div class="error-box">
+      {{ errorMessage }}
+    </div>
 
   } @else if (area) {
 
-    <h1>{{ area.name }}</h1>
+    <div class="area-header">
 
-    <p class="location">
-      {{ area.location || 'Kein Standort angegeben' }}
-    </p>
+      <div class="area-image">
+        @if (area.imageUrl) {
+          <img [src]="area.imageUrl" [alt]="area.name">
+        } @else {
+          <div class="area-image-placeholder">
+            {{ area.name.charAt(0) }}
+          </div>
+        }
+      </div>
 
-    <p class="description">
-      {{ area.description || 'Keine Beschreibung vorhanden.' }}
-    </p>
+      <div class="area-info">
+        <h1>{{ area.name }}</h1>
 
-    <p class="hint">
-      Sektoren werden im nächsten Issue angezeigt.
-    </p>
+        <p class="location">
+          {{ area.location || 'Kein Standort angegeben' }}
+        </p>
+
+        <p class="description">
+          {{ area.description || 'Keine Beschreibung vorhanden.' }}
+        </p>
+      </div>
+
+    </div>
+
+    <div class="content-grid">
+
+      <section class="detail-section">
+        <h2>Sektoren & Routen</h2>
+
+        @if (sectors.length === 0) {
+
+          <p class="empty-text">Keine Sektoren vorhanden.</p>
+
+        } @else {
+
+          <div class="sector-list">
+
+            @for (sector of sectors; track sector.id) {
+
+              <div class="sector-card">
+
+                <button class="sector-header" type="button" (click)="toggleSector(sector)">
+                  <span>{{ sector.name }}</span>
+                  <span>{{ sector.expanded ? '▲' : '▼' }}</span>
+                </button>
+
+                @if (sector.description) {
+                  <p class="sector-description">
+                    {{ sector.description }}
+                  </p>
+                }
+
+                @if (sector.expanded) {
+
+                  <div class="routes-box">
+
+                    @if (sector.loadingRoutes) {
+
+                      <p>Routen werden geladen...</p>
+
+                    } @else if (sector.routes.length === 0) {
+
+                      <p class="empty-text">Keine Routen vorhanden.</p>
+
+                    } @else {
+
+                      <table class="routes-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Grad</th>
+                            <th>Länge</th>
+                            <th>Stil</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          @for (route of sector.routes; track route.id) {
+                            <tr>
+                              <td>{{ route.name }}</td>
+                              <td>{{ route.grade || '-' }}</td>
+                              <td>
+                                @if (route.length) {
+                                  {{ route.length }} m
+                                } @else {
+                                  -
+                                }
+                              </td>
+                              <td>{{ route.style || '-' }}</td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+
+                    }
+
+                  </div>
+
+                }
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </section>
+
+      <aside class="side-column">
+
+        <section class="detail-section">
+          <h2>Kommende Termine</h2>
+
+          @if (appointments.length === 0) {
+
+            <p class="empty-text">Keine Termine vorhanden.</p>
+
+          } @else {
+
+            <div class="appointment-list">
+              @for (appointment of appointments; track appointment.id) {
+                <div class="appointment-card">
+                  <h3>{{ appointment.title }}</h3>
+
+                  <p>
+                    {{ appointment.date || 'Kein Datum angegeben' }}
+                  </p>
+
+                  <p>
+                    Teilnehmer: {{ appointment.participantCount ?? 0 }}
+                  </p>
+                </div>
+              }
+            </div>
+
+          }
+
+        </section>
+
+        <section class="detail-section">
+          <div class="comments-header">
+            <h2>Kommentare</h2>
+
+            @if (isLoggedIn()) {
+              <button type="button" class="comment-button">
+                Kommentar schreiben
+              </button>
+            }
+          </div>
+
+          @if (comments.length === 0) {
+
+            <p class="empty-text">Keine Kommentare vorhanden.</p>
+
+          } @else {
+
+            <div class="comment-list">
+              @for (comment of comments; track comment.id) {
+                <div class="comment-card">
+
+                  <div class="comment-author">
+
+                    @if (comment.authorPhotoUrl) {
+                      <img [src]="comment.authorPhotoUrl" [alt]="comment.authorName || 'User'">
+                    }
+
+                    <strong>{{ comment.authorName || 'Unbekannter User' }}</strong>
+                  </div>
+
+                  <p>{{ comment.text }}</p>
+
+                  @if (comment.createdAt) {
+                    <small>{{ comment.createdAt }}</small>
+                  }
+
+                </div>
+              }
+            </div>
+
+          }
+
+        </section>
+
+      </aside>
+
+    </div>
 
   }
 
