@@ -1,0 +1,36 @@
+.area-detail {
+  padding: 32px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #1864ab;
+  font-weight: 600;
+}
+
+.area-detail h1 {
+  margin: 0 0 12px;
+  font-size: 34px;
+}
+
+.location {
+  color: #555;
+  font-weight: 600;
+}
+
+.description {
+  max-width: 700px;
+  line-height: 1.5;
+}
+
+.hint {
+  margin-top: 24px;
+  color: #777;
+  font-style: italic;
+}
+
+.error {
+  color: #c92a2a;
+}
