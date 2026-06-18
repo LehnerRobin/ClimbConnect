@@ -3,7 +3,6 @@
   display: flex;
   flex-direction: column;
   background: #f8fafc;
-  color: #111827;
 }
 
 .app-main {
@@ -22,7 +21,7 @@
 
 .app-footer span {
   display: block;
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 

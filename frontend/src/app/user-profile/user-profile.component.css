@@ -1,17 +1,168 @@
+.profile-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.profile-header {
+  margin-bottom: 24px;
+}
+
+.profile-header h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #111827;
+}
+
+.profile-header p {
+  margin: 8px 0 0;
+  color: #6b7280;
+}
+
+.eyebrow {
+  margin: 0 0 6px !important;
+  color: #f97316 !important;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+
 .profile-card {
-  background: white;
-  padding: 20px;
-  margin: 20px;
-  border-radius: 8px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.profile-card h2 {
+  margin: 0 0 22px;
+  font-size: 26px;
+  color: #111827;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+label {
+  color: #374151;
+  font-weight: 700;
+}
+
+textarea,
+input,
+select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 11px 12px;
+  background: #f9fafb;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 textarea {
-  width: 300px;
-  height: 100px;
+  min-height: 130px;
+  resize: vertical;
 }
 
-input,
-select {
-  width: 300px;
-  padding: 8px;
+textarea:focus,
+input:focus,
+select:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
+  background: #ffffff;
+}
+
+.button-row {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-button {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 18px;
+  background: #f97316;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.save-button:hover {
+  background: #ea580c;
+  transform: translateY(-1px);
+}
+
+.stat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.stat-item span {
+  color: #6b7280;
+  font-weight: 700;
+}
+
+.stat-item strong {
+  color: #111827;
+}
+
+@media (max-width: 900px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-page {
+    padding: 22px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .button-row {
+    justify-content: stretch;
+  }
+
+  .save-button {
+    width: 100%;
+  }
 }

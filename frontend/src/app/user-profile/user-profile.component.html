@@ -1,83 +1,77 @@
-<h2>My Profile</h2>
+<section class="profile-page">
 
-<div class="profile-card">
+  <div class="profile-header">
+    <div>
+      <p class="eyebrow">ClimbConnect</p>
+      <h1>Mein Profil</h1>
+      <p>Verwalte dein Kletterprofil und deine persönlichen Einstellungen.</p>
+    </div>
+  </div>
 
-  <h3>Profile Information</h3>
+  <div class="profile-layout">
 
-  <label>Bio</label><br>
-  <textarea [(ngModel)]="user.bio"></textarea>
+    <section class="profile-card profile-info-card">
+      <h2>Profil informationen</h2>
 
-  <br><br>
+      <div class="form-grid">
 
-  <label>Preferred Grade Scale</label><br>
-  <select [(ngModel)]="user.preferredGradeScale">
-    <option value="UIAA">UIAA</option>
-    <option value="French">French</option>
-    <option value="American">American</option>
-  </select>
+        <div class="form-field full-width">
+          <label for="bio">Über mich</label>
+          <textarea
+            id="bio"
+            [(ngModel)]="user.bio"
+            placeholder="Schreib kurz etwas über dich...">
+          </textarea>
+        </div>
 
-  <br><br>
+        <div class="form-field">
+          <label for="gradeScale">Bevorzugte Bewertungsskala</label>
+          <select id="gradeScale" [(ngModel)]="user.preferredGradeScale">
+            <option value="UIAA">UIAA</option>
+            <option value="French">Französisch</option>
+            <option value="American">Amerikanisch</option>
+          </select>
+        </div>
 
-  <label>Average Grade</label><br>
-  <input
-    type="text"
-    [(ngModel)]="user.averageGrade">
+        <div class="form-field">
+          <label for="averageGrade">Durchschnittlicher Grad</label>
+          <input
+            id="averageGrade"
+            type="text"
+            [(ngModel)]="user.averageGrade"
+            placeholder="z. B. 6a oder VI">
+        </div>
 
-  <br><br>
+      </div>
 
-  <button>
-    Save Profile
-  </button>
+      <div class="button-row">
+        <button type="button" class="save-button">
+          Profil speichern
+        </button>
+      </div>
+    </section>
 
-</div>
+    <aside class="profile-card statistics-card">
+      <h2>Statistiken</h2>
 
-<div class="profile-card">
+      <div class="stat-list">
+        <div class="stat-item">
+          <span>Begehungen</span>
+          <strong>-</strong>
+        </div>
 
-  <h3>Statistics</h3>
+        <div class="stat-item">
+          <span>Projekte</span>
+          <strong>-</strong>
+        </div>
 
-  <p>Ascents: -</p>
-  <p>Projects: -</p>
-  <p>Favorite Area: -</p>
+        <div class="stat-item">
+          <span>Lieblingsgebiet</span>
+          <strong>-</strong>
+        </div>
+      </div>
+    </aside>
 
-</div><h2>My Profile</h2>
+  </div>
 
-<div class="profile-card">
-
-  <h3>Profile Information</h3>
-
-  <label>Bio</label><br>
-  <textarea [(ngModel)]="user.bio"></textarea>
-
-  <br><br>
-
-  <label>Preferred Grade Scale</label><br>
-  <select [(ngModel)]="user.preferredGradeScale">
-    <option value="UIAA">UIAA</option>
-    <option value="French">French</option>
-    <option value="American">American</option>
-  </select>
-
-  <br><br>
-
-  <label>Average Grade</label><br>
-  <input
-    type="text"
-    [(ngModel)]="user.averageGrade">
-
-  <br><br>
-
-  <button>
-    Save Profile
-  </button>
-
-</div>
-
-<div class="profile-card">
-
-  <h3>Statistics</h3>
-
-  <p>Ascents: -</p>
-  <p>Projects: -</p>
-  <p>Favorite Area: -</p>
-
-</div>
+</section>
