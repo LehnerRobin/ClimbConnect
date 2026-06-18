@@ -1,42 +1,61 @@
 <nav class="menu">
 
-  <div class="logo">
+  <a routerLink="/home" class="logo">
     ClimbConnect
-  </div>
+  </a>
 
   <div class="actions">
 
-    <a routerLink="/home" class="action-item">
+    <a
+      routerLink="/home"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="action-item">
       Home
     </a>
 
-    <a routerLink="/areas" class="action-item">
+    <a
+      routerLink="/areas"
+      routerLinkActive="active"
+      class="action-item">
       Areas
     </a>
 
     @if (isAdmin) {
-      <a routerLink="/admin" class="action-item">
+      <a
+        routerLink="/admin"
+        routerLinkActive="active"
+        class="action-item">
         Admin
       </a>
     }
 
-    <a routerLink="/profile" class="action-item">
+    <a
+      routerLink="/profile"
+      routerLinkActive="active"
+      class="action-item">
       Profile
     </a>
 
     @if (!authenticated) {
 
-      <a routerLink="/login" class="action-item">
+      <a
+        routerLink="/login"
+        routerLinkActive="active"
+        class="action-item">
         Login
       </a>
 
-      <a routerLink="/register" class="action-item">
+      <a
+        routerLink="/register"
+        routerLinkActive="active"
+        class="action-item">
         Register
       </a>
 
     } @else {
 
-      <button class="action-item logout-btn" (click)="logout()">
+      <button class="action-item logout-btn" type="button" (click)="logout()">
         Logout
       </button>
 

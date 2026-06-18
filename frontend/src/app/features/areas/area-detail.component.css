@@ -1,4 +1,6 @@
 .area-detail {
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 32px;
 }
 
@@ -66,10 +68,10 @@
 
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: minmax(0, 1fr) 360px;
   gap: 24px;
+  align-items: start;
 }
-
 .detail-section {
   background: white;
   border-radius: 16px;
