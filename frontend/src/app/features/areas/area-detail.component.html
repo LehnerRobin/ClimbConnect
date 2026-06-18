@@ -1,0 +1,33 @@
+<section class="area-detail">
+
+  <a routerLink="/areas" class="back-link">
+    ← Zurück zu Areas
+  </a>
+
+  @if (loading) {
+
+    <p>Gebiet wird geladen...</p>
+
+  } @else if (errorMessage) {
+
+    <p class="error">{{ errorMessage }}</p>
+
+  } @else if (area) {
+
+    <h1>{{ area.name }}</h1>
+
+    <p class="location">
+      {{ area.location || 'Kein Standort angegeben' }}
+    </p>
+
+    <p class="description">
+      {{ area.description || 'Keine Beschreibung vorhanden.' }}
+    </p>
+
+    <p class="hint">
+      Sektoren werden im nächsten Issue angezeigt.
+    </p>
+
+  }
+
+</section>

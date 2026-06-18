@@ -1,20 +1,73 @@
-<h1>Climbing Areas</h1>
+<section class="areas-page">
 
-<div class="areas-grid">
-
-  <div class="area-card">
-    <h2>Magic Wood</h2>
-    <p>Switzerland</p>
+  <div class="page-header">
+    <h1>Climbing Areas</h1>
+    <p>Entdecke verfügbare Klettergebiete.</p>
   </div>
 
-  <div class="area-card">
-    <h2>Frankenjura</h2>
-    <p>Germany</p>
-  </div>
+  @if (loading) {
 
-  <div class="area-card">
-    <h2>Fontainebleau</h2>
-    <p>France</p>
-  </div>
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p>Gebiete werden geladen...</p>
+    </div>
 
-</div>
+  } @else if (errorMessage) {
+
+    <div class="error-box">
+      <p>{{ errorMessage }}</p>
+      <button type="button" (click)="loadAreas()">Nochmal versuchen</button>
+    </div>
+
+  } @else if (areas.length === 0) {
+
+    <div class="empty-box">
+      <p>Es wurden keine Gebiete gefunden.</p>
+    </div>
+
+  } @else {
+
+    <div class="areas-grid">
+
+      @for (area of areas; track area.id) {
+
+        <a class="area-card" [routerLink]="['/areas', area.id]">
+
+          <div class="area-image">
+            @if (area.imageUrl) {
+              <img [src]="area.imageUrl" [alt]="area.name">
+            } @else {
+              <div class="area-image-placeholder">
+                {{ area.name.charAt(0) }}
+              </div>
+            }
+          </div>
+
+          <div class="area-content">
+
+            <div class="area-title-row">
+              <h2>{{ area.name }}</h2>
+              <span class="visitor-badge">
+                {{ area.todayVisitors ?? 0 }} heute
+              </span>
+            </div>
+
+            <p class="location">
+              {{ area.location || 'Kein Standort angegeben' }}
+            </p>
+
+            <p class="description">
+              {{ area.description || 'Keine Beschreibung vorhanden.' }}
+            </p>
+
+          </div>
+
+        </a>
+
+      }
+
+    </div>
+
+  }
+
+</section>
