@@ -20,6 +20,10 @@ export class MenuComponent {
     return this.authService.isAuthenticated();
   }
 
+  get isAdmin(): boolean {
+    return this.authService.hasRole('admin');
+  }
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

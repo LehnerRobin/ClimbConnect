@@ -14,6 +14,12 @@
       Areas
     </a>
 
+    @if (isAdmin) {
+      <a routerLink="/admin" class="action-item">
+        Admin
+      </a>
+    }
+
     <a routerLink="/profile" class="action-item">
       Profile
     </a>

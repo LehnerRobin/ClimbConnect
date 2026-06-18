@@ -3,44 +3,103 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../environments/environment';
 
+interface JwtPayload {
+  exp?: number;
+  role?: string;
+  sub?: string;
+  email?: string;
+  username?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = `${environment.apiUrl}/api/auth`;
+  private readonly tokenKey = 'token';
+  private readonly apiUrl = `${environment.apiUrl}/api/auth`;
 
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
-      tap(response => {
-        if (response.token) {
-          localStorage.setItem('token', response.token);
-        }
-      })
+      tap(response => this.saveToken(response))
     );
   }
 
   register(user: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
-      tap(response => {
-        if (response.token) {
-          localStorage.setItem('token', response.token);
-        }
-      })
+      tap(response => this.saveToken(response))
     );
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem(this.tokenKey);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem(this.tokenKey);
   }
 
   isAuthenticated(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+
+    const payload = this.decodeToken(token);
+    if (!payload?.exp) {
+      return false;
+    }
+
+    return Date.now() < payload.exp * 1000;
+  }
+
+  hasRole(role: string): boolean {
+    if (!this.isAuthenticated()) {
+      return false;
+    }
+
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+
+    const payload = this.decodeToken(token);
+    return payload?.role?.toLowerCase() === role.toLowerCase();
+  }
+
+  getRole(): string | null {
+    if (!this.isAuthenticated()) {
+      return null;
+    }
+
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    return this.decodeToken(token)?.role?.toLowerCase() ?? null;
+  }
+
+  private saveToken(response: any): void {
+    if (response?.token) {
+      localStorage.setItem(this.tokenKey, response.token);
+    }
+  }
+
+  private decodeToken(token: string): JwtPayload | null {
+    try {
+      const payload = token.split('.')[1];
+      if (!payload) {
+        return null;
+      }
+
+      const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = atob(normalized);
+      return JSON.parse(decoded) as JwtPayload;
+    } catch {
+      return null;
+    }
   }
 }

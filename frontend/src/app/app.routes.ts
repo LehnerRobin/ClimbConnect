@@ -16,9 +16,18 @@ export const routes: Routes = [
 
   { path: 'areas', component: AreasPageComponent },
 
-  { path: 'admin', component: AdminComponent, canActivate: [canActivateAuthRole] },
+  {
+    path: 'admin',
+    component: AdminComponent,
+    canActivate: [canActivateAuthRole],
+    data: { requiredRole: 'admin' }
+  },
 
-  { path: 'profile', component: UserProfileComponent, canActivate: [canActivateAuthRole] },
+  {
+    path: 'profile',
+    component: UserProfileComponent,
+    canActivate: [canActivateAuthRole]
+  },
 
   { path: 'forbidden', component: ForbiddenComponent },
   { path: 'login', component: LoginComponent },
