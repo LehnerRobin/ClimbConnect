@@ -10,8 +10,35 @@ export interface Area {
   description?: string | null;
   imageUrl?: string | null;
   todayVisitors?: number;
-  todayAppointments?: number;
-  createdAtUtc?: string;
+}
+
+export interface Sector {
+  id: number;
+  name: string;
+  description?: string | null;
+}
+
+export interface ClimbingRoute {
+  id: number;
+  name: string;
+  grade?: string | null;
+  length?: number | null;
+  style?: string | null;
+}
+
+export interface Appointment {
+  id: number;
+  title: string;
+  date?: string | null;
+  participantCount?: number;
+}
+
+export interface AreaComment {
+  id: number;
+  text: string;
+  authorName?: string | null;
+  authorPhotoUrl?: string | null;
+  createdAt?: string | null;
 }
 
 @Injectable({
@@ -19,15 +46,31 @@ export interface Area {
 })
 export class AreasService {
 
-  private apiUrl = `${environment.apiUrl}/api/areas`;
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
   getAreas(): Observable<Area[]> {
-    return this.http.get<Area[]>(this.apiUrl);
+    return this.http.get<Area[]>(`${this.apiUrl}/areas`);
   }
 
   getAreaById(id: number): Observable<Area> {
-    return this.http.get<Area>(`${this.apiUrl}/${id}`);
+    return this.http.get<Area>(`${this.apiUrl}/areas/${id}`);
+  }
+
+  getSectorsByArea(areaId: number): Observable<Sector[]> {
+    return this.http.get<Sector[]>(`${this.apiUrl}/areas/${areaId}/sectors`);
+  }
+
+  getRoutesBySector(sectorId: number, scale: string): Observable<ClimbingRoute[]> {
+    return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/sectors/${sectorId}/routes?scale=${scale}`);
+  }
+
+  getAppointmentsByArea(areaId: number): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/areas/${areaId}/appointments`);
+  }
+
+  getCommentsByArea(areaId: number): Observable<AreaComment[]> {
+    return this.http.get<AreaComment[]>(`${this.apiUrl}/areas/${areaId}/comments`);
   }
 }
