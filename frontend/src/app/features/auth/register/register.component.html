@@ -1,35 +1,74 @@
-<h2>Register</h2>
+<section class="auth-page">
 
-<input
-  #username
-  type="text"
-  placeholder="Username">
+  <div class="auth-card">
 
-<input
-  #email
-  type="email"
-  placeholder="Email">
+    <div class="auth-header">
+      <p class="eyebrow">ClimbConnect</p>
+      <h1>Registrieren</h1>
+      <p>Erstelle ein Konto, um deine Kletterdaten und dein Profil zu speichern.</p>
+    </div>
 
-<input
-  #password
-  type="password"
-  placeholder="Password">
+    <form
+      class="auth-form"
+      (submit)="register(username.value, email.value, password.value, confirmPassword.value); $event.preventDefault()">
 
-<input
-  #confirmPassword
-  type="password"
-  placeholder="Repeat Password">
+      <div class="form-field">
+        <label for="username">Benutzername</label>
+        <input
+          id="username"
+          #username
+          type="text"
+          placeholder="Dein Benutzername"
+          autocomplete="username">
+      </div>
 
-<button
-  (click)="register(
-    username.value,
-    email.value,
-    password.value,
-    confirmPassword.value
-  )">
-  Register
-</button>
+      <div class="form-field">
+        <label for="email">E-Mail</label>
+        <input
+          id="email"
+          #email
+          type="email"
+          placeholder="deine.email@example.com"
+          autocomplete="email">
+      </div>
 
-@if (errorMessage) {
-  <p>{{ errorMessage }}</p>
-}
+      <div class="form-field">
+        <label for="password">Passwort</label>
+        <input
+          id="password"
+          #password
+          type="password"
+          placeholder="Mindestens 8 Zeichen"
+          autocomplete="new-password">
+      </div>
+
+      <div class="form-field">
+        <label for="confirmPassword">Passwort wiederholen</label>
+        <input
+          id="confirmPassword"
+          #confirmPassword
+          type="password"
+          placeholder="Passwort erneut eingeben"
+          autocomplete="new-password">
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-box">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button type="submit" class="auth-button">
+        Konto erstellen
+      </button>
+
+    </form>
+
+    <p class="auth-switch">
+      Du hast schon ein Konto?
+      <a href="/login">Jetzt anmelden</a>
+    </p>
+
+  </div>
+
+</section>

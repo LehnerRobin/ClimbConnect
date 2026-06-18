@@ -1,20 +1,54 @@
-<h2>Login</h2>
+<section class="auth-page">
 
-<input
-  #email
-  type="email"
-  placeholder="E-Mail">
+  <div class="auth-card">
 
-<input
-  #password
-  type="password"
-  placeholder="Passwort">
+    <div class="auth-header">
+      <p class="eyebrow">ClimbConnect</p>
+      <h1>Anmelden</h1>
+      <p>Melde dich an, um dein Profil und deine Kletterdaten zu verwalten.</p>
+    </div>
 
-<button
-  (click)="login(email.value, password.value)">
-  Login
-</button>
+    <form
+      class="auth-form"
+      (submit)="login(email.value, password.value); $event.preventDefault()">
 
-@if (errorMessage) {
-  <p>{{ errorMessage }}</p>
-}
+      <div class="form-field">
+        <label for="email">E-Mail</label>
+        <input
+          id="email"
+          #email
+          type="email"
+          placeholder="deine.email@example.com"
+          autocomplete="email">
+      </div>
+
+      <div class="form-field">
+        <label for="password">Passwort</label>
+        <input
+          id="password"
+          #password
+          type="password"
+          placeholder="Dein Passwort"
+          autocomplete="current-password">
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-box">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button type="submit" class="auth-button">
+        Anmelden
+      </button>
+
+    </form>
+
+    <p class="auth-switch">
+      Noch kein Konto?
+      <a href="/register">Jetzt registrieren</a>
+    </p>
+
+  </div>
+
+</section>
