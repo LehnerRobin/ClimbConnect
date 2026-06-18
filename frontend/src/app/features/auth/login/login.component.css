@@ -119,6 +119,10 @@ input:focus {
 }
 
 @media (max-width: 520px) {
+  .auth-page {
+    padding: 28px 18px;
+  }
+
   .auth-card {
     padding: 26px;
   }

@@ -80,7 +80,6 @@ select {
   background: #f9fafb;
   color: #111827;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 textarea {
@@ -110,12 +109,10 @@ select:focus {
   color: white;
   font-weight: 800;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .save-button:hover {
   background: #ea580c;
-  transform: translateY(-1px);
 }
 
 .stat-list {
@@ -128,6 +125,7 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 14px 16px;
   border-radius: 12px;
   background: #f9fafb;
@@ -151,6 +149,14 @@ select:focus {
 
 @media (max-width: 600px) {
   .profile-page {
+    padding: 24px 18px;
+  }
+
+  .profile-header h1 {
+    font-size: 30px;
+  }
+
+  .profile-card {
     padding: 22px;
   }
 

@@ -6,9 +6,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
 
   padding: 16px 32px;
-
   background: #111827;
   color: white;
 
@@ -21,13 +21,15 @@
   font-weight: 800;
   color: #f97316;
   text-decoration: none;
-  letter-spacing: -0.5px;
+  white-space: nowrap;
 }
 
 .actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .action-item {
@@ -64,12 +66,32 @@
 @media (max-width: 768px) {
   .menu {
     flex-direction: column;
-    gap: 16px;
+    align-items: stretch;
     padding: 16px 20px;
   }
 
+  .logo {
+    text-align: center;
+  }
+
   .actions {
-    flex-wrap: wrap;
     justify-content: center;
+    gap: 8px;
+  }
+
+  .action-item {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 420px) {
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .action-item {
+    text-align: center;
   }
 }
