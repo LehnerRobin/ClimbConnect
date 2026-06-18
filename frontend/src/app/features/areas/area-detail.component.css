@@ -206,3 +206,44 @@
     padding: 22px;
   }
 }
+@media (max-width: 900px) {
+  .area-detail {
+    padding: 24px 18px;
+  }
+
+  .area-header,
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .area-info {
+    padding: 22px;
+  }
+
+  .area-image {
+    height: 220px;
+  }
+}
+
+@media (max-width: 600px) {
+  .area-info h1 {
+    font-size: 28px;
+  }
+
+  .detail-section {
+    padding: 16px;
+  }
+
+  .routes-box {
+    overflow-x: auto;
+  }
+
+  .routes-table {
+    min-width: 560px;
+  }
+
+  .comments-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -15,17 +15,13 @@ body {
   overflow-x: hidden;
 }
 
+img {
+  max-width: 100%;
+}
+
 button,
 input,
 textarea,
 select {
   font: inherit;
-}
-
-img {
-  max-width: 100%;
-}
-
-a {
-  color: inherit;
 }
