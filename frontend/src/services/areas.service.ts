@@ -41,6 +41,15 @@ export interface AreaComment {
   createdAt?: string | null;
 }
 
+export interface AppointmentCreateRequest {
+  title: string;
+  date: string;
+  meetingPoint?: string | null;
+  description?: string | null;
+  minParticipants?: number | null;
+  maxParticipants?: number | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -73,4 +82,12 @@ export class AreasService {
   getCommentsByArea(areaId: number): Observable<AreaComment[]> {
     return this.http.get<AreaComment[]>(`${this.apiUrl}/areas/${areaId}/comments`);
   }
+
+  createAppointment(areaId: number, appointment: AppointmentCreateRequest): Observable<Appointment> {
+  return this.http.post<Appointment>(
+    `${this.apiUrl}/areas/${areaId}/appointments`,
+    appointment
+  );
+}
+
 }

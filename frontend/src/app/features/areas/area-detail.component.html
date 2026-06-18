@@ -132,8 +132,18 @@
 
       <aside class="side-column">
 
-        <section class="detail-section">
-          <h2>Kommende Termine</h2>
+<section class="detail-section">
+  <div class="appointments-header">
+    <h2>Kommende Termine</h2>
+
+    @if (isLoggedIn()) {
+      <a
+        class="create-appointment-button"
+        [routerLink]="['/areas', area.id, 'appointments', 'new']">
+        Klettersession erstellen
+      </a>
+    }
+  </div>
 
           @if (appointments.length === 0) {
 
