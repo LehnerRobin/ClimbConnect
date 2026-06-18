@@ -247,3 +247,31 @@
     align-items: flex-start;
   }
 }
+
+.appointments-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.appointments-header h2 {
+  margin: 0;
+}
+
+.create-appointment-button {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f97316;
+  color: white;
+  text-decoration: none;
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.create-appointment-button:hover {
+  background: #ea580c;
+}

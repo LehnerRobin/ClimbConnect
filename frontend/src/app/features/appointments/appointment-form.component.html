@@ -1,0 +1,109 @@
+<section class="appointment-page">
+
+  <a [routerLink]="['/areas', areaId]" class="back-link">
+    ← Zurück zum Gebiet
+  </a>
+
+  <div class="appointment-card">
+
+    <div class="appointment-header">
+      <p class="eyebrow">ClimbConnect</p>
+      <h1>Klettersession erstellen</h1>
+      <p>Erstelle einen Termin, damit andere Benutzer daran teilnehmen können.</p>
+    </div>
+
+    <form class="appointment-form" (ngSubmit)="createAppointment()">
+
+      <div class="form-field full-width">
+        <label for="title">Titel</label>
+        <input
+          id="title"
+          type="text"
+          name="title"
+          [(ngModel)]="form.title"
+          placeholder="z. B. Feierabend-Klettern">
+      </div>
+
+      <div class="form-field">
+        <label for="date">Datum</label>
+        <input
+          id="date"
+          type="date"
+          name="date"
+          [(ngModel)]="form.date">
+      </div>
+
+      <div class="form-field">
+        <label for="time">Uhrzeit</label>
+        <input
+          id="time"
+          type="time"
+          name="time"
+          [(ngModel)]="form.time">
+      </div>
+
+      <div class="form-field full-width">
+        <label for="meetingPoint">Treffpunkt</label>
+        <input
+          id="meetingPoint"
+          type="text"
+          name="meetingPoint"
+          [(ngModel)]="form.meetingPoint"
+          placeholder="z. B. Parkplatz beim Einstieg">
+      </div>
+
+      <div class="form-field full-width">
+        <label for="description">Beschreibung</label>
+        <textarea
+          id="description"
+          name="description"
+          [(ngModel)]="form.description"
+          placeholder="Zusätzliche Infos zur Session...">
+        </textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="minParticipants">Min. Teilnehmer</label>
+        <input
+          id="minParticipants"
+          type="number"
+          name="minParticipants"
+          min="1"
+          [(ngModel)]="form.minParticipants">
+      </div>
+
+      <div class="form-field">
+        <label for="maxParticipants">Max. Teilnehmer</label>
+        <input
+          id="maxParticipants"
+          type="number"
+          name="maxParticipants"
+          min="1"
+          [(ngModel)]="form.maxParticipants">
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-box full-width">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <div class="button-row full-width">
+        <a [routerLink]="['/areas', areaId]" class="cancel-button">
+          Abbrechen
+        </a>
+
+        <button type="submit" class="submit-button" [disabled]="submitting">
+          @if (submitting) {
+            Wird erstellt...
+          } @else {
+            Klettersession erstellen
+          }
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</section>

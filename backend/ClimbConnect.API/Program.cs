@@ -743,59 +743,44 @@ app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreate
 {
     if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
         return Results.Unauthorized();
-    if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
+
+    var areaExists = await db.Areas.AnyAsync(a => a.Id == id);
+    if (!areaExists)
+        return Results.NotFound();
+
+    var currentUser = await db.Users.FindAsync(userId);
+    if (currentUser is null)
+        return Results.Unauthorized();
+
     if (string.IsNullOrWhiteSpace(dto.Title))
         return Results.BadRequest(new { error = "Titel ist erforderlich" });
+
+    if (dto.MinParticipants.HasValue && dto.MaxParticipants.HasValue &&
+        dto.MinParticipants.Value > dto.MaxParticipants.Value)
+        return Results.BadRequest(new { error = "Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein" });
 
     var appointment = new Appointment
     {
         AreaId          = id,
         CreatedByUserId = userId,
+        CreatedBy       = currentUser,
         Title           = dto.Title.Trim(),
         Date            = dto.Date,
-        MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim(),
-        Description     = string.IsNullOrWhiteSpace(dto.Description)   ? null : dto.Description.Trim(),
+        MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint) ? null : dto.MeetingPoint.Trim(),
+        Description     = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
         MinParticipants = dto.MinParticipants,
         MaxParticipants = dto.MaxParticipants
     };
+
     db.Appointments.Add(appointment);
     await db.SaveChangesAsync();
+
     return Results.Created($"/api/appointments/{appointment.Id}", appointment);
 })
 .WithName("CreateAppointment")
 .WithTags("Appointments")
 .RequireAuthorization("User");
 
-app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSubscribeDto dto, ClaimsPrincipal user, AppDbContext db) =>
-{
-    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
-        return Results.Unauthorized();
-
-    var appointment = await db.Appointments
-        .Include(a => a.AppointmentUsers)
-        .FirstOrDefaultAsync(a => a.Id == id);
-    if (appointment is null) return Results.NotFound();
-
-    if (appointment.AppointmentUsers.Any(au => au.UserId == userId))
-        return Results.Conflict(new { error = "Bereits angemeldet" });
-
-    if (appointment.MaxParticipants.HasValue &&
-        appointment.AppointmentUsers.Count >= appointment.MaxParticipants.Value)
-        return Results.Conflict(new { error = "Maximale Teilnehmerzahl erreicht" });
-
-    var subscription = new AppointmentUser
-    {
-        AppointmentId = id,
-        UserId        = userId,
-        Comment       = string.IsNullOrWhiteSpace(dto.Comment) ? null : dto.Comment.Trim()
-    };
-    db.AppointmentUsers.Add(subscription);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/appointments/{id}/subscribe", subscription);
-})
-.WithName("SubscribeToAppointment")
-.WithTags("Appointments")
-.RequireAuthorization("User");
 
 app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, ClaimsPrincipal user, AppDbContext db) =>
 {
