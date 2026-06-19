@@ -7,6 +7,8 @@ public class User
     public string Username { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public string Role { get; set; } = "user";    // "user" | "admin"
+    public string? Bio { get; set; }
+    public string? PreferredGradeScale { get; set; }  // "french" | "uiaa" | "american"
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     public ICollection<Progress> Progresses { get; set; } = [];
