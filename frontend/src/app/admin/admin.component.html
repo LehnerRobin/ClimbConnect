@@ -1,8 +1,283 @@
-<h1>Welcome (Admin)</h1>
+<div class="admin-page">
 
-<div>
-  TODO ... Create admin page.
+  <div class="admin-header">
+    <h1>Admin-Bereich</h1>
+    <p>Gebiete, Sektoren und Routen verwalten</p>
+  </div>
+
+  @if (successMsg) { <p class="msg-success">{{ successMsg }}</p> }
+  @if (errorMsg)   { <p class="msg-error">{{ errorMsg }}</p> }
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button [class.active]="activeTab === 'areas'"   (click)="setTab('areas')">Gebiete</button>
+    <button [class.active]="activeTab === 'sectors'" (click)="setTab('sectors')">Sektoren</button>
+    <button [class.active]="activeTab === 'routes'"  (click)="setTab('routes')">Routen</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: GEBIETE                                                          -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'areas') {
+    <section class="tab-content">
+
+      <div class="section-toolbar">
+        <h2>Klettergebiete</h2>
+        <button class="btn-add" (click)="startCreateArea()">+ Neues Gebiet</button>
+      </div>
+
+      @if (showAreaForm) {
+        <div class="inline-form">
+          <h3>{{ editingArea ? 'Gebiet bearbeiten' : 'Neues Gebiet' }}</h3>
+
+          <div class="form-row">
+            <label>Name *</label>
+            <input type="text" [(ngModel)]="areaForm.name" placeholder="z. B. Traunstein">
+          </div>
+          <div class="form-row">
+            <label>Ort</label>
+            <input type="text" [(ngModel)]="areaForm.location" placeholder="z. B. Gmunden">
+          </div>
+          <div class="form-row">
+            <label>Beschreibung</label>
+            <textarea [(ngModel)]="areaForm.description" placeholder="Kurze Beschreibung des Gebiets..."></textarea>
+          </div>
+          <div class="form-row">
+            <label>Bild-URL</label>
+            <input type="text" [(ngModel)]="areaForm.imageUrl" placeholder="https://...">
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-cancel" (click)="showAreaForm = false">Abbrechen</button>
+            <button class="btn-save" (click)="saveArea()">Speichern</button>
+          </div>
+        </div>
+      }
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Ort</th>
+            <th>Beschreibung</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (area of areas; track area.id) {
+            <tr>
+              <td><strong>{{ area.name }}</strong></td>
+              <td>{{ area.location ?? '-' }}</td>
+              <td class="desc-cell">{{ area.description ?? '-' }}</td>
+              <td class="actions-cell">
+                <button class="btn-edit"   (click)="startEditArea(area)">Bearbeiten</button>
+                <button class="btn-delete" (click)="deleteArea(area)">Löschen</button>
+              </td>
+            </tr>
+          }
+          @if (areas.length === 0) {
+            <tr><td colspan="4" class="empty-row">Noch keine Gebiete vorhanden.</td></tr>
+          }
+        </tbody>
+      </table>
+
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: SEKTOREN                                                         -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'sectors') {
+    <section class="tab-content">
+
+      <div class="section-toolbar">
+        <h2>Sektoren</h2>
+      </div>
+
+      <div class="picker-row">
+        <label>Gebiet auswählen:</label>
+        <select (change)="selectAreaForSectors(areas[$any($event.target).selectedIndex - 1])"
+                [disabled]="areas.length === 0">
+          <option value="">— Gebiet wählen —</option>
+          @for (area of areas; track area.id) {
+            <option [value]="area.id">{{ area.name }}</option>
+          }
+        </select>
+      </div>
+
+      @if (selectedAreaForSectors) {
+
+        <div class="section-toolbar sub-toolbar">
+          <span>{{ selectedAreaForSectors.name }}</span>
+          <button class="btn-add" (click)="startCreateSector()">+ Neuer Sektor</button>
+        </div>
+
+        @if (showSectorForm) {
+          <div class="inline-form">
+            <h3>{{ editingSector ? 'Sektor bearbeiten' : 'Neuer Sektor' }}</h3>
+
+            <div class="form-row">
+              <label>Name *</label>
+              <input type="text" [(ngModel)]="sectorForm.name" placeholder="z. B. Nordwand">
+            </div>
+            <div class="form-row">
+              <label>Beschreibung</label>
+              <textarea [(ngModel)]="sectorForm.description" placeholder="Kurze Beschreibung..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-cancel" (click)="showSectorForm = false">Abbrechen</button>
+              <button class="btn-save"   (click)="saveSector()">Speichern</button>
+            </div>
+          </div>
+        }
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Beschreibung</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (sector of sectors; track sector.id) {
+              <tr>
+                <td><strong>{{ sector.name }}</strong></td>
+                <td class="desc-cell">{{ sector.description ?? '-' }}</td>
+                <td class="actions-cell">
+                  <button class="btn-edit"   (click)="startEditSector(sector)">Bearbeiten</button>
+                  <button class="btn-delete" (click)="deleteSector(sector)">Löschen</button>
+                </td>
+              </tr>
+            }
+            @if (sectors.length === 0) {
+              <tr><td colspan="3" class="empty-row">Keine Sektoren für dieses Gebiet.</td></tr>
+            }
+          </tbody>
+        </table>
+
+      }
+
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: ROUTEN                                                           -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'routes') {
+    <section class="tab-content">
+
+      <div class="section-toolbar">
+        <h2>Routen</h2>
+      </div>
+
+      <div class="picker-row">
+        <label>Gebiet:</label>
+        <select (change)="selectAreaForRoutes(areas[$any($event.target).selectedIndex - 1])"
+                [disabled]="areas.length === 0">
+          <option value="">— Gebiet wählen —</option>
+          @for (area of areas; track area.id) {
+            <option [value]="area.id">{{ area.name }}</option>
+          }
+        </select>
+
+        @if (selectedAreaForRoutes && sectorsForRoutes.length > 0) {
+          <label>Sektor:</label>
+          <select (change)="selectSectorForRoutes(sectorsForRoutes[$any($event.target).selectedIndex - 1])">
+            <option value="">— Sektor wählen —</option>
+            @for (sector of sectorsForRoutes; track sector.id) {
+              <option [value]="sector.id">{{ sector.name }}</option>
+            }
+          </select>
+        }
+      </div>
+
+      @if (selectedSectorForRoutes) {
+
+        <div class="section-toolbar sub-toolbar">
+          <span>{{ selectedAreaForRoutes.name }} › {{ selectedSectorForRoutes.name }}</span>
+          <button class="btn-add" (click)="startCreateRoute()">+ Neue Route</button>
+        </div>
+
+        @if (showRouteForm) {
+          <div class="inline-form">
+            <h3>{{ editingRoute ? 'Route bearbeiten' : 'Neue Route' }}</h3>
+
+            <div class="form-grid">
+              <div class="form-row">
+                <label>Name *</label>
+                <input type="text" [(ngModel)]="routeForm.name" placeholder="z. B. Klassischer Riss">
+              </div>
+              <div class="form-row">
+                <label>Grad * (franz. Skala)</label>
+                <input type="text" [(ngModel)]="routeForm.grade" placeholder="z. B. 6a">
+              </div>
+              <div class="form-row">
+                <label>Stil</label>
+                <select [(ngModel)]="routeForm.style">
+                  @for (s of styles; track s) {
+                    <option [value]="s">{{ s }}</option>
+                  }
+                </select>
+              </div>
+              <div class="form-row">
+                <label>Länge (m)</label>
+                <input type="number" [(ngModel)]="routeForm.lengthMeters" placeholder="z. B. 25" min="1">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label>Beschreibung</label>
+              <textarea [(ngModel)]="routeForm.description" placeholder="Routenbeschreibung, Charakter..."></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn-cancel" (click)="showRouteForm = false">Abbrechen</button>
+              <button class="btn-save"   (click)="saveRoute()">Speichern</button>
+            </div>
+          </div>
+        }
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Grad</th>
+              <th>Stil</th>
+              <th>Länge</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (route of routes; track route.id) {
+              <tr>
+                <td><strong>{{ route.name }}</strong></td>
+                <td><span class="grade-chip">{{ route.grade }}</span></td>
+                <td>{{ route.style ?? '-' }}</td>
+                <td>{{ route.lengthMeters ? route.lengthMeters + ' m' : '-' }}</td>
+                <td class="actions-cell">
+                  <button class="btn-edit"   (click)="startEditRoute(route)">Bearbeiten</button>
+                  <button class="btn-delete" (click)="deleteRoute(route)">Löschen</button>
+                </td>
+              </tr>
+            }
+            @if (routes.length === 0) {
+              <tr><td colspan="5" class="empty-row">Keine Routen in diesem Sektor.</td></tr>
+            }
+          </tbody>
+        </table>
+
+      }
+
+    </section>
+  }
+
+  <!-- Gefahrenzone -->
+  <details class="danger-zone">
+    <summary>⚠ Gefahrenzone</summary>
+    <p>Setzt die gesamte Datenbank zurück und lädt Seed-Daten neu. <strong>Alle Einträge werden gelöscht.</strong></p>
+    <button class="btn-danger" (click)="initDatabase()">Datenbank zurücksetzen</button>
+  </details>
+
 </div>
-<br/>
-<h1>Admin DANGER ZONE</h1>
-<button class="btn btn-danger btn-sm" (click)="initDatabase()">Init Database</button>
