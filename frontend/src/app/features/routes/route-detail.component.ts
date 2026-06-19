@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AreasService, ClimbingRoute, RouteComment, SafetyReport } from '../../../services/areas.service';
@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-route-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './route-detail.component.html',
   styleUrl: './route-detail.component.css'
 })
@@ -41,6 +41,7 @@ export class RouteDetailComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private areasService: AreasService,
     private authService: AuthService
   ) {}

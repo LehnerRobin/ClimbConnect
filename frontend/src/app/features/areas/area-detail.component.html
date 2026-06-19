@@ -163,6 +163,18 @@
                   <p>
                     Teilnehmer: {{ appointment.participantCount ?? 0 }}
                   </p>
+
+                  @if (isLoggedIn()) {
+                    @if (isSubscribed(appointment.id)) {
+                      <button class="btn-unsubscribe" (click)="unsubscribe(appointment)">
+                        Austreten
+                      </button>
+                    } @else {
+                      <button class="btn-subscribe" (click)="subscribe(appointment)">
+                        Beitreten
+                      </button>
+                    }
+                  }
                 </div>
               }
             </div>

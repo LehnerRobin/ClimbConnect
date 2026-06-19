@@ -155,4 +155,37 @@ export class AreasService {
     form.append('file', file);
     return this.http.post<{ url: string }>(`${this.apiUrl}/upload`, form);
   }
+
+  // ── Appointments Subscribe ──────────────────────────────────────────────────
+
+  subscribeToAppointment(id: number, comment?: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/appointments/${id}/subscribe`, { comment: comment ?? null });
+  }
+
+  unsubscribeFromAppointment(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/appointments/${id}/subscribe`);
+  }
+
+  getAppointmentById(id: number, scale = 'french'): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/appointments/${id}?scale=${scale}`);
+  }
+
+  // ── Progress ───────────────────────────────────────────────────────────────
+
+  getMyProgress(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/progress/me`);
+  }
+
+  createProgress(data: {
+    routeId: number;
+    status: string;
+    climbingStyle: string;
+    attempts: number;
+    notes?: string | null;
+    date: string;
+    subjectiveGrade?: string | null;
+    subjectiveGradeComment?: string | null;
+  }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/progress`, data);
+  }
 }

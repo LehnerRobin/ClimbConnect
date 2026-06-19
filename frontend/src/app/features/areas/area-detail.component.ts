@@ -35,6 +35,9 @@ export class AreaDetailComponent implements OnInit {
   appointments: Appointment[] = [];
   comments: AreaComment[] = [];
 
+  // IDs der Termine, bei denen der User schon angemeldet ist
+  subscribedIds = new Set<number>();
+
   loading = true;
   errorMessage = '';
 
@@ -74,27 +77,17 @@ export class AreaDetailComponent implements OnInit {
           routes: []
         }));
       },
-      error: () => {
-        console.error('Sektoren konnten nicht geladen werden.');
-      }
+      error: () => {}
     });
 
     this.areasService.getAppointmentsByArea(areaId).subscribe({
-      next: (appointments) => {
-        this.appointments = appointments;
-      },
-      error: () => {
-        console.error('Termine konnten nicht geladen werden.');
-      }
+      next: (appointments) => { this.appointments = appointments; },
+      error: () => {}
     });
 
     this.areasService.getCommentsByArea(areaId).subscribe({
-      next: (comments) => {
-        this.comments = comments;
-      },
-      error: () => {
-        console.error('Kommentare konnten nicht geladen werden.');
-      }
+      next: (comments) => { this.comments = comments; },
+      error: () => {}
     });
   }
 
@@ -109,33 +102,40 @@ export class AreaDetailComponent implements OnInit {
   loadRoutesForSector(sector: SectorWithRoutes): void {
     sector.loadingRoutes = true;
 
-    const scale = this.getPreferredGradeScale();
-
-    this.areasService.getRoutesBySector(sector.id, scale).subscribe({
+    this.areasService.getRoutesBySector(sector.id, 'french').subscribe({
       next: (routes) => {
         sector.routes = routes;
         sector.loadingRoutes = false;
       },
-      error: () => {
-        sector.loadingRoutes = false;
-        console.error('Routen konnten nicht geladen werden.');
-      }
+      error: () => { sector.loadingRoutes = false; }
     });
-  }
-
-  getPreferredGradeScale(): string {
-    const token = this.authService.getToken();
-
-    if (!token) {
-      return 'french';
-    }
-
-    const payload = this.authService.getRole();
-
-    return payload === 'admin' ? 'french' : 'french';
   }
 
   isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  isSubscribed(appointmentId: number): boolean {
+    return this.subscribedIds.has(appointmentId);
+  }
+
+  subscribe(appointment: Appointment): void {
+    this.areasService.subscribeToAppointment(appointment.id).subscribe({
+      next: () => {
+        this.subscribedIds.add(appointment.id);
+        appointment.participantCount = (appointment.participantCount ?? 0) + 1;
+      },
+      error: () => {}
+    });
+  }
+
+  unsubscribe(appointment: Appointment): void {
+    this.areasService.unsubscribeFromAppointment(appointment.id).subscribe({
+      next: () => {
+        this.subscribedIds.delete(appointment.id);
+        appointment.participantCount = Math.max((appointment.participantCount ?? 1) - 1, 0);
+      },
+      error: () => {}
+    });
   }
 }

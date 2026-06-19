@@ -172,3 +172,61 @@ select:focus {
     width: 100%;
   }
 }
+
+.progress-card {
+  margin-top: 1.5rem;
+}
+
+.progress-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.progress-item:last-child { border-bottom: none; }
+
+.progress-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.route-link {
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.route-link:hover { text-decoration: underline; }
+
+.status-badge {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+
+.progress-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: #9ca3af;
+}
+
+.progress-notes {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.empty-hint {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.empty-chart-hint {
+  color: #9ca3af;
+  font-style: italic;
+  margin-top: 0.5rem;
+}

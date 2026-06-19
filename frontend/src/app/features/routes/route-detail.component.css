@@ -170,6 +170,18 @@ select {
   font-size: 0.9rem;
 }
 
+.btn-log-ascent {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.55rem 1.1rem;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
 .empty-hint { color: #9ca3af; font-style: italic; }
 .loading-msg { color: #6b7280; }
 .error-msg { color: #ef4444; }

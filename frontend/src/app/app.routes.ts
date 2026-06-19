@@ -12,6 +12,7 @@ import { AreaDetailComponent } from './features/areas/area-detail.component';
 import { AppointmentFormComponent } from './features/appointments/appointment-form.component';
 import { RouteDetailComponent } from './features/routes/route-detail.component';
 import { PublicProfileComponent } from './features/users/public-profile.component';
+import { ProgressFormComponent } from './features/progress/progress-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -29,6 +30,12 @@ export const routes: Routes = [
   { path: 'areas/:id', component: AreaDetailComponent },
 
   { path: 'routes/:id', component: RouteDetailComponent },
+
+  {
+    path: 'progress/new',
+    component: ProgressFormComponent,
+    canActivate: [canActivateAuthRole]
+  },
 
   { path: 'users/:id', component: PublicProfileComponent },
 

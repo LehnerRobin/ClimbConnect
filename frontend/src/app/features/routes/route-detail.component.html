@@ -25,6 +25,15 @@
       @if (route.description) {
         <p class="route-description">{{ route.description }}</p>
       }
+
+      @if (isLoggedIn) {
+        <a
+          class="btn-log-ascent"
+          [routerLink]="['/progress/new']"
+          [queryParams]="{ routeId: route.id, routeName: route.name }">
+          + Begehung eintragen
+        </a>
+      }
     </div>
 
     <!-- Safety Reports -->
