@@ -1,0 +1,109 @@
+<section class="route-detail-page">
+
+  @if (loading) {
+    <p class="loading-msg">Route wird geladen...</p>
+  }
+
+  @if (errorMessage) {
+    <p class="error-msg">{{ errorMessage }}</p>
+  }
+
+  @if (!loading && route) {
+    <div class="route-header">
+      <p class="eyebrow">{{ route.sectorName }}</p>
+      <h1>{{ route.name }}</h1>
+
+      <div class="route-meta">
+        <span class="grade-badge">{{ route.grade }}</span>
+        @if (communityGrade) {
+          <span class="community-grade">Community: {{ communityGrade }}</span>
+        }
+        @if (route.style) { <span class="tag">{{ route.style }}</span> }
+        @if (route.lengthMeters) { <span class="tag">{{ route.lengthMeters }} m</span> }
+      </div>
+
+      @if (route.description) {
+        <p class="route-description">{{ route.description }}</p>
+      }
+    </div>
+
+    <!-- Safety Reports -->
+    <section class="section-card">
+      <div class="section-header">
+        <h2>Sicherheitsmeldungen</h2>
+        @if (isLoggedIn) {
+          <button class="btn-outline" (click)="showReportForm = !showReportForm">
+            + Meldung erstellen
+          </button>
+        }
+      </div>
+
+      @if (showReportForm) {
+        <div class="report-form">
+          <textarea [(ngModel)]="reportText" placeholder="Beschreibe das Problem..."></textarea>
+          <select [(ngModel)]="reportSeverity">
+            <option value="Low">Niedrig</option>
+            <option value="Medium">Mittel</option>
+            <option value="High">Hoch</option>
+          </select>
+          <input type="file" accept="image/*" (change)="onReportPhotoSelected($event)">
+          @if (reportError) { <p class="error-msg">{{ reportError }}</p> }
+          <button class="btn-primary" (click)="submitReport()" [disabled]="reportSending || !reportText.trim()">
+            {{ reportSending ? 'Wird gesendet...' : 'Meldung abschicken' }}
+          </button>
+        </div>
+      }
+
+      @if (reports.length === 0) {
+        <p class="empty-hint">Keine offenen Sicherheitsmeldungen.</p>
+      }
+
+      @for (report of reports; track report.id) {
+        <div class="report-item" [class]="severityClass(report.severity)">
+          <div class="report-severity-badge">{{ report.severity }}</div>
+          <p>{{ report.text }}</p>
+          @if (report.photoUrl) {
+            <img [src]="report.photoUrl" alt="Report Foto" class="report-photo">
+          }
+          <small>{{ report.authorName }} · {{ report.createdAtUtc | date:'dd.MM.yyyy' }}</small>
+        </div>
+      }
+    </section>
+
+    <!-- Kommentare -->
+    <section class="section-card">
+      <h2>Kommentare</h2>
+
+      @if (isLoggedIn) {
+        <div class="comment-form">
+          <textarea [(ngModel)]="newCommentText" placeholder="Kommentar schreiben..."></textarea>
+          <input type="file" accept="image/*" (change)="onCommentPhotoSelected($event)">
+          @if (commentPhotoPreview) {
+            <img [src]="commentPhotoPreview" alt="Vorschau" class="photo-preview">
+          }
+          @if (commentError) { <p class="error-msg">{{ commentError }}</p> }
+          @if (commentSuccess) { <p class="success-msg">Kommentar gespeichert!</p> }
+          <button class="btn-primary" (click)="submitComment()" [disabled]="commentSending || !newCommentText.trim()">
+            {{ commentSending ? 'Wird gesendet...' : 'Kommentar abschicken' }}
+          </button>
+        </div>
+      }
+
+      @if (comments.length === 0) {
+        <p class="empty-hint">Noch keine Kommentare.</p>
+      }
+
+      @for (comment of comments; track comment.id) {
+        <div class="comment-item">
+          <div class="comment-author">{{ comment.authorName }}</div>
+          <p>{{ comment.text }}</p>
+          @if (comment.photoUrl) {
+            <img [src]="comment.photoUrl" alt="Kommentar Foto" class="comment-photo">
+          }
+          <small>{{ comment.createdAtUtc | date:'dd.MM.yyyy' }}</small>
+        </div>
+      }
+    </section>
+  }
+
+</section>

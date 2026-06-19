@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-user-profile',
@@ -9,7 +12,9 @@ import { UserService } from '../../services/user.service';
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('gradeChart') gradeChartRef!: ElementRef<HTMLCanvasElement>;
 
   user = {
     id: 0,
@@ -26,6 +31,10 @@ export class UserProfileComponent implements OnInit {
     favoriteArea: '-'
   };
 
+  gradeProgression: { month: string; grade: string }[] = [];
+  chartReady = false;
+  private chart: Chart | null = null;
+
   saveSuccess = false;
   saveError = '';
 
@@ -34,24 +43,72 @@ export class UserProfileComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getMe().subscribe({
       next: (data) => {
-        this.user.id                = data.id;
-        this.user.username          = data.username;
-        this.user.email             = data.email;
-        this.user.bio               = data.bio ?? '';
+        this.user.id                  = data.id;
+        this.user.username            = data.username;
+        this.user.email               = data.email;
+        this.user.bio                 = data.bio ?? '';
         this.user.preferredGradeScale = data.preferredGradeScale ?? 'french';
-        this.user.memberSince       = data.memberSince;
+        this.user.memberSince         = data.memberSince;
 
-        // Statistiken laden sobald wir die userId kennen
-        this.userService.getStats(data.id).subscribe({
+        this.userService.getStats(data.id, data.preferredGradeScale ?? 'french').subscribe({
           next: (s) => {
-            this.stats.totalAscents = s.totalAscents ?? 0;
+            this.stats.totalAscents = s.totalClimbed ?? 0;
             this.stats.openProjects = s.openProjects ?? 0;
             this.stats.favoriteArea = s.favoriteArea ?? '-';
+            this.gradeProgression   = s.gradeProgression ?? [];
+            this.buildChart();
           },
-          error: () => { /* Statistiken optional */ }
+          error: () => {}
         });
       },
-      error: () => { /* Nicht eingeloggt — Guard leitet weiter */ }
+      error: () => {}
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.chartReady = true;
+    this.buildChart();
+  }
+
+  private buildChart(): void {
+    if (!this.chartReady || this.gradeProgression.length === 0) return;
+    if (!this.gradeChartRef?.nativeElement) return;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(this.gradeChartRef.nativeElement, {
+      type: 'line',
+      data: {
+        labels: this.gradeProgression.map(p => p.month),
+        datasets: [{
+          label: 'Höchster Grad',
+          data: this.gradeProgression.map((_, i) => i + 1),
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37,99,235,0.1)',
+          tension: 0.3,
+          fill: true,
+          pointRadius: 5
+        }]
+      },
+      options: {
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (ctx) => this.gradeProgression[ctx.dataIndex]?.grade ?? ''
+            }
+          },
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            ticks: {
+              callback: (_, i) => this.gradeProgression[i]?.grade ?? ''
+            }
+          }
+        }
+      }
     });
   }
 

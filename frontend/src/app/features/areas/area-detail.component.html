@@ -102,8 +102,8 @@
                               <td>{{ route.name }}</td>
                               <td>{{ route.grade || '-' }}</td>
                               <td>
-                                @if (route.length) {
-                                  {{ route.length }} m
+                                @if (route.lengthMeters) {
+                                  {{ route.lengthMeters }} m
                                 } @else {
                                   -
                                 }

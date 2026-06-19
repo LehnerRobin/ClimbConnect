@@ -20,17 +20,21 @@ export interface Sector {
 
 export interface ClimbingRoute {
   id: number;
+  sectorId: number;
+  sectorName?: string | null;
   name: string;
   grade?: string | null;
-  length?: number | null;
+  lengthMeters?: number | null;
   style?: string | null;
+  description?: string | null;
 }
 
-export interface Appointment {
+export interface RouteComment {
   id: number;
-  title: string;
-  date?: string | null;
-  participantCount?: number;
+  text: string;
+  authorName?: string | null;
+  photoUrl?: string | null;
+  createdAtUtc?: string | null;
 }
 
 export interface AreaComment {
@@ -39,6 +43,23 @@ export interface AreaComment {
   authorName?: string | null;
   authorPhotoUrl?: string | null;
   createdAt?: string | null;
+}
+
+export interface SafetyReport {
+  id: number;
+  text: string;
+  severity: string;
+  status: string;
+  photoUrl?: string | null;
+  createdAtUtc?: string | null;
+  authorName?: string | null;
+}
+
+export interface Appointment {
+  id: number;
+  title: string;
+  date?: string | null;
+  participantCount?: number;
 }
 
 export interface AppointmentCreateRequest {
@@ -59,8 +80,11 @@ export class AreasService {
 
   constructor(private http: HttpClient) {}
 
-  getAreas(): Observable<Area[]> {
-    return this.http.get<Area[]>(`${this.apiUrl}/areas`);
+  // ── Gebiete ────────────────────────────────────────────────────────────────
+
+  getAreas(search?: string): Observable<Area[]> {
+    const params = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.http.get<Area[]>(`${this.apiUrl}/areas${params}`);
   }
 
   getAreaById(id: number): Observable<Area> {
@@ -69,10 +93,6 @@ export class AreasService {
 
   getSectorsByArea(areaId: number): Observable<Sector[]> {
     return this.http.get<Sector[]>(`${this.apiUrl}/areas/${areaId}/sectors`);
-  }
-
-  getRoutesBySector(sectorId: number, scale: string): Observable<ClimbingRoute[]> {
-    return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/sectors/${sectorId}/routes?scale=${scale}`);
   }
 
   getAppointmentsByArea(areaId: number): Observable<Appointment[]> {
@@ -84,10 +104,55 @@ export class AreasService {
   }
 
   createAppointment(areaId: number, appointment: AppointmentCreateRequest): Observable<Appointment> {
-  return this.http.post<Appointment>(
-    `${this.apiUrl}/areas/${areaId}/appointments`,
-    appointment
-  );
-}
+    return this.http.post<Appointment>(
+      `${this.apiUrl}/areas/${areaId}/appointments`,
+      appointment
+    );
+  }
 
+  // ── Routen ─────────────────────────────────────────────────────────────────
+
+  getRoutesBySector(sectorId: number, scale: string): Observable<ClimbingRoute[]> {
+    return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/sectors/${sectorId}/routes?scale=${scale}`);
+  }
+
+  searchRoutes(search: string, scale = 'french'): Observable<ClimbingRoute[]> {
+    return this.http.get<ClimbingRoute[]>(
+      `${this.apiUrl}/routes?search=${encodeURIComponent(search)}&scale=${scale}`
+    );
+  }
+
+  getRouteById(id: number, scale = 'french'): Observable<ClimbingRoute> {
+    return this.http.get<ClimbingRoute>(`${this.apiUrl}/routes/${id}?scale=${scale}`);
+  }
+
+  getCommunityGrade(routeId: number, scale = 'french'): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/routes/${routeId}/community-grade?scale=${scale}`);
+  }
+
+  getRouteComments(routeId: number): Observable<RouteComment[]> {
+    return this.http.get<RouteComment[]>(`${this.apiUrl}/routes/${routeId}/comments`);
+  }
+
+  addRouteComment(routeId: number, text: string, photoUrl?: string | null): Observable<any> {
+    return this.http.post(`${this.apiUrl}/routes/${routeId}/comments`, { text, photoUrl });
+  }
+
+  getRouteReports(routeId: number): Observable<SafetyReport[]> {
+    return this.http.get<SafetyReport[]>(`${this.apiUrl}/routes/${routeId}/reports`);
+  }
+
+  // ── Safety Reports ──────────────────────────────────────────────────────────
+
+  createReport(data: { routeId?: number; areaId?: number; text: string; severity: string; photoUrl?: string | null }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reports`, data);
+  }
+
+  // ── Upload ─────────────────────────────────────────────────────────────────
+
+  uploadImage(file: File): Observable<{ url: string }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/upload`, form);
+  }
 }

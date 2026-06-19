@@ -87,4 +87,16 @@
 
   </div>
 
+  <!-- Grad-Entwicklungs-Chart -->
+  @if (gradeProgression.length > 0) {
+    <section class="profile-card chart-card">
+      <h2>Grad-Entwicklung</h2>
+      <canvas #gradeChart></canvas>
+    </section>
+  }
+
+  @if (gradeProgression.length === 0 && stats.totalAscents === 0) {
+    <p class="empty-chart-hint">Trage deine ersten Begehungen ein um die Grad-Entwicklung zu sehen.</p>
+  }
+
 </section>
