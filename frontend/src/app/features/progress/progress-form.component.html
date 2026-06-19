@@ -41,8 +41,13 @@
     </div>
 
     <div class="form-field">
-      <label for="grade">Subjektive Gradeinschätzung (franz., optional)</label>
-      <input id="grade" type="text" [(ngModel)]="form.subjectiveGrade" placeholder="z. B. 6b">
+      <label for="grade">Subjektive Gradeinschätzung (optional)</label>
+      <select id="grade" [(ngModel)]="form.subjectiveGrade">
+        <option value="">— kein Grad —</option>
+        @for (g of frenchGrades; track g) {
+          <option [value]="g">{{ g }}</option>
+        }
+      </select>
     </div>
 
     <div class="form-field">
