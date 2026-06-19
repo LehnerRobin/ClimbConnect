@@ -16,6 +16,16 @@
       <div class="form-grid">
 
         <div class="form-field full-width">
+          <label>Benutzername</label>
+          <input type="text" [value]="user.username" disabled>
+        </div>
+
+        <div class="form-field full-width">
+          <label>E-Mail</label>
+          <input type="text" [value]="user.email" disabled>
+        </div>
+
+        <div class="form-field full-width">
           <label for="bio">Über mich</label>
           <textarea
             id="bio"
@@ -27,25 +37,28 @@
         <div class="form-field">
           <label for="gradeScale">Bevorzugte Bewertungsskala</label>
           <select id="gradeScale" [(ngModel)]="user.preferredGradeScale">
-            <option value="UIAA">UIAA</option>
-            <option value="French">Französisch</option>
-            <option value="American">Amerikanisch</option>
+            <option value="uiaa">UIAA</option>
+            <option value="french">Französisch</option>
+            <option value="american">Amerikanisch</option>
           </select>
         </div>
 
         <div class="form-field">
-          <label for="averageGrade">Durchschnittlicher Grad</label>
-          <input
-            id="averageGrade"
-            type="text"
-            [(ngModel)]="user.averageGrade"
-            placeholder="z. B. 6a oder VI">
+          <label>Mitglied seit</label>
+          <input type="text" [value]="user.memberSince" disabled>
         </div>
 
       </div>
 
+      @if (saveSuccess) {
+        <p class="success-msg">Profil erfolgreich gespeichert!</p>
+      }
+      @if (saveError) {
+        <p class="error-msg">{{ saveError }}</p>
+      }
+
       <div class="button-row">
-        <button type="button" class="save-button">
+        <button type="button" class="save-button" (click)="saveProfile()">
           Profil speichern
         </button>
       </div>
@@ -57,17 +70,17 @@
       <div class="stat-list">
         <div class="stat-item">
           <span>Begehungen</span>
-          <strong>-</strong>
+          <strong>{{ stats.totalAscents }}</strong>
         </div>
 
         <div class="stat-item">
           <span>Projekte</span>
-          <strong>-</strong>
+          <strong>{{ stats.openProjects }}</strong>
         </div>
 
         <div class="stat-item">
           <span>Lieblingsgebiet</span>
-          <strong>-</strong>
+          <strong>{{ stats.favoriteArea }}</strong>
         </div>
       </div>
     </aside>

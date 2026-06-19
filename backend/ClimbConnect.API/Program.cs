@@ -1035,6 +1035,60 @@ app.MapGet("/api/routes/{id:int}/reports", async (int id, AppDbContext db) =>
 
 
 // --------------------
+// EIGENES PROFIL
+// --------------------
+
+// Eigenes Profil abrufen (eingeloggter User)
+app.MapGet("/api/users/me", async (ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
+    var u = await db.Users.FindAsync(userId);
+    if (u is null) return Results.NotFound();
+
+    return Results.Ok(new
+    {
+        u.Id, u.Username, u.Email, u.Role,
+        u.Bio, u.PreferredGradeScale,
+        MemberSince = u.CreatedAtUtc.ToString("yyyy-MM-dd")
+    });
+})
+.WithName("GetOwnProfile")
+.WithTags("Users")
+.RequireAuthorization("User");
+
+// Eigenes Profil bearbeiten (Bio und bevorzugte Gradskala)
+app.MapPut("/api/users/me/profile", async (UserProfileUpdateDto dto, ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
+
+    var u = await db.Users.FindAsync(userId);
+    if (u is null) return Results.NotFound();
+
+    var validScales = new[] { "french", "uiaa", "american" };
+    if (!string.IsNullOrWhiteSpace(dto.PreferredGradeScale) &&
+        !validScales.Contains(dto.PreferredGradeScale.ToLower()))
+        return Results.BadRequest(new { error = "PreferredGradeScale muss french, uiaa oder american sein" });
+
+    u.Bio                 = string.IsNullOrWhiteSpace(dto.Bio) ? null : dto.Bio.Trim();
+    u.PreferredGradeScale = string.IsNullOrWhiteSpace(dto.PreferredGradeScale)
+                            ? null : dto.PreferredGradeScale.ToLower().Trim();
+
+    await db.SaveChangesAsync();
+    return Results.Ok(new
+    {
+        u.Id, u.Username, u.Email, u.Role,
+        u.Bio, u.PreferredGradeScale
+    });
+})
+.WithName("UpdateOwnProfile")
+.WithTags("Users")
+.RequireAuthorization("User");
+
+
+// --------------------
 // USER STATISTIKEN
 // --------------------
 app.MapGet("/api/users/{id:int}/stats", async (int id, string? scale, AppDbContext db) =>
