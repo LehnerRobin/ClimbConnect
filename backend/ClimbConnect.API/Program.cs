@@ -323,7 +323,8 @@ app.MapPost("/api/areas", async (AreaCreateDto dto, AppDbContext db) =>
     {
         Name        = dto.Name.Trim(),
         Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim(),
-        Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim()
+        Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
+        ImageUrl    = string.IsNullOrWhiteSpace(dto.ImageUrl)    ? null : dto.ImageUrl.Trim()
     };
     db.Areas.Add(area);
     await db.SaveChangesAsync();
@@ -343,6 +344,7 @@ app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext
     area.Name        = dto.Name.Trim();
     area.Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim();
     area.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
+    area.ImageUrl    = string.IsNullOrWhiteSpace(dto.ImageUrl)    ? null : dto.ImageUrl.Trim();
 
     await db.SaveChangesAsync();
     return Results.Ok(area);

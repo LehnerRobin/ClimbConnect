@@ -12,6 +12,10 @@ public class Area
     public string? Location { get; set; }
 
     public string? Description { get; set; }
+
+    /// <summary>URL zu einem Bild des Gebiets (z.B. /uploads/abc123.jpg).</summary>
+    public string? ImageUrl { get; set; }
+
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     // Navigation
