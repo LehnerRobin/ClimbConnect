@@ -99,4 +99,32 @@
     <p class="empty-chart-hint">Trage deine ersten Begehungen ein um die Grad-Entwicklung zu sehen.</p>
   }
 
+  <!-- Meine Begehungen -->
+  <section class="profile-card progress-card">
+    <h2>Meine Begehungen</h2>
+
+    @if (myProgress.length === 0) {
+      <p class="empty-hint">Noch keine Begehungen eingetragen.</p>
+    }
+
+    @for (p of myProgress; track p.id) {
+      <div class="progress-item">
+        <div class="progress-main">
+          <a [routerLink]="['/routes', p.route?.id]" class="route-link">
+            {{ p.route?.name ?? 'Route' }}
+          </a>
+          <span class="status-badge">{{ p.status }}</span>
+        </div>
+        <div class="progress-meta">
+          <span>{{ p.date | date:'dd.MM.yyyy' }}</span>
+          <span>{{ p.climbingStyle }}</span>
+          <span>{{ p.attempts }} Versuch(e)</span>
+        </div>
+        @if (p.notes) {
+          <p class="progress-notes">{{ p.notes }}</p>
+        }
+      </div>
+    }
+  </section>
+
 </section>

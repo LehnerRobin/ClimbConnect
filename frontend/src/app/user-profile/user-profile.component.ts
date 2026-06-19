@@ -1,6 +1,9 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { AreasService } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -8,7 +11,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
@@ -35,10 +38,15 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   chartReady = false;
   private chart: Chart | null = null;
 
+  myProgress: any[] = [];
+
   saveSuccess = false;
   saveError = '';
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private areasService: AreasService
+  ) {}
 
   ngOnInit(): void {
     this.userService.getMe().subscribe({
@@ -58,6 +66,11 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
             this.gradeProgression   = s.gradeProgression ?? [];
             this.buildChart();
           },
+          error: () => {}
+        });
+
+        this.areasService.getMyProgress().subscribe({
+          next: (p) => { this.myProgress = p; },
           error: () => {}
         });
       },

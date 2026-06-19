@@ -826,7 +826,38 @@ app.MapPost("/api/areas/{id:int}/appointments", async (int id, AppointmentCreate
 .WithTags("Appointments")
 .RequireAuthorization("User");
 
+// Termin beitreten
+app.MapPost("/api/appointments/{id:int}/subscribe", async (int id, AppointmentSubscribeDto dto, ClaimsPrincipal user, AppDbContext db) =>
+{
+    if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+        return Results.Unauthorized();
 
+    var appointment = await db.Appointments
+        .Include(a => a.AppointmentUsers)
+        .FirstOrDefaultAsync(a => a.Id == id);
+    if (appointment is null) return Results.NotFound();
+
+    if (appointment.AppointmentUsers.Any(au => au.UserId == userId))
+        return Results.Conflict(new { error = "Du nimmst bereits an diesem Termin teil" });
+
+    if (appointment.MaxParticipants.HasValue &&
+        appointment.AppointmentUsers.Count >= appointment.MaxParticipants.Value)
+        return Results.BadRequest(new { error = "Termin ist bereits voll" });
+
+    db.AppointmentUsers.Add(new AppointmentUser
+    {
+        AppointmentId = id,
+        UserId        = userId,
+        Comment       = string.IsNullOrWhiteSpace(dto.Comment) ? null : dto.Comment.Trim()
+    });
+    await db.SaveChangesAsync();
+    return Results.Ok(new { message = "Erfolgreich beigetreten" });
+})
+.WithName("SubscribeToAppointment")
+.WithTags("Appointments")
+.RequireAuthorization("User");
+
+// Termin verlassen
 app.MapDelete("/api/appointments/{id:int}/subscribe", async (int id, ClaimsPrincipal user, AppDbContext db) =>
 {
     if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
