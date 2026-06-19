@@ -1,0 +1,41 @@
+<section class="public-profile-page">
+
+  @if (loading) {
+    <p class="loading-msg">Profil wird geladen...</p>
+  }
+
+  @if (errorMessage) {
+    <p class="error-msg">{{ errorMessage }}</p>
+  }
+
+  @if (!loading && profile) {
+    <div class="profile-header">
+      <p class="eyebrow">ClimbConnect</p>
+      <h1>{{ profile.username }}</h1>
+      <p class="member-since">Mitglied seit {{ profile.memberSince }}</p>
+    </div>
+
+    <div class="ascents-card">
+      <h2>Letzte Begehungen</h2>
+
+      @if (profile.recentAscents.length === 0) {
+        <p class="empty-hint">Noch keine Begehungen eingetragen.</p>
+      }
+
+      @for (ascent of profile.recentAscents; track $index) {
+        <div class="ascent-item">
+          <div class="ascent-main">
+            <span class="ascent-route">{{ ascent.routeName }}</span>
+            <span class="ascent-grade">{{ ascent.grade }}</span>
+          </div>
+          <div class="ascent-meta">
+            <span>{{ ascent.area }}</span>
+            <span class="status-badge">{{ statusLabel(ascent.status) }}</span>
+            <span>{{ ascent.date | date:'dd.MM.yyyy' }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</section>

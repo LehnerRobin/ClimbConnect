@@ -10,22 +10,27 @@ import { RegisterComponent } from './features/auth/register/register.component';
 import { canActivateAuthRole } from './guards/auth-role.guard';
 import { AreaDetailComponent } from './features/areas/area-detail.component';
 import { AppointmentFormComponent } from './features/appointments/appointment-form.component';
+import { RouteDetailComponent } from './features/routes/route-detail.component';
+import { PublicProfileComponent } from './features/users/public-profile.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 
   { path: 'home', component: HomeComponent },
 
-  
   { path: 'areas', component: AreasPageComponent },
 
   {
-  path: 'areas/:id/appointments/new',
-  component: AppointmentFormComponent,
-  canActivate: [canActivateAuthRole]
-},
+    path: 'areas/:id/appointments/new',
+    component: AppointmentFormComponent,
+    canActivate: [canActivateAuthRole]
+  },
 
   { path: 'areas/:id', component: AreaDetailComponent },
+
+  { path: 'routes/:id', component: RouteDetailComponent },
+
+  { path: 'users/:id', component: PublicProfileComponent },
 
   {
     path: 'admin',
@@ -35,7 +40,7 @@ export const routes: Routes = [
   },
 
   {
-    path: 'profile',  
+    path: 'profile',
     component: UserProfileComponent,
     canActivate: [canActivateAuthRole]
   },

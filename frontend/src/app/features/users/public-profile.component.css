@@ -1,0 +1,76 @@
+.public-profile-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.profile-header {
+  margin-bottom: 2rem;
+}
+
+.eyebrow {
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.member-since {
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.ascents-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+}
+
+.ascent-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ascent-item:last-child { border-bottom: none; }
+
+.ascent-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.ascent-route {
+  font-weight: 600;
+  color: #111827;
+}
+
+.ascent-grade {
+  background: #2563eb;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.ascent-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #6b7280;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.empty-hint { color: #9ca3af; font-style: italic; }
+.loading-msg { color: #6b7280; }
+.error-msg { color: #ef4444; }
