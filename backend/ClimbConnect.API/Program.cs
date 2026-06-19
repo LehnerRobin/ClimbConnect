@@ -277,12 +277,23 @@ app.MapPost("/api/auth/login", async (LoginDto dto, AppDbContext db, JwtService 
 // --------------------
 // AREAS (Admin: POST/PUT/DELETE, alle: GET)
 // --------------------
-app.MapGet("/api/areas", async (AppDbContext db) =>
+app.MapGet("/api/areas", async (string? search, AppDbContext db) =>
 {
     var today = DateTime.UtcNow.Date;
     var tomorrow = today.AddDays(1);
 
-    var areas = await db.Areas.OrderBy(a => a.Name).ToListAsync();
+    // Optionale Suche auf Name, Location und Description
+    var query = db.Areas.AsQueryable();
+    if (!string.IsNullOrWhiteSpace(search))
+    {
+        var term = search.Trim().ToLower();
+        query = query.Where(a =>
+            a.Name.ToLower().Contains(term) ||
+            (a.Location != null && a.Location.ToLower().Contains(term)) ||
+            (a.Description != null && a.Description.ToLower().Contains(term)));
+    }
+
+    var areas = await query.OrderBy(a => a.Name).ToListAsync();
 
     // Für jedes Gebiet: wie viele Leute sind heute dort, wie viele kommen geplant
     var todayAppointments = await db.Appointments
@@ -446,6 +457,38 @@ app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db) =>
 // --------------------
 // ROUTES (Admin: POST/PUT/DELETE, alle: GET)
 // --------------------
+
+// Globale Routen-Suche über alle Sektoren
+app.MapGet("/api/routes", async (string? search, string? scale, AppDbContext db) =>
+{
+    var query = db.Routes
+        .Include(r => r.Sector)
+        .AsQueryable();
+
+    if (!string.IsNullOrWhiteSpace(search))
+    {
+        var term = search.Trim().ToLower();
+        query = query.Where(r =>
+            r.Name.ToLower().Contains(term) ||
+            (r.Description != null && r.Description.ToLower().Contains(term)));
+    }
+
+    var routes = await query.OrderBy(r => r.Name).ToListAsync();
+
+    var result = routes.Select(r => new
+    {
+        r.Id, r.SectorId,
+        SectorName = r.Sector.Name,
+        r.Name,
+        Grade      = GradeConversionService.Convert(r.Grade, scale ?? "french"),
+        r.LengthMeters, r.Style, r.Description, r.CreatedAtUtc
+    });
+
+    return Results.Ok(result);
+})
+.WithName("SearchRoutes")
+.WithTags("Routes");
+
 app.MapGet("/api/sectors/{id:int}/routes", async (int id, string? scale, AppDbContext db) =>
 {
     if (!await db.Sectors.AnyAsync(s => s.Id == id)) return Results.NotFound();
