@@ -11,8 +11,7 @@ namespace ClimbConnect.API.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Pings");
+            migrationBuilder.Sql("DROP TABLE IF EXISTS \"Pings\";");
 
             migrationBuilder.AddColumn<string>(
                 name: "Bio",
