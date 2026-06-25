@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { HomeComponent } from './home/home.component';
+import { HomePageComponent } from './features/home/home-page.component';
 import { AdminComponent } from './admin/admin.component';
 import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
@@ -17,7 +17,7 @@ import { ProgressFormComponent } from './features/progress/progress-form.compone
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
 
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: HomePageComponent },
 
   { path: 'areas', component: AreasPageComponent },
 

@@ -10,7 +10,10 @@ export interface Area {
   description?: string | null;
   imageUrl?: string | null;
   todayVisitors?: number;
+  todayAppointments?: number;
+  createdAtUtc?: string;
 }
+
 
 export interface Sector {
   id: number;
@@ -57,8 +60,13 @@ export interface SafetyReport {
 
 export interface Appointment {
   id: number;
+  areaId?: number;
   title: string;
   date?: string | null;
+  meetingPoint?: string | null;
+  description?: string | null;
+  minParticipants?: number | null;
+  maxParticipants?: number | null;
   participantCount?: number;
 }
 
@@ -95,8 +103,8 @@ export class AreasService {
     return this.http.get<Sector[]>(`${this.apiUrl}/areas/${areaId}/sectors`);
   }
 
-  getAppointmentsByArea(areaId: number): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.apiUrl}/areas/${areaId}/appointments`);
+  getAppointmentsByArea(areaId: number, all = false): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/areas/${areaId}/appointments?all=${all}`);
   }
 
   getCommentsByArea(areaId: number): Observable<AreaComment[]> {
@@ -120,6 +128,11 @@ export class AreasService {
     return this.http.get<ClimbingRoute[]>(
       `${this.apiUrl}/routes?search=${encodeURIComponent(search)}&scale=${scale}`
     );
+  }
+
+  getRoutes(search = '', scale = 'french'): Observable<ClimbingRoute[]> {
+    const searchParam = search ? `search=${encodeURIComponent(search)}&` : '';
+    return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/routes?${searchParam}scale=${scale}`);
   }
 
   getRouteById(id: number, scale = 'french'): Observable<ClimbingRoute> {

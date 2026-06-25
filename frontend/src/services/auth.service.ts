@@ -6,6 +6,7 @@ import { environment } from '../environments/environment';
 interface JwtPayload {
   exp?: number;
   role?: string;
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string;
   sub?: string;
   email?: string;
   username?: string;
@@ -56,17 +57,7 @@ export class AuthService {
   }
 
   hasRole(role: string): boolean {
-    if (!this.isAuthenticated()) {
-      return false;
-    }
-
-    const token = this.getToken();
-    if (!token) {
-      return false;
-    }
-
-    const payload = this.decodeToken(token);
-    return payload?.role?.toLowerCase() === role.toLowerCase();
+    return this.getRole() === role.toLowerCase();
   }
 
   getRole(): string | null {
@@ -79,7 +70,25 @@ export class AuthService {
       return null;
     }
 
-    return this.decodeToken(token)?.role?.toLowerCase() ?? null;
+    const payload = this.decodeToken(token);
+    const role = payload?.role
+      ?? payload?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+
+    return role?.toLowerCase() ?? null;
+  }
+
+  getUsername(): string | null {
+    if (!this.isAuthenticated()) {
+      return null;
+    }
+
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    const payload = this.decodeToken(token);
+    return payload?.username ?? payload?.email ?? null;
   }
 
   private saveToken(response: any): void {

@@ -9,6 +9,12 @@ export interface UserStats {
   gradeProgression: { month: string; grade: string }[];
 }
 
+export interface UserListItem {
+  id: number;
+  username: string;
+  memberSince: string;
+}
+
 export interface PublicProfile {
   id: number;
   username: string;
@@ -49,5 +55,10 @@ export class UserService {
   /// Öffentliches Profil eines anderen Users (GET /api/users/{id}/profile)
   getPublicProfile(userId: number, scale = 'french') {
     return this.http.get<PublicProfile>(`${this.apiUrl}/api/users/${userId}/profile?scale=${scale}`);
+  }
+
+  /// Öffentliche User-Liste abrufen (GET /api/users)
+  getUsers() {
+    return this.http.get<UserListItem[]>(`${this.apiUrl}/api/users`);
   }
 }

@@ -303,7 +303,7 @@ app.MapGet("/api/areas", async (string? search, AppDbContext db) =>
 
     var result = areas.Select(a => new
     {
-        a.Id, a.Name, a.Location, a.Description, a.CreatedAtUtc,
+        a.Id, a.Name, a.Location, a.Description, a.ImageUrl, a.CreatedAtUtc,
         TodayVisitors  = todayAppointments
             .Where(ap => ap.AreaId == a.Id)
             .Sum(ap => ap.AppointmentUsers.Count),

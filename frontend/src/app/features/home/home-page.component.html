@@ -1,23 +1,153 @@
-<section class="hero">
+<section class="home-page">
 
-  <div class="hero-content">
+  <section class="hero-section">
 
-    <h1>ClimbConnect</h1>
+    <div class="hero-content">
+      <p class="eyebrow">ClimbConnect</p>
 
-    <p>
-      Find climbing partners, discover climbing areas and organize your next adventure.
-    </p>
+      @if (username) {
+        <h1>Willkommen zurück, {{ username }}!</h1>
+      } @else {
+        <h1>Finde dein nächstes Kletterabenteuer.</h1>
+      }
 
-    <div class="buttons">
-      <a routerLink="/areas" class="btn-primary">
-        Explore Areas
-      </a>
+      <p class="hero-text">
+        Entdecke Klettergebiete, finde passende Sessions und plane deine nächste Route mit der Community.
+      </p>
 
-      <a routerLink="/profile" class="btn-secondary">
-        My Profile
-      </a>
+      <div class="hero-actions">
+        <a routerLink="/areas" class="primary-action">Gebiete erkunden</a>
+
+        @if (isAuthenticated()) {
+          <a routerLink="/profile" class="secondary-action">Profil öffnen</a>
+        } @else {
+          <a routerLink="/register" class="secondary-action">Registrieren</a>
+        }
+      </div>
     </div>
 
-  </div>
+    <div class="hero-card">
+      <span class="card-label">Nächste Session</span>
+
+      @if (loading) {
+        <p class="card-title">Daten werden geladen...</p>
+        <p class="card-text">Wir suchen gerade aktuelle Klettertermine.</p>
+      } @else if (nextAppointment; as appointment) {
+        <p class="card-title">{{ appointment.title }}</p>
+        <p class="card-text">
+          {{ appointment.areaName }}
+          @if (appointment.areaLocation) {
+            · {{ appointment.areaLocation }}
+          }
+        </p>
+        <p class="card-date">{{ appointment.date | date:'dd.MM.yyyy, HH:mm' }}</p>
+      } @else {
+        <p class="card-title">Noch keine Termine</p>
+        <p class="card-text">Erstelle in einem Gebiet eine neue Klettersession.</p>
+      }
+    </div>
+
+  </section>
+
+  @if (errorMessage) {
+    <div class="message-box error-box">
+      <p>{{ errorMessage }}</p>
+      <button type="button" (click)="loadHomeData()">Nochmal laden</button>
+    </div>
+  }
+
+  <section class="stats-grid" aria-label="Kurzstatistiken">
+    <article class="stat-card">
+      <span>{{ areaCount }}</span>
+      <p>Gebiete</p>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ routeCount }}</span>
+      <p>Routen</p>
+    </article>
+
+    <article class="stat-card">
+      <span>{{ userCount }}</span>
+      <p>User</p>
+    </article>
+  </section>
+
+  <section class="content-section">
+    <div class="section-header">
+      <div>
+        <p class="eyebrow">Entdecken</p>
+        <h2>Beliebte Klettergebiete</h2>
+      </div>
+
+      <a routerLink="/areas" class="section-link">Alle Gebiete anzeigen</a>
+    </div>
+
+    @if (loading && featuredAreas.length === 0) {
+      <div class="message-box">Gebiete werden geladen...</div>
+    } @else if (featuredAreas.length === 0) {
+      <div class="message-box">Es gibt noch keine Klettergebiete.</div>
+    } @else {
+      <div class="area-grid">
+        @for (area of featuredAreas; track area.id) {
+          <a class="area-card" [routerLink]="['/areas', area.id]">
+            <div class="area-image">
+              @if (area.imageUrl) {
+                <img [src]="area.imageUrl" [alt]="area.name">
+              } @else {
+                <span>{{ area.name.charAt(0) }}</span>
+              }
+            </div>
+
+            <div class="area-card-body">
+              <div class="area-title-row">
+                <h3>{{ area.name }}</h3>
+                <span>{{ area.todayVisitors ?? 0 }} heute</span>
+              </div>
+
+              <p class="area-location">{{ area.location || 'Standort nicht angegeben' }}</p>
+              <p class="area-description">{{ area.description || 'Noch keine Beschreibung vorhanden.' }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="content-section sessions-section">
+    <div class="section-header">
+      <div>
+        <p class="eyebrow">Termine</p>
+        <h2>Aktuelle Klettersessions</h2>
+      </div>
+    </div>
+
+    @if (appointmentsErrorMessage) {
+      <div class="message-box error-box">{{ appointmentsErrorMessage }}</div>
+    } @else if (loading && upcomingAppointments.length === 0) {
+      <div class="message-box">Termine werden geladen...</div>
+    } @else if (upcomingAppointments.length === 0) {
+      <div class="message-box">Aktuell sind keine kommenden Sessions geplant.</div>
+    } @else {
+      <div class="session-list">
+        @for (appointment of upcomingAppointments; track appointment.id) {
+          <a class="session-card" [routerLink]="['/areas', appointment.areaId]">
+            <div>
+              <p class="session-date">{{ appointment.date | date:'dd.MM.yyyy, HH:mm' }}</p>
+              <h3>{{ appointment.title }}</h3>
+              <p>
+                {{ appointment.areaName }}
+                @if (appointment.areaLocation) {
+                  · {{ appointment.areaLocation }}
+                }
+              </p>
+            </div>
+
+            <span>{{ appointment.participantCount ?? 0 }} Teilnehmer</span>
+          </a>
+        }
+      </div>
+    }
+  </section>
 
 </section>
