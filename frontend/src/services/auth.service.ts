@@ -8,6 +8,8 @@ interface JwtPayload {
   role?: string;
   'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'?: string;
   sub?: string;
+  nameid?: string;
+  'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'?: string;
   email?: string;
   username?: string;
 }
@@ -89,6 +91,25 @@ export class AuthService {
 
     const payload = this.decodeToken(token);
     return payload?.username ?? payload?.email ?? null;
+  }
+
+  getUserId(): number | null {
+    if (!this.isAuthenticated()) {
+      return null;
+    }
+
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    const payload = this.decodeToken(token);
+    const rawId = payload?.sub
+      ?? payload?.nameid
+      ?? payload?.['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+    const id = Number(rawId);
+
+    return Number.isFinite(id) ? id : null;
   }
 
   private saveToken(response: any): void {

@@ -570,3 +570,58 @@
     justify-self: start;
   }
 }
+
+.appointment-owner-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-edit-appointment,
+.btn-delete-appointment {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 38px;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 950;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-edit-appointment {
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.btn-edit-appointment:hover {
+  background: #ffedd5;
+}
+
+.btn-delete-appointment {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.btn-delete-appointment:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.btn-delete-appointment:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.appointment-error {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-weight: 850;
+}

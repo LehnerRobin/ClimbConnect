@@ -37,11 +37,15 @@ export class AreaDetailComponent implements OnInit {
 
   // IDs der Termine, bei denen der User schon angemeldet ist
   subscribedIds = new Set<number>();
+  currentUserId: number | null = null;
+  deletingAppointmentId: number | null = null;
+  appointmentActionError = '';
 
   loading = true;
   errorMessage = '';
 
   ngOnInit(): void {
+    this.currentUserId = this.authService.getUserId();
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
     if (!id) {
@@ -117,6 +121,35 @@ export class AreaDetailComponent implements OnInit {
 
   isSubscribed(appointmentId: number): boolean {
     return this.subscribedIds.has(appointmentId);
+  }
+
+  isOwnAppointment(appointment: Appointment): boolean {
+    return !!this.currentUserId && appointment.createdByUserId === this.currentUserId;
+  }
+
+  deleteAppointment(appointment: Appointment): void {
+    const confirmed = window.confirm(`Termin "${appointment.title}" wirklich löschen?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.appointmentActionError = '';
+    this.deletingAppointmentId = appointment.id;
+
+    this.areasService.deleteAppointment(appointment.id).subscribe({
+      next: () => {
+        this.appointments = this.appointments.filter(item => item.id !== appointment.id);
+        this.subscribedIds.delete(appointment.id);
+        this.deletingAppointmentId = null;
+      },
+      error: (error) => {
+        console.error('Appointment delete error:', error);
+        this.appointmentActionError = error.status === 401 || error.status === 403
+          ? 'Du darfst nur eigene Termine löschen.'
+          : 'Termin konnte nicht gelöscht werden.';
+        this.deletingAppointmentId = null;
+      }
+    });
   }
 
   subscribe(appointment: Appointment): void {

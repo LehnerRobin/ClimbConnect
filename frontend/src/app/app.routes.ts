@@ -27,6 +27,12 @@ export const routes: Routes = [
     canActivate: [canActivateAuthRole]
   },
 
+  {
+    path: 'areas/:id/appointments/:appointmentId/edit',
+    component: AppointmentFormComponent,
+    canActivate: [canActivateAuthRole]
+  },
+
   { path: 'areas/:id', component: AreaDetailComponent },
 
   { path: 'routes/:id', component: RouteDetailComponent },

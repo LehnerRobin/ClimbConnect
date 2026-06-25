@@ -162,3 +162,11 @@ textarea:focus {
     width: 100%;
   }
 }
+.loading-box {
+  padding: 18px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-weight: 800;
+}

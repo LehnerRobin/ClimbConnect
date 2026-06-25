@@ -87,6 +87,87 @@
 
   </div>
 
+  <!-- Eigene Termine -->
+  <section class="profile-card appointments-card">
+    <div class="appointments-header">
+      <div>
+        <p class="eyebrow">Sessions</p>
+        <h2>Meine Termine</h2>
+        <p>Hier siehst du alle Klettersessions, die du selbst erstellt hast.</p>
+      </div>
+    </div>
+
+    @if (appointmentError) {
+      <p class="error-msg">{{ appointmentError }}</p>
+    }
+
+    @if (loadingAppointments) {
+      <p class="empty-hint">Termine werden geladen...</p>
+    } @else if (myAppointments.length === 0) {
+      <p class="empty-hint">Du hast noch keine eigenen Termine erstellt.</p>
+    } @else {
+      <div class="appointment-list">
+        @for (appointment of myAppointments; track appointment.id) {
+          <article class="appointment-item">
+            <div class="appointment-main">
+              <div>
+                <h3>{{ appointment.title }}</h3>
+                <a [routerLink]="['/areas', appointment.areaId]" class="area-link">
+                  {{ appointment.areaName }}
+                </a>
+              </div>
+
+              <span class="appointment-date-badge">
+                @if (appointment.date) {
+                  {{ appointment.date | date:'dd.MM.yyyy, HH:mm' }} Uhr
+                } @else {
+                  Kein Datum
+                }
+              </span>
+            </div>
+
+            <div class="appointment-meta">
+              @if (appointment.areaLocation) {
+                <span>📍 {{ appointment.areaLocation }}</span>
+              }
+
+              @if (appointment.meetingPoint) {
+                <span>🤝 {{ appointment.meetingPoint }}</span>
+              }
+
+              <span>👥 {{ appointment.minParticipants ?? '-' }}–{{ appointment.maxParticipants ?? '-' }} TN</span>
+            </div>
+
+            @if (appointment.description) {
+              <p class="appointment-description">{{ appointment.description }}</p>
+            }
+
+            <div class="appointment-actions">
+              <a
+                class="edit-appointment-button"
+                [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
+                Bearbeiten
+              </a>
+
+              <button
+                type="button"
+                class="delete-appointment-button"
+                [disabled]="deletingAppointmentId === appointment.id"
+                (click)="deleteOwnAppointment(appointment)">
+                @if (deletingAppointmentId === appointment.id) {
+                  Löscht...
+                } @else {
+                  Löschen
+                }
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+
   <!-- Grad-Entwicklungs-Chart -->
   @if (gradeProgression.length > 0) {
     <section class="profile-card chart-card">

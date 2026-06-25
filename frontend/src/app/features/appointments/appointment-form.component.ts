@@ -1,8 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AreasService, AppointmentCreateRequest } from '../../../services/areas.service';
+import {
+  AppointmentCreateRequest,
+  AppointmentUpdateRequest,
+  AreasService
+} from '../../../services/areas.service';
 
 @Component({
   selector: 'app-appointment-form',
@@ -11,14 +15,16 @@ import { AreasService, AppointmentCreateRequest } from '../../../services/areas.
   templateUrl: './appointment-form.component.html',
   styleUrl: './appointment-form.component.css'
 })
-export class AppointmentFormComponent {
+export class AppointmentFormComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private areasService = inject(AreasService);
 
   areaId = Number(this.route.snapshot.paramMap.get('id'));
+  appointmentId = Number(this.route.snapshot.paramMap.get('appointmentId')) || null;
 
+  loading = false;
   submitting = false;
   errorMessage = '';
 
@@ -32,7 +38,44 @@ export class AppointmentFormComponent {
     maxParticipants: 4
   };
 
-  createAppointment(): void {
+  get isEditMode(): boolean {
+    return this.appointmentId !== null;
+  }
+
+  ngOnInit(): void {
+    if (this.isEditMode && this.appointmentId) {
+      this.loadAppointment(this.appointmentId);
+    }
+  }
+
+  loadAppointment(appointmentId: number): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.areasService.getAppointmentById(appointmentId).subscribe({
+      next: (appointment) => {
+        this.form.title = appointment.title ?? '';
+        this.form.meetingPoint = appointment.meetingPoint ?? '';
+        this.form.description = appointment.description ?? '';
+        this.form.minParticipants = appointment.minParticipants ?? 1;
+        this.form.maxParticipants = appointment.maxParticipants ?? 4;
+
+        if (appointment.date) {
+          const dateValue = String(appointment.date);
+          this.form.date = dateValue.slice(0, 10);
+          this.form.time = dateValue.includes('T') ? dateValue.split('T')[1].slice(0, 5) : '18:00';
+        }
+
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Termin konnte nicht geladen werden.';
+        this.loading = false;
+      }
+    });
+  }
+
+  saveAppointment(): void {
     this.errorMessage = '';
 
     if (!this.areaId) {
@@ -57,7 +100,7 @@ export class AppointmentFormComponent {
       }
     }
 
-    const appointment: AppointmentCreateRequest = {
+    const appointment: AppointmentCreateRequest | AppointmentUpdateRequest = {
       title: this.form.title.trim(),
       date: `${this.form.date}T${this.form.time}:00`,
       meetingPoint: this.form.meetingPoint.trim() || null,
@@ -68,19 +111,27 @@ export class AppointmentFormComponent {
 
     this.submitting = true;
 
-    this.areasService.createAppointment(this.areaId, appointment).subscribe({
+    const request = this.isEditMode && this.appointmentId
+      ? this.areasService.updateAppointment(this.appointmentId, appointment)
+      : this.areasService.createAppointment(this.areaId, appointment);
+
+    request.subscribe({
       next: () => {
         this.submitting = false;
         this.router.navigate(['/areas', this.areaId]);
       },
       error: (error) => {
-        console.error('Appointment create error:', error);
+        console.error('Appointment save error:', error);
         this.submitting = false;
 
         if (error.status === 401 || error.status === 403) {
-          this.errorMessage = 'Du musst eingeloggt sein, um eine Klettersession zu erstellen.';
+          this.errorMessage = this.isEditMode
+            ? 'Du darfst nur eigene Termine bearbeiten.'
+            : 'Du musst eingeloggt sein, um eine Klettersession zu erstellen.';
         } else {
-          this.errorMessage = 'Klettersession konnte nicht erstellt werden.';
+          this.errorMessage = this.isEditMode
+            ? 'Termin konnte nicht gespeichert werden.'
+            : 'Klettersession konnte nicht erstellt werden.';
         }
       }
     });

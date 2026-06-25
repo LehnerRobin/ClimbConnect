@@ -230,3 +230,148 @@ select:focus {
   font-style: italic;
   margin-top: 0.5rem;
 }
+.appointments-card {
+  margin-top: 1.5rem;
+}
+
+.appointments-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.appointments-header h2 {
+  margin-bottom: 8px;
+}
+
+.appointments-header p:last-child {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.appointment-list {
+  display: grid;
+  gap: 14px;
+}
+
+.appointment-item {
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.appointment-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.appointment-main h3 {
+  margin: 0 0 6px;
+  color: #111827;
+  font-size: 19px;
+}
+
+.area-link {
+  color: #c2410c;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.area-link:hover {
+  color: #f97316;
+}
+
+.appointment-date-badge {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 12px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.appointment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.appointment-meta span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.appointment-description {
+  margin: 14px 0 0;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.appointment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.edit-appointment-button,
+.delete-appointment-button {
+  min-width: 120px;
+  border-radius: 11px;
+  padding: 10px 14px;
+  font-weight: 900;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.edit-appointment-button {
+  border: 1px solid #fed7aa;
+  background: #fff7ed;
+  color: #c2410c;
+}
+
+.edit-appointment-button:hover {
+  background: #ffedd5;
+}
+
+.delete-appointment-button {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.delete-appointment-button:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.delete-appointment-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .appointment-main,
+  .appointment-actions {
+    flex-direction: column;
+  }
+
+  .appointment-date-badge,
+  .edit-appointment-button,
+  .delete-appointment-button {
+    width: 100%;
+  }
+}

@@ -61,6 +61,7 @@ export interface SafetyReport {
 export interface Appointment {
   id: number;
   areaId?: number;
+  createdByUserId?: number;
   title: string;
   date?: string | null;
   meetingPoint?: string | null;
@@ -71,6 +72,15 @@ export interface Appointment {
 }
 
 export interface AppointmentCreateRequest {
+  title: string;
+  date: string;
+  meetingPoint?: string | null;
+  description?: string | null;
+  minParticipants?: number | null;
+  maxParticipants?: number | null;
+}
+
+export interface AppointmentUpdateRequest {
   title: string;
   date: string;
   meetingPoint?: string | null;
@@ -116,6 +126,14 @@ export class AreasService {
       `${this.apiUrl}/areas/${areaId}/appointments`,
       appointment
     );
+  }
+
+  updateAppointment(id: number, appointment: AppointmentUpdateRequest): Observable<Appointment> {
+    return this.http.put<Appointment>(`${this.apiUrl}/appointments/${id}`, appointment);
+  }
+
+  deleteAppointment(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/appointments/${id}`);
   }
 
   // ── Routen ─────────────────────────────────────────────────────────────────
