@@ -6,21 +6,23 @@
 
   @if (loading) {
 
-    <div class="loading-box">
-      Gebiet wird geladen...
+    <div class="state-box loading-box">
+      <div class="spinner"></div>
+      <p>Gebiet wird geladen...</p>
     </div>
 
   } @else if (errorMessage) {
 
-    <div class="error-box">
-      {{ errorMessage }}
+    <div class="state-box error-box">
+      <h2>Gebiet konnte nicht geladen werden</h2>
+      <p>{{ errorMessage }}</p>
     </div>
 
   } @else if (area) {
 
-    <div class="area-header">
+    <header class="area-hero-card">
 
-      <div class="area-image">
+      <div class="area-hero-image">
         @if (area.imageUrl) {
           <img [src]="area.imageUrl" [alt]="area.name">
         } @else {
@@ -28,30 +30,50 @@
             {{ area.name.charAt(0) }}
           </div>
         }
+
+        <span class="hero-image-badge">Klettergebiet</span>
       </div>
 
-      <div class="area-info">
+      <div class="area-hero-content">
+        <p class="eyebrow">Area Details</p>
         <h1>{{ area.name }}</h1>
 
-        <p class="location">
+        <p class="hero-location">
           {{ area.location || 'Kein Standort angegeben' }}
         </p>
 
-        <p class="description">
+        <p class="hero-description">
           {{ area.description || 'Keine Beschreibung vorhanden.' }}
         </p>
+
+        <div class="hero-meta">
+          <span>📍 {{ area.location || 'Unbekannt' }}</span>
+          <span>🧗 {{ sectors.length }} Sektoren</span>
+          <span>📅 {{ appointments.length }} Termine</span>
+          <span>💬 {{ comments.length }} Kommentare</span>
+        </div>
       </div>
 
-    </div>
+    </header>
 
     <div class="content-grid">
 
-      <section class="detail-section">
-        <h2>Sektoren & Routen</h2>
+      <section class="detail-section routes-section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Routenübersicht</p>
+            <h2>Sektoren & Routen</h2>
+          </div>
+
+          <span class="section-pill">{{ sectors.length }} Sektoren</span>
+        </div>
 
         @if (sectors.length === 0) {
 
-          <p class="empty-text">Keine Sektoren vorhanden.</p>
+          <div class="empty-card">
+            <strong>Noch keine Sektoren</strong>
+            <p>Für dieses Gebiet wurden noch keine Sektoren eingetragen.</p>
+          </div>
 
         } @else {
 
@@ -59,18 +81,24 @@
 
             @for (sector of sectors; track sector.id) {
 
-              <div class="sector-card">
+              <article class="sector-card" [class.expanded]="sector.expanded">
 
                 <button class="sector-header" type="button" (click)="toggleSector(sector)">
-                  <span>{{ sector.name }}</span>
-                  <span>{{ sector.expanded ? '▲' : '▼' }}</span>
-                </button>
+                  <span class="sector-icon">▣</span>
 
-                @if (sector.description) {
-                  <p class="sector-description">
-                    {{ sector.description }}
-                  </p>
-                }
+                  <span class="sector-text">
+                    <strong>{{ sector.name }}</strong>
+                    <small>{{ sector.description || 'Keine Beschreibung vorhanden.' }}</small>
+                  </span>
+
+                  <span class="sector-action">
+                    @if (sector.expanded) {
+                      Einklappen ▲
+                    } @else {
+                      Routen anzeigen ▼
+                    }
+                  </span>
+                </button>
 
                 @if (sector.expanded) {
 
@@ -78,7 +106,10 @@
 
                     @if (sector.loadingRoutes) {
 
-                      <p>Routen werden geladen...</p>
+                      <div class="mini-loading">
+                        <div class="mini-spinner"></div>
+                        <span>Routen werden geladen...</span>
+                      </div>
 
                     } @else if (sector.routes.length === 0) {
 
@@ -86,33 +117,28 @@
 
                     } @else {
 
-                      <table class="routes-table">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-                            <th>Grad</th>
-                            <th>Länge</th>
-                            <th>Stil</th>
-                          </tr>
-                        </thead>
+                      <div class="route-cards">
+                        @for (route of sector.routes; track route.id) {
+                          <a class="route-card" [routerLink]="['/routes', route.id]">
+                            <span class="route-main">
+                              <strong>{{ route.name }}</strong>
+                              <small>{{ route.style || 'Stil nicht angegeben' }}</small>
+                            </span>
 
-                        <tbody>
-                          @for (route of sector.routes; track route.id) {
-                            <tr>
-                              <td>{{ route.name }}</td>
-                              <td>{{ route.grade || '-' }}</td>
-                              <td>
-                                @if (route.lengthMeters) {
-                                  {{ route.lengthMeters }} m
-                                } @else {
-                                  -
-                                }
-                              </td>
-                              <td>{{ route.style || '-' }}</td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
+                            <span class="route-grade">
+                              {{ route.grade || '-' }}
+                            </span>
+
+                            <span class="route-length">
+                              @if (route.lengthMeters) {
+                                {{ route.lengthMeters }} m
+                              } @else {
+                                Länge offen
+                              }
+                            </span>
+                          </a>
+                        }
+                      </div>
 
                     }
 
@@ -120,7 +146,7 @@
 
                 }
 
-              </div>
+              </article>
 
             }
 
@@ -132,37 +158,50 @@
 
       <aside class="side-column">
 
-<section class="detail-section">
-  <div class="appointments-header">
-    <h2>Kommende Termine</h2>
+        <section class="detail-section side-card appointments-card">
+          <div class="side-header">
+            <div>
+              <p class="eyebrow">Sessions</p>
+              <h2>Kommende Termine</h2>
+            </div>
 
-    @if (isLoggedIn()) {
-      <a
-        class="create-appointment-button"
-        [routerLink]="['/areas', area.id, 'appointments', 'new']">
-        Klettersession erstellen
-      </a>
-    }
-  </div>
+            @if (isLoggedIn()) {
+              <a
+                class="create-appointment-button"
+                [routerLink]="['/areas', area.id, 'appointments', 'new']">
+                + Session
+              </a>
+            }
+          </div>
 
           @if (appointments.length === 0) {
 
-            <p class="empty-text">Keine Termine vorhanden.</p>
+            <div class="empty-card compact">
+              <strong>Keine Termine</strong>
+              <p>Aktuell ist hier keine Klettersession geplant.</p>
+            </div>
 
           } @else {
 
             <div class="appointment-list">
               @for (appointment of appointments; track appointment.id) {
-                <div class="appointment-card">
-                  <h3>{{ appointment.title }}</h3>
+                <article class="appointment-card">
+                  <div class="appointment-topline">
+                    <h3>{{ appointment.title }}</h3>
+                    <span>{{ appointment.participantCount ?? 0 }} TN</span>
+                  </div>
 
-                  <p>
-                    {{ appointment.date || 'Kein Datum angegeben' }}
+                  <p class="appointment-date">
+                    @if (appointment.date) {
+                      {{ appointment.date | date:'dd.MM.yyyy, HH:mm' }} Uhr
+                    } @else {
+                      Kein Datum angegeben
+                    }
                   </p>
 
-                  <p>
-                    Teilnehmer: {{ appointment.participantCount ?? 0 }}
-                  </p>
+                  @if (appointment.meetingPoint) {
+                    <p class="appointment-meeting">Treffpunkt: {{ appointment.meetingPoint }}</p>
+                  }
 
                   @if (isLoggedIn()) {
                     @if (isSubscribed(appointment.id)) {
@@ -175,7 +214,7 @@
                       </button>
                     }
                   }
-                </div>
+                </article>
               }
             </div>
 
@@ -183,43 +222,51 @@
 
         </section>
 
-        <section class="detail-section">
-          <div class="comments-header">
-            <h2>Kommentare</h2>
+        <section class="detail-section side-card comments-card">
+          <div class="side-header comments-header">
+            <div>
+              <p class="eyebrow">Community</p>
+              <h2>Kommentare</h2>
+            </div>
 
             @if (isLoggedIn()) {
               <button type="button" class="comment-button">
-                Kommentar schreiben
+                Schreiben
               </button>
             }
           </div>
 
           @if (comments.length === 0) {
 
-            <p class="empty-text">Keine Kommentare vorhanden.</p>
+            <div class="empty-card compact">
+              <strong>Noch keine Kommentare</strong>
+              <p>Hier gibt es noch keine Hinweise von anderen Usern.</p>
+            </div>
 
           } @else {
 
             <div class="comment-list">
               @for (comment of comments; track comment.id) {
-                <div class="comment-card">
+                <article class="comment-card">
 
                   <div class="comment-author">
-
                     @if (comment.authorPhotoUrl) {
                       <img [src]="comment.authorPhotoUrl" [alt]="comment.authorName || 'User'">
+                    } @else {
+                      <span>{{ (comment.authorName || 'U').charAt(0) }}</span>
                     }
 
-                    <strong>{{ comment.authorName || 'Unbekannter User' }}</strong>
+                    <div>
+                      <strong>{{ comment.authorName || 'Unbekannter User' }}</strong>
+                      @if (comment.createdAt) {
+                        <small>{{ comment.createdAt | date:'dd.MM.yyyy' }}</small>
+                      }
+                    </div>
                   </div>
 
                   <p>{{ comment.text }}</p>
 
-                  @if (comment.createdAt) {
-                    <small>{{ comment.createdAt }}</small>
-                  }
-
-                </div>
+                </article>
               }
             </div>
 

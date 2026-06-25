@@ -1,31 +1,87 @@
 <section class="areas-page">
 
-  <div class="page-header">
-    <h1>Climbing Areas</h1>
-    <p>Entdecke verfügbare Klettergebiete.</p>
-  </div>
+  <header class="areas-hero">
+    <div class="hero-copy">
+      <p class="eyebrow">ClimbConnect Areas</p>
+      <h1>Klettergebiete entdecken</h1>
+      <p>
+        Finde passende Klettergebiete, sieh dir kommende Sessions an und öffne direkt die Details
+        zu Sektoren, Routen und Kommentaren.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-card">
+        <strong>{{ areas.length }}</strong>
+        <span>Gebiete</span>
+      </div>
+
+      <div class="stat-card">
+        <strong>{{ totalVisitorsToday }}</strong>
+        <span>Besucher heute</span>
+      </div>
+
+      <div class="stat-card">
+        <strong>{{ totalAppointmentsToday }}</strong>
+        <span>Termine heute</span>
+      </div>
+    </div>
+  </header>
+
+  <form class="areas-toolbar" (ngSubmit)="searchAreas()">
+    <div class="search-box">
+      <span aria-hidden="true">⌕</span>
+      <input
+        name="areaSearch"
+        type="search"
+        [(ngModel)]="searchTerm"
+        placeholder="Nach Gebiet, Ort oder Beschreibung suchen...">
+    </div>
+
+    <button type="submit" class="toolbar-button primary-button">
+      Suchen
+    </button>
+
+    @if (searchTerm) {
+      <button type="button" class="toolbar-button ghost-button" (click)="clearSearch()">
+        Zurücksetzen
+      </button>
+    }
+  </form>
 
   @if (loading) {
 
-    <div class="loading-box">
+    <div class="loading-box state-box">
       <div class="spinner"></div>
       <p>Gebiete werden geladen...</p>
     </div>
 
   } @else if (errorMessage) {
 
-    <div class="error-box">
+    <div class="error-box state-box">
+      <h2>Ups, da ist etwas schiefgelaufen.</h2>
       <p>{{ errorMessage }}</p>
       <button type="button" (click)="loadAreas()">Nochmal versuchen</button>
     </div>
 
   } @else if (areas.length === 0) {
 
-    <div class="empty-box">
-      <p>Es wurden keine Gebiete gefunden.</p>
+    <div class="empty-box state-box">
+      <h2>Keine Gebiete gefunden</h2>
+      <p>Ändere deine Suche oder setze den Filter zurück.</p>
+      <button type="button" (click)="clearSearch()">Alle Gebiete anzeigen</button>
     </div>
 
   } @else {
+
+    <div class="section-title">
+      <div>
+        <p class="eyebrow">Übersicht</p>
+        <h2>Verfügbare Klettergebiete</h2>
+      </div>
+
+      <span>{{ areas.length }} Treffer</span>
+    </div>
 
     <div class="areas-grid">
 
@@ -38,28 +94,30 @@
               <img [src]="area.imageUrl" [alt]="area.name">
             } @else {
               <div class="area-image-placeholder">
-                {{ area.name.charAt(0) }}
+                {{ getInitial(area) }}
               </div>
             }
+
+            <span class="image-badge">
+              {{ area.todayVisitors ?? 0 }} heute
+            </span>
           </div>
 
           <div class="area-content">
-
-            <div class="area-title-row">
-              <h2>{{ area.name }}</h2>
-              <span class="visitor-badge">
-                {{ area.todayVisitors ?? 0 }} heute
-              </span>
-            </div>
-
-            <p class="location">
+            <p class="area-location">
               {{ area.location || 'Kein Standort angegeben' }}
             </p>
 
-            <p class="description">
+            <h3>{{ area.name }}</h3>
+
+            <p class="area-description">
               {{ area.description || 'Keine Beschreibung vorhanden.' }}
             </p>
 
+            <div class="card-footer">
+              <span>{{ area.todayAppointments ?? 0 }} Termine heute</span>
+              <strong>Details ansehen →</strong>
+            </div>
           </div>
 
         </a>
