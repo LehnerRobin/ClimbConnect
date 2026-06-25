@@ -35,6 +35,7 @@
         name="areaSearch"
         type="search"
         [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchInput($event)"
         placeholder="Nach Gebiet, Ort oder Beschreibung suchen...">
     </div>
 

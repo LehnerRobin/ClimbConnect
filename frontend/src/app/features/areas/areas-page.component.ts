@@ -18,6 +18,7 @@ export class AreasPageComponent implements OnInit {
   loading = true;
   errorMessage = '';
   searchTerm = '';
+  private searchDebounce?: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
     this.loadAreas();
@@ -50,12 +51,30 @@ export class AreasPageComponent implements OnInit {
   }
 
   searchAreas(): void {
+    this.cancelSearchDebounce();
     this.loadAreas(this.searchTerm);
   }
 
+  onSearchInput(value: string): void {
+    this.searchTerm = value;
+    this.cancelSearchDebounce();
+
+    this.searchDebounce = setTimeout(() => {
+      this.loadAreas(this.searchTerm);
+    }, 350);
+  }
+
   clearSearch(): void {
+    this.cancelSearchDebounce();
     this.searchTerm = '';
     this.loadAreas('');
+  }
+
+  private cancelSearchDebounce(): void {
+    if (this.searchDebounce) {
+      clearTimeout(this.searchDebounce);
+      this.searchDebounce = undefined;
+    }
   }
 
   getInitial(area: Area): string {
