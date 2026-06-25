@@ -201,6 +201,10 @@ export class AreasService {
     return this.http.get<RouteComment[]>(`${this.apiUrl}/routes/${routeId}/comments`);
   }
 
+  addAreaComment(areaId: number, text: string, photoUrl?: string | null): Observable<any> {
+    return this.http.post(`${this.apiUrl}/areas/${areaId}/comments`, { text, photoUrl });
+  }
+
   addRouteComment(routeId: number, text: string, photoUrl?: string | null): Observable<any> {
     return this.http.post(`${this.apiUrl}/routes/${routeId}/comments`, { text, photoUrl });
   }

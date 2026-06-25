@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AreasService, ClimbingRoute, RouteComment, SafetyReport } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-route-detail',
@@ -39,11 +40,14 @@ export class RouteDetailComponent implements OnInit {
   reportError = '';
   reportSuccess = false;
 
+  gradeScale = 'french';
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private areasService: AreasService,
-    private authService: AuthService
+    private authService: AuthService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +58,31 @@ export class RouteDetailComponent implements OnInit {
       return;
     }
 
-    this.areasService.getRouteById(id, 'french').subscribe({
+    if (this.authService.isAuthenticated()) {
+      this.userService.getMe().subscribe({
+        next: (data) => {
+          this.gradeScale = data.preferredGradeScale ?? 'french';
+          this.loadRoute(id);
+        },
+        error: () => this.loadRoute(id)
+      });
+    } else {
+      this.loadRoute(id);
+    }
+
+    this.areasService.getRouteComments(id).subscribe({
+      next: (c) => { this.comments = c; },
+      error: () => {}
+    });
+
+    this.areasService.getRouteReports(id).subscribe({
+      next: (r) => { this.reports = r; },
+      error: () => {}
+    });
+  }
+
+  private loadRoute(id: number): void {
+    this.areasService.getRouteById(id, this.gradeScale).subscribe({
       next: (r) => {
         this.route = r;
         this.loading = false;
@@ -65,18 +93,8 @@ export class RouteDetailComponent implements OnInit {
       }
     });
 
-    this.areasService.getCommunityGrade(id, 'french').subscribe({
+    this.areasService.getCommunityGrade(id, this.gradeScale).subscribe({
       next: (data) => { this.communityGrade = data?.communityGrade ?? null; },
-      error: () => {}
-    });
-
-    this.areasService.getRouteComments(id).subscribe({
-      next: (c) => { this.comments = c; },
-      error: () => {}
-    });
-
-    this.areasService.getRouteReports(id).subscribe({
-      next: (r) => { this.reports = r; },
       error: () => {}
     });
   }

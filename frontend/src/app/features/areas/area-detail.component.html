@@ -258,11 +258,31 @@
             </div>
 
             @if (isLoggedIn()) {
-              <button type="button" class="comment-button">
-                Schreiben
+              <button type="button" class="comment-button" (click)="showCommentForm = !showCommentForm">
+                {{ showCommentForm ? 'Abbrechen' : 'Schreiben' }}
               </button>
             }
           </div>
+
+          @if (showCommentForm) {
+            <div class="comment-form">
+              <textarea
+                [(ngModel)]="commentText"
+                placeholder="Dein Kommentar zu diesem Gebiet..."
+                rows="3">
+              </textarea>
+              @if (commentError) {
+                <p class="comment-form-error">{{ commentError }}</p>
+              }
+              <button
+                type="button"
+                class="comment-submit"
+                [disabled]="commentSending || !commentText.trim()"
+                (click)="submitComment()">
+                {{ commentSending ? 'Wird gespeichert...' : 'Absenden' }}
+              </button>
+            </div>
+          }
 
           @if (comments.length === 0) {
 
