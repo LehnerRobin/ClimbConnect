@@ -177,47 +177,137 @@ select:focus {
   margin-top: 1.5rem;
 }
 
-.progress-item {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #f3f4f6;
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
 }
 
-.progress-item:last-child { border-bottom: none; }
+.progress-header h2 {
+  margin-bottom: 8px;
+}
+
+.progress-header p:last-child {
+  margin: 0;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.progress-list {
+  display: grid;
+  gap: 14px;
+}
+
+.progress-item {
+  padding: 18px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #f8fafc;
+}
 
 .progress-main {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.25rem;
+  align-items: flex-start;
+  gap: 14px;
 }
 
 .route-link {
-  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 850;
   color: #2563eb;
   text-decoration: none;
 }
 
-.route-link:hover { text-decoration: underline; }
+.route-link:hover {
+  text-decoration: underline;
+}
 
 .status-badge {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.15rem 0.6rem;
-  border-radius: 1rem;
-  font-size: 0.8rem;
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 950;
+  white-space: nowrap;
 }
 
 .progress-meta {
   display: flex;
-  gap: 1rem;
-  font-size: 0.82rem;
-  color: #9ca3af;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.progress-meta span,
+.progress-grade span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .progress-notes {
-  font-size: 0.85rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
+  margin: 14px 0 0;
+  color: #4b5563;
+  line-height: 1.55;
+}
+
+.progress-grade {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.progress-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.edit-progress-button,
+.delete-progress-button {
+  min-width: 120px;
+  border-radius: 11px;
+  padding: 10px 14px;
+  font-weight: 900;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.edit-progress-button {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.edit-progress-button:hover {
+  background: #dbeafe;
+}
+
+.delete-progress-button {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.delete-progress-button:hover:not(:disabled) {
+  background: #fee2e2;
+}
+
+.delete-progress-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .empty-hint {
@@ -230,6 +320,20 @@ select:focus {
   font-style: italic;
   margin-top: 0.5rem;
 }
+
+@media (max-width: 700px) {
+  .progress-main,
+  .progress-actions {
+    flex-direction: column;
+  }
+
+  .status-badge,
+  .edit-progress-button,
+  .delete-progress-button {
+    width: 100%;
+  }
+}
+
 .appointments-card {
   margin-top: 1.5rem;
 }

@@ -89,6 +89,42 @@ export interface AppointmentUpdateRequest {
   maxParticipants?: number | null;
 }
 
+export interface ProgressEntry {
+  id: number;
+  userId?: number;
+  routeId?: number;
+  route?: ClimbingRoute | null;
+  status: string;
+  climbingStyle: string;
+  attempts: number;
+  notes?: string | null;
+  date: string;
+  subjectiveGrade?: string | null;
+  subjectiveGradeComment?: string | null;
+  createdAtUtc?: string | null;
+}
+
+export interface ProgressCreateRequest {
+  routeId: number;
+  status: string;
+  climbingStyle: string;
+  attempts: number;
+  notes?: string | null;
+  date: string;
+  subjectiveGrade?: string | null;
+  subjectiveGradeComment?: string | null;
+}
+
+export interface ProgressUpdateRequest {
+  status: string;
+  climbingStyle: string;
+  attempts: number;
+  notes?: string | null;
+  date: string;
+  subjectiveGrade?: string | null;
+  subjectiveGradeComment?: string | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -203,20 +239,23 @@ export class AreasService {
 
   // ── Progress ───────────────────────────────────────────────────────────────
 
-  getMyProgress(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/progress/me`);
+  getMyProgress(): Observable<ProgressEntry[]> {
+    return this.http.get<ProgressEntry[]>(`${this.apiUrl}/progress/me`);
   }
 
-  createProgress(data: {
-    routeId: number;
-    status: string;
-    climbingStyle: string;
-    attempts: number;
-    notes?: string | null;
-    date: string;
-    subjectiveGrade?: string | null;
-    subjectiveGradeComment?: string | null;
-  }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/progress`, data);
+  getProgressById(id: number): Observable<ProgressEntry> {
+    return this.http.get<ProgressEntry>(`${this.apiUrl}/progress/${id}`);
+  }
+
+  createProgress(data: ProgressCreateRequest): Observable<ProgressEntry> {
+    return this.http.post<ProgressEntry>(`${this.apiUrl}/progress`, data);
+  }
+
+  updateProgress(id: number, data: ProgressUpdateRequest): Observable<ProgressEntry> {
+    return this.http.put<ProgressEntry>(`${this.apiUrl}/progress/${id}`, data);
+  }
+
+  deleteProgress(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/progress/${id}`);
   }
 }

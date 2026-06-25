@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { Area, Appointment, AreasService } from '../../services/areas.service';
+import { Area, Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -45,7 +45,9 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   chartReady = false;
   private chart: Chart | null = null;
 
-  myProgress: any[] = [];
+  myProgress: ProgressEntry[] = [];
+  progressError = '';
+  deletingProgressId: number | null = null;
   myAppointments: MyAppointment[] = [];
   loadingAppointments = false;
   appointmentError = '';
@@ -96,9 +98,13 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   }
 
   private loadMyProgress(): void {
+    this.progressError = '';
+
     this.areasService.getMyProgress().subscribe({
-      next: (p) => { this.myProgress = p; },
-      error: () => {}
+      next: (progress) => { this.myProgress = progress; },
+      error: () => {
+        this.progressError = 'Begehungen konnten nicht geladen werden.';
+      }
     });
   }
 
@@ -164,6 +170,32 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
           ? 'Du darfst nur eigene Termine löschen.'
           : 'Termin konnte nicht gelöscht werden.';
         this.deletingAppointmentId = null;
+      }
+    });
+  }
+
+  deleteProgress(progress: ProgressEntry): void {
+    const routeName = progress.route?.name ?? 'diese Begehung';
+    const confirmed = window.confirm(`Begehung von "${routeName}" wirklich löschen?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.progressError = '';
+    this.deletingProgressId = progress.id;
+
+    this.areasService.deleteProgress(progress.id).subscribe({
+      next: () => {
+        this.myProgress = this.myProgress.filter(item => item.id !== progress.id);
+        this.deletingProgressId = null;
+        this.loadStats();
+      },
+      error: (error) => {
+        console.error('Progress delete error:', error);
+        this.progressError = error.status === 401 || error.status === 403
+          ? 'Du darfst nur eigene Begehungen löschen.'
+          : 'Begehung konnte nicht gelöscht werden.';
+        this.deletingProgressId = null;
       }
     });
   }

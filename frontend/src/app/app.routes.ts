@@ -43,6 +43,12 @@ export const routes: Routes = [
     canActivate: [canActivateAuthRole]
   },
 
+  {
+    path: 'progress/:id/edit',
+    component: ProgressFormComponent,
+    canActivate: [canActivateAuthRole]
+  },
+
   { path: 'users/:id', component: PublicProfileComponent },
 
   {

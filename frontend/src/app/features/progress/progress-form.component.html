@@ -1,71 +1,86 @@
 <section class="progress-form-page">
 
   <div class="form-header">
-    <p class="eyebrow">Begehung eintragen</p>
+    <p class="eyebrow">{{ isEditMode ? 'Begehung bearbeiten' : 'Begehung eintragen' }}</p>
     <h1>{{ routeName || 'Route' }}</h1>
-  </div>
-
-  <div class="form-card">
-
-    <div class="form-field">
-      <label for="status">Status</label>
-      <select id="status" [(ngModel)]="form.status">
-        @for (s of statuses; track s) {
-          <option [value]="s">{{ s }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="form-field">
-      <label for="style">Begehungsart</label>
-      <select id="style" [(ngModel)]="form.climbingStyle">
-        @for (s of climbingStyles; track s) {
-          <option [value]="s">{{ s }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="form-field">
-      <label for="attempts">Anzahl Versuche</label>
-      <input id="attempts" type="number" min="1" [(ngModel)]="form.attempts">
-    </div>
-
-    <div class="form-field">
-      <label for="date">Datum</label>
-      <input id="date" type="date" [(ngModel)]="form.date">
-    </div>
-
-    <div class="form-field">
-      <label for="notes">Notizen</label>
-      <textarea id="notes" [(ngModel)]="form.notes" placeholder="Eigene Notizen zur Begehung..."></textarea>
-    </div>
-
-    <div class="form-field">
-      <label for="grade">Subjektive Gradeinschätzung (optional)</label>
-      <select id="grade" [(ngModel)]="form.subjectiveGrade">
-        <option value="">— kein Grad —</option>
-        @for (g of frenchGrades; track g) {
-          <option [value]="g">{{ g }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="form-field">
-      <label for="gradeComment">Kommentar zum Grad (optional)</label>
-      <input id="gradeComment" type="text" [(ngModel)]="form.subjectiveGradeComment" placeholder="z. B. 'Eher leichter als 6b'">
-    </div>
-
-    @if (errorMessage) {
-      <p class="error-msg">{{ errorMessage }}</p>
+    @if (isEditMode) {
+      <p class="form-subtitle">Passe deine gespeicherte Begehung an.</p>
     }
-
-    <div class="button-row">
-      <button type="button" class="btn-secondary" (click)="cancel()">Abbrechen</button>
-      <button type="button" class="btn-primary" (click)="submit()" [disabled]="submitting">
-        {{ submitting ? 'Wird gespeichert...' : 'Begehung speichern' }}
-      </button>
-    </div>
-
   </div>
+
+  @if (loading) {
+    <div class="form-card">
+      <p class="loading-msg">Begehung wird geladen...</p>
+    </div>
+  } @else {
+    <div class="form-card">
+
+      <div class="form-field">
+        <label for="status">Status</label>
+        <select id="status" [(ngModel)]="form.status">
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="style">Begehungsart</label>
+        <select id="style" [(ngModel)]="form.climbingStyle">
+          @for (s of climbingStyles; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="attempts">Anzahl Versuche</label>
+        <input id="attempts" type="number" min="1" [(ngModel)]="form.attempts">
+      </div>
+
+      <div class="form-field">
+        <label for="date">Datum</label>
+        <input id="date" type="date" [(ngModel)]="form.date">
+      </div>
+
+      <div class="form-field">
+        <label for="notes">Notizen</label>
+        <textarea id="notes" [(ngModel)]="form.notes" placeholder="Eigene Notizen zur Begehung..."></textarea>
+      </div>
+
+      <div class="form-field">
+        <label for="grade">Subjektive Gradeinschätzung (optional)</label>
+        <select id="grade" [(ngModel)]="form.subjectiveGrade">
+          <option value="">— kein Grad —</option>
+          @for (g of frenchGrades; track g) {
+            <option [value]="g">{{ g }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label for="gradeComment">Kommentar zum Grad (optional)</label>
+        <input id="gradeComment" type="text" [(ngModel)]="form.subjectiveGradeComment" placeholder="z. B. 'Eher leichter als 6b'">
+      </div>
+
+      @if (errorMessage) {
+        <p class="error-msg">{{ errorMessage }}</p>
+      }
+
+      <div class="button-row">
+        <button type="button" class="btn-secondary" (click)="cancel()">Abbrechen</button>
+        <button type="button" class="btn-primary" (click)="submit()" [disabled]="submitting">
+          @if (submitting) {
+            Wird gespeichert...
+          } @else if (isEditMode) {
+            Änderungen speichern
+          } @else {
+            Begehung speichern
+          }
+        </button>
+      </div>
+
+    </div>
+  }
 
 </section>

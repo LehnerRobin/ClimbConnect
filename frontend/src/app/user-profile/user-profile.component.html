@@ -182,27 +182,74 @@
 
   <!-- Meine Begehungen -->
   <section class="profile-card progress-card">
-    <h2>Meine Begehungen</h2>
+    <div class="progress-header">
+      <div>
+        <p class="eyebrow">Fortschritt</p>
+        <h2>Meine Begehungen</h2>
+        <p>Hier kannst du deine eingetragenen Begehungen bearbeiten oder löschen.</p>
+      </div>
+    </div>
+
+    @if (progressError) {
+      <p class="error-msg">{{ progressError }}</p>
+    }
 
     @if (myProgress.length === 0) {
       <p class="empty-hint">Noch keine Begehungen eingetragen.</p>
-    }
+    } @else {
+      <div class="progress-list">
+        @for (p of myProgress; track p.id) {
+          <article class="progress-item">
+            <div class="progress-main">
+              <div>
+                <a [routerLink]="['/routes', p.route?.id]" class="route-link">
+                  {{ p.route?.name ?? 'Route' }}
+                </a>
+                <div class="progress-meta">
+                  <span>{{ p.date | date:'dd.MM.yyyy' }}</span>
+                  <span>{{ p.climbingStyle }}</span>
+                  <span>{{ p.attempts }} Versuch(e)</span>
+                </div>
+              </div>
 
-    @for (p of myProgress; track p.id) {
-      <div class="progress-item">
-        <div class="progress-main">
-          <a [routerLink]="['/routes', p.route?.id]" class="route-link">
-            {{ p.route?.name ?? 'Route' }}
-          </a>
-          <span class="status-badge">{{ p.status }}</span>
-        </div>
-        <div class="progress-meta">
-          <span>{{ p.date | date:'dd.MM.yyyy' }}</span>
-          <span>{{ p.climbingStyle }}</span>
-          <span>{{ p.attempts }} Versuch(e)</span>
-        </div>
-        @if (p.notes) {
-          <p class="progress-notes">{{ p.notes }}</p>
+              <span class="status-badge">{{ p.status }}</span>
+            </div>
+
+            @if (p.notes) {
+              <p class="progress-notes">{{ p.notes }}</p>
+            }
+
+            @if (p.subjectiveGrade || p.subjectiveGradeComment) {
+              <div class="progress-grade">
+                @if (p.subjectiveGrade) {
+                  <span>Grad: {{ p.subjectiveGrade }}</span>
+                }
+                @if (p.subjectiveGradeComment) {
+                  <span>{{ p.subjectiveGradeComment }}</span>
+                }
+              </div>
+            }
+
+            <div class="progress-actions">
+              <a
+                class="edit-progress-button"
+                [routerLink]="['/progress', p.id, 'edit']">
+                Bearbeiten
+              </a>
+
+              <button
+                type="button"
+                class="delete-progress-button"
+                [disabled]="deletingProgressId === p.id"
+                (click)="deleteProgress(p)">
+                @if (deletingProgressId === p.id) {
+                  Löscht...
+                } @else {
+                  Löschen
+                }
+              </button>
+            </div>
+          </article>
         }
       </div>
     }
