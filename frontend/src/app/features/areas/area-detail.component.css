@@ -625,3 +625,49 @@
   color: #b91c1c;
   font-weight: 850;
 }
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.comment-form textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.comment-form-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.comment-submit {
+  align-self: flex-end;
+  padding: 9px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #111827;
+  color: #ffffff;
+  font-weight: 950;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.comment-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

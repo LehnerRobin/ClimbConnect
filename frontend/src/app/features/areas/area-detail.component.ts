@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
   Area,
   AreaComment,
@@ -10,6 +11,7 @@ import {
   Sector
 } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
+import { UserService } from '../../../services/user.service';
 
 interface SectorWithRoutes extends Sector {
   expanded: boolean;
@@ -20,7 +22,7 @@ interface SectorWithRoutes extends Sector {
 @Component({
   selector: 'app-area-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './area-detail.component.html',
   styleUrl: './area-detail.component.css'
 })
@@ -29,6 +31,7 @@ export class AreaDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private areasService = inject(AreasService);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
 
   area?: Area;
   sectors: SectorWithRoutes[] = [];
@@ -41,8 +44,15 @@ export class AreaDetailComponent implements OnInit {
   deletingAppointmentId: number | null = null;
   appointmentActionError = '';
 
+  gradeScale = 'french';
+
   loading = true;
   errorMessage = '';
+
+  showCommentForm = false;
+  commentText = '';
+  commentSending = false;
+  commentError = '';
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getUserId();
@@ -52,6 +62,13 @@ export class AreaDetailComponent implements OnInit {
       this.errorMessage = 'Ungültige Area-ID.';
       this.loading = false;
       return;
+    }
+
+    if (this.authService.isAuthenticated()) {
+      this.userService.getMe().subscribe({
+        next: (data) => { this.gradeScale = data.preferredGradeScale ?? 'french'; },
+        error: () => {}
+      });
     }
 
     this.loadAreaDetails(id);
@@ -106,7 +123,7 @@ export class AreaDetailComponent implements OnInit {
   loadRoutesForSector(sector: SectorWithRoutes): void {
     sector.loadingRoutes = true;
 
-    this.areasService.getRoutesBySector(sector.id, 'french').subscribe({
+    this.areasService.getRoutesBySector(sector.id, this.gradeScale).subscribe({
       next: (routes) => {
         sector.routes = routes;
         sector.loadingRoutes = false;
@@ -169,6 +186,25 @@ export class AreaDetailComponent implements OnInit {
         appointment.participantCount = Math.max((appointment.participantCount ?? 1) - 1, 0);
       },
       error: () => {}
+    });
+  }
+
+  submitComment(): void {
+    if (!this.commentText.trim() || !this.area) return;
+    this.commentSending = true;
+    this.commentError = '';
+
+    this.areasService.addAreaComment(this.area.id, this.commentText.trim()).subscribe({
+      next: (comment: AreaComment) => {
+        this.comments = [comment, ...this.comments];
+        this.commentText = '';
+        this.commentSending = false;
+        this.showCommentForm = false;
+      },
+      error: () => {
+        this.commentError = 'Kommentar konnte nicht gespeichert werden.';
+        this.commentSending = false;
+      }
     });
   }
 }
