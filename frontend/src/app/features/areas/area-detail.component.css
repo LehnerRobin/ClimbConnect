@@ -276,6 +276,59 @@
   background: #ea580c;
 }
 
+.route-row {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.route-row:hover td {
+  background: #f0f4ff;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+  padding: 14px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.comment-form textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.comment-form-error {
+  margin: 0;
+  color: #c92a2a;
+  font-size: 13px;
+}
+
+.comment-submit {
+  align-self: flex-end;
+  padding: 8px 18px;
+  background: #222;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.comment-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-subscribe, .btn-unsubscribe {
   margin-top: 0.5rem;
   padding: 0.35rem 0.85rem;

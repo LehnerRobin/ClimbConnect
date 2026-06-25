@@ -98,7 +98,7 @@
 
                         <tbody>
                           @for (route of sector.routes; track route.id) {
-                            <tr>
+                            <tr class="route-row" [routerLink]="['/routes', route.id]">
                               <td>{{ route.name }}</td>
                               <td>{{ route.grade || '-' }}</td>
                               <td>
@@ -132,18 +132,18 @@
 
       <aside class="side-column">
 
-<section class="detail-section">
-  <div class="appointments-header">
-    <h2>Kommende Termine</h2>
+        <section class="detail-section">
+          <div class="appointments-header">
+            <h2>Kommende Termine</h2>
 
-    @if (isLoggedIn()) {
-      <a
-        class="create-appointment-button"
-        [routerLink]="['/areas', area.id, 'appointments', 'new']">
-        Klettersession erstellen
-      </a>
-    }
-  </div>
+            @if (isLoggedIn()) {
+              <a
+                class="create-appointment-button"
+                [routerLink]="['/areas', area.id, 'appointments', 'new']">
+                Klettersession erstellen
+              </a>
+            }
+          </div>
 
           @if (appointments.length === 0) {
 
@@ -157,7 +157,7 @@
                   <h3>{{ appointment.title }}</h3>
 
                   <p>
-                    {{ appointment.date || 'Kein Datum angegeben' }}
+                    {{ (appointment.date | date:'dd.MM.yyyy, HH:mm') || 'Kein Datum angegeben' }}
                   </p>
 
                   <p>
@@ -188,11 +188,33 @@
             <h2>Kommentare</h2>
 
             @if (isLoggedIn()) {
-              <button type="button" class="comment-button">
-                Kommentar schreiben
+              <button type="button" class="comment-button" (click)="showCommentForm = !showCommentForm">
+                {{ showCommentForm ? 'Abbrechen' : 'Kommentar schreiben' }}
               </button>
             }
           </div>
+
+          @if (showCommentForm) {
+            <div class="comment-form">
+              <textarea
+                [(ngModel)]="commentText"
+                placeholder="Dein Kommentar..."
+                rows="3">
+              </textarea>
+
+              @if (commentError) {
+                <p class="comment-form-error">{{ commentError }}</p>
+              }
+
+              <button
+                type="button"
+                class="comment-submit"
+                [disabled]="commentSending || !commentText.trim()"
+                (click)="submitComment()">
+                {{ commentSending ? 'Wird gespeichert...' : 'Absenden' }}
+              </button>
+            </div>
+          }
 
           @if (comments.length === 0) {
 
@@ -216,7 +238,7 @@
                   <p>{{ comment.text }}</p>
 
                   @if (comment.createdAt) {
-                    <small>{{ comment.createdAt }}</small>
+                    <small>{{ comment.createdAt | date:'dd.MM.yyyy, HH:mm' }}</small>
                   }
 
                 </div>
