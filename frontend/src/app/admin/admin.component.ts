@@ -14,7 +14,7 @@ export class AdminComponent implements OnInit {
 
   private adminService = inject(AdminService);
 
-  activeTab: 'areas' | 'sectors' | 'routes' = 'areas';
+  activeTab: 'areas' | 'sectors' | 'routes' | 'reports' = 'areas';
 
   // ── Gebiete ────────────────────────────────────────────────────────────────
   areas: any[] = [];
@@ -47,10 +47,11 @@ export class AdminComponent implements OnInit {
     this.loadAreas();
   }
 
-  setTab(tab: 'areas' | 'sectors' | 'routes'): void {
+  setTab(tab: 'areas' | 'sectors' | 'routes' | 'reports'): void {
     this.activeTab = tab;
     this.clearMessages();
     this.resetForms();
+    if (tab === 'reports') this.loadReports();
   }
 
   // ── Gebiete ────────────────────────────────────────────────────────────────
@@ -250,6 +251,44 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => { this.errorMsg = err?.error?.error ?? 'Fehler beim Löschen.'; }
     });
+  }
+
+  // ── Reports ────────────────────────────────────────────────────────────────
+
+  reports: any[] = [];
+  showResolvedReports = false;
+
+  loadReports(): void {
+    this.clearMessages();
+    this.adminService.getReports().subscribe({
+      next: (data) => { this.reports = data; },
+      error: () => { this.errorMsg = 'Reports konnten nicht geladen werden.'; }
+    });
+  }
+
+  resolveReport(report: any): void {
+    this.clearMessages();
+    this.adminService.resolveReport(report.id).subscribe({
+      next: () => {
+        report.status = 'Resolved';
+        this.successMsg = 'Report als erledigt markiert.';
+      },
+      error: () => { this.errorMsg = 'Fehler beim Aktualisieren des Reports.'; }
+    });
+  }
+
+  get visibleReports(): any[] {
+    return this.showResolvedReports
+      ? this.reports
+      : this.reports.filter(r => r.status !== 'Resolved');
+  }
+
+  severityClass(severity: string): string {
+    switch (severity?.toLowerCase()) {
+      case 'high':   return 'severity-high';
+      case 'medium': return 'severity-medium';
+      default:       return 'severity-low';
+    }
   }
 
   // ── Datenbank zurücksetzen ─────────────────────────────────────────────────

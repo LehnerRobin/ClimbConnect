@@ -44,6 +44,9 @@ export class AreaDetailComponent implements OnInit {
   deletingAppointmentId: number | null = null;
   appointmentActionError = '';
 
+  expandedAppointmentId: number | null = null;
+  appointmentDetails: { [id: number]: any } = {};
+
   gradeScale = 'french';
 
   loading = true;
@@ -188,6 +191,20 @@ export class AreaDetailComponent implements OnInit {
       },
       error: () => {}
     });
+  }
+
+  toggleAppointmentDetail(appointmentId: number): void {
+    if (this.expandedAppointmentId === appointmentId) {
+      this.expandedAppointmentId = null;
+      return;
+    }
+    this.expandedAppointmentId = appointmentId;
+    if (!this.appointmentDetails[appointmentId]) {
+      this.areasService.getAppointmentById(appointmentId, this.gradeScale).subscribe({
+        next: (detail) => { this.appointmentDetails[appointmentId] = detail; },
+        error: () => {}
+      });
+    }
   }
 
   isOwnComment(comment: { userId?: number }): boolean {

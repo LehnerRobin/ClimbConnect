@@ -104,7 +104,13 @@
 
       @for (comment of comments; track comment.id) {
         <div class="comment-item">
-          <div class="comment-author">{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</div>
+          <div class="comment-author">
+            @if (comment.user?.id) {
+              <a [routerLink]="['/users', comment.user!.id]">{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</a>
+            } @else {
+              {{ comment.user?.username || comment.authorName || 'Unbekannter User' }}
+            }
+          </div>
           <p>{{ comment.text }}</p>
           @if (comment.photoUrl) {
             <img [src]="comment.photoUrl" alt="Kommentar Foto" class="comment-photo">

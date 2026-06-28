@@ -13,6 +13,7 @@ import { AppointmentFormComponent } from './features/appointments/appointment-fo
 import { RouteDetailComponent } from './features/routes/route-detail.component';
 import { PublicProfileComponent } from './features/users/public-profile.component';
 import { ProgressFormComponent } from './features/progress/progress-form.component';
+import { ClimbersPage } from './features/climbers/climbers-page';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -20,6 +21,8 @@ export const routes: Routes = [
   { path: 'home', component: HomePageComponent },
 
   { path: 'areas', component: AreasPageComponent },
+
+  { path: 'climbers', component: ClimbersPage },
 
   {
     path: 'areas/:id/appointments/new',

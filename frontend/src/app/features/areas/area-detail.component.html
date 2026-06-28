@@ -192,9 +192,9 @@
             <div class="appointment-list">
               @for (appointment of appointments; track appointment.id) {
                 <article class="appointment-card">
-                  <div class="appointment-topline">
+                  <div class="appointment-topline" (click)="toggleAppointmentDetail(appointment.id)" style="cursor:pointer">
                     <h3>{{ appointment.title }}</h3>
-                    <span>{{ appointment.participantCount ?? 0 }} TN</span>
+                    <span>{{ appointment.participantCount ?? 0 }} TN {{ expandedAppointmentId === appointment.id ? '▲' : '▼' }}</span>
                   </div>
 
                   <p class="appointment-date">
@@ -207,6 +207,30 @@
 
                   @if (appointment.meetingPoint) {
                     <p class="appointment-meeting">Treffpunkt: {{ appointment.meetingPoint }}</p>
+                  }
+
+                  @if (expandedAppointmentId === appointment.id) {
+                    @let detail = appointmentDetails[appointment.id];
+                    @if (detail) {
+                      <div class="appointment-detail">
+                        @if (detail.description) {
+                          <p class="appointment-description">{{ detail.description }}</p>
+                        }
+                        @if (detail.averageGrade) {
+                          <p class="appointment-avg-grade">Ø Grad der Gruppe: <strong>{{ detail.averageGrade }}</strong></p>
+                        }
+                        @if (detail.participants?.length > 0) {
+                          <div class="participant-list">
+                            <strong>Teilnehmer:</strong>
+                            @for (p of detail.participants; track p.userId) {
+                              <span class="participant-chip">{{ p.username }}</span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <p class="loading-detail">Lädt...</p>
+                    }
                   }
 
                   @if (isOwnAppointment(appointment)) {
@@ -305,7 +329,13 @@
                     }
 
                     <div>
-                      <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
+                      @if (comment.user?.id) {
+                        <a [routerLink]="['/users', comment.user!.id]" class="author-link">
+                          {{ comment.user?.username || comment.authorName || 'Unbekannter User' }}
+                        </a>
+                      } @else {
+                        <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
+                      }
                       @if (comment.createdAtUtc || comment.createdAt) {
                         <small>{{ (comment.createdAtUtc || comment.createdAt) | date:'dd.MM.yyyy' }}</small>
                       }

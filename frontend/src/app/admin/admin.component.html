@@ -13,6 +13,7 @@
     <button [class.active]="activeTab === 'areas'"   (click)="setTab('areas')">Gebiete</button>
     <button [class.active]="activeTab === 'sectors'" (click)="setTab('sectors')">Sektoren</button>
     <button [class.active]="activeTab === 'routes'"  (click)="setTab('routes')">Routen</button>
+    <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">Reports</button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════ -->
@@ -270,6 +271,60 @@
 
       }
 
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: REPORTS                                                           -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'reports') {
+    <section class="tab-content">
+      <div class="section-header">
+        <h2>Safety Reports</h2>
+        <label class="toggle-label">
+          <input type="checkbox" [(ngModel)]="showResolvedReports">
+          Erledigte anzeigen
+        </label>
+      </div>
+
+      @if (visibleReports.length === 0) {
+        <p class="empty-hint">Keine offenen Reports vorhanden.</p>
+      } @else {
+        @for (report of visibleReports; track report.id) {
+          <div class="report-item" [class]="severityClass(report.severity)" [class.resolved]="report.status === 'Resolved'">
+            <div class="report-header">
+              <span class="report-severity-badge">{{ report.severity }}</span>
+              <span class="report-status" [class.status-resolved]="report.status === 'Resolved'">
+                {{ report.status === 'Resolved' ? 'Erledigt' : 'Offen' }}
+              </span>
+              <small>{{ report.createdAtUtc | date:'dd.MM.yyyy HH:mm' }}</small>
+            </div>
+
+            <p class="report-text">{{ report.text }}</p>
+
+            @if (report.user?.username) {
+              <small class="report-author">Gemeldet von: {{ report.user.username }}</small>
+            }
+
+            @if (report.routeId) {
+              <small>Route-ID: {{ report.routeId }}</small>
+            }
+            @if (report.areaId) {
+              <small>Gebiet-ID: {{ report.areaId }}</small>
+            }
+
+            @if (report.photoUrl) {
+              <img [src]="report.photoUrl" alt="Report Foto" class="report-photo">
+            }
+
+            @if (report.status !== 'Resolved') {
+              <button class="btn-resolve" (click)="resolveReport(report)">
+                ✓ Als erledigt markieren
+              </button>
+            }
+          </div>
+        }
+      }
     </section>
   }
 
