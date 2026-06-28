@@ -56,6 +56,10 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   saveSuccess = false;
   saveError = '';
 
+  passwordForm = { current: '', newPw: '', confirm: '' };
+  passwordSuccess = false;
+  passwordError = '';
+
   constructor(
     private userService: UserService,
     private areasService: AreasService
@@ -247,6 +251,30 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
             }
           }
         }
+      }
+    });
+  }
+
+  changePassword(): void {
+    this.passwordSuccess = false;
+    this.passwordError   = '';
+
+    if (this.passwordForm.newPw !== this.passwordForm.confirm) {
+      this.passwordError = 'Die neuen Passwörter stimmen nicht überein.';
+      return;
+    }
+    if (this.passwordForm.newPw.length < 8) {
+      this.passwordError = 'Das neue Passwort muss mindestens 8 Zeichen lang sein.';
+      return;
+    }
+
+    this.userService.changePassword(this.passwordForm.current, this.passwordForm.newPw).subscribe({
+      next: () => {
+        this.passwordSuccess = true;
+        this.passwordForm = { current: '', newPw: '', confirm: '' };
+      },
+      error: (err) => {
+        this.passwordError = err?.error?.error ?? 'Passwort konnte nicht geändert werden.';
       }
     });
   }
