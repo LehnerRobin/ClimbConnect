@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService, PublicProfile } from '../../../services/user.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-public-profile',
@@ -18,7 +19,8 @@ export class PublicProfileComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -29,7 +31,18 @@ export class PublicProfileComponent implements OnInit {
       return;
     }
 
-    this.userService.getPublicProfile(id, 'french').subscribe({
+    if (this.authService.isAuthenticated()) {
+      this.userService.getMe().subscribe({
+        next: (data) => this.loadProfile(id, data.preferredGradeScale ?? 'french'),
+        error: () => this.loadProfile(id, 'french')
+      });
+    } else {
+      this.loadProfile(id, 'french');
+    }
+  }
+
+  private loadProfile(id: number, scale: string): void {
+    this.userService.getPublicProfile(id, scale).subscribe({
       next: (data) => {
         this.profile = data;
         this.loading = false;
