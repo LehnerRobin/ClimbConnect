@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 
 @Injectable({
@@ -15,7 +16,7 @@ export class AdminService {
   // ── Gebiete ────────────────────────────────────────────────────────────────
 
   getAreas(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.api}/areas`);
+    return this.http.get<{ items: any[] }>(`${this.api}/areas?pageSize=100`).pipe(map(r => r.items));
   }
 
   createArea(data: { name: string; location?: string | null; description?: string | null; imageUrl?: string | null }): Observable<any> {
@@ -64,6 +65,16 @@ export class AdminService {
 
   deleteRoute(id: number): Observable<any> {
     return this.http.delete(`${this.api}/routes/${id}`);
+  }
+
+  // ── Reports ────────────────────────────────────────────────────────────────
+
+  getReports(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.api}/reports`);
+  }
+
+  resolveReport(id: number): Observable<any> {
+    return this.http.put(`${this.api}/reports/${id}/status`, { status: 'Resolved' });
   }
 
   // ── Datenbank zurücksetzen (Gefahrenzone) ──────────────────────────────────

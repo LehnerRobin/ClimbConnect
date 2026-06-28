@@ -45,7 +45,7 @@ export interface RouteComment {
   userId?: number;
   text: string;
   authorName?: string | null;
-  user?: { username?: string | null };
+  user?: { id?: number; username?: string | null };
   photoUrl?: string | null;
   createdAtUtc?: string | null;
 }
@@ -55,7 +55,7 @@ export interface AreaComment {
   userId?: number;
   text: string;
   authorName?: string | null;
-  user?: { username?: string | null };
+  user?: { id?: number; username?: string | null };
   authorPhotoUrl?: string | null;
   createdAt?: string | null;
   createdAtUtc?: string | null;

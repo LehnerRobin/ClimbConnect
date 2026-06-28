@@ -1,1 +1,37 @@
-<p>climbers-page works!</p>
+<section class="climbers-page">
+
+  <div class="page-header">
+    <h1>Kletterer</h1>
+    <p>Suche andere Kletterer und sieh ihre letzten Begehungen.</p>
+  </div>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Benutzername suchen..."
+      class="search-input">
+  </div>
+
+  @if (loading) {
+    <p class="loading-msg">Wird geladen...</p>
+  } @else if (errorMessage) {
+    <p class="error-msg">{{ errorMessage }}</p>
+  } @else if (filteredUsers.length === 0) {
+    <p class="empty-hint">Kein Benutzer gefunden.</p>
+  } @else {
+    <div class="user-list">
+      @for (user of filteredUsers; track user.id) {
+        <a class="user-card" [routerLink]="['/users', user.id]">
+          <div class="user-avatar">{{ user.username.charAt(0).toUpperCase() }}</div>
+          <div class="user-info">
+            <strong>{{ user.username }}</strong>
+            <small>Dabei seit {{ user.memberSince | date:'MMMM yyyy' : '' : 'de' }}</small>
+          </div>
+          <span class="profile-link">Profil ansehen →</span>
+        </a>
+      }
+    </div>
+  }
+
+</section>
