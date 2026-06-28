@@ -48,6 +48,15 @@
         Zurücksetzen
       </button>
     }
+
+    <button
+      type="button"
+      class="toolbar-button"
+      [class.primary-button]="showOnlyFavorites"
+      [class.ghost-button]="!showOnlyFavorites"
+      (click)="showOnlyFavorites = !showOnlyFavorites">
+      {{ showOnlyFavorites ? '♥ Alle anzeigen' : '♡ Favoriten' }}
+    </button>
   </form>
 
   @if (loading) {
@@ -78,15 +87,23 @@
     <div class="section-title">
       <div>
         <p class="eyebrow">Übersicht</p>
-        <h2>Verfügbare Klettergebiete</h2>
+        <h2>{{ showOnlyFavorites ? 'Meine Favoriten' : 'Verfügbare Klettergebiete' }}</h2>
       </div>
 
-      <span>{{ areas.length }} Treffer</span>
+      <span>{{ displayedAreas.length }} Treffer</span>
     </div>
+
+    @if (showOnlyFavorites && displayedAreas.length === 0) {
+      <div class="empty-box state-box">
+        <h2>Keine Favoriten gespeichert</h2>
+        <p>Klicke auf das ♡-Symbol bei einem Gebiet um es zu speichern.</p>
+        <button type="button" (click)="showOnlyFavorites = false">Alle Gebiete anzeigen</button>
+      </div>
+    } @else {
 
     <div class="areas-grid">
 
-      @for (area of areas; track area.id) {
+      @for (area of displayedAreas; track area.id) {
 
         <a class="area-card" [routerLink]="['/areas', area.id]">
 
@@ -102,6 +119,15 @@
             <span class="image-badge">
               {{ area.todayVisitors ?? 0 }} heute
             </span>
+
+            <button
+              type="button"
+              class="favorite-btn"
+              [class.is-favorite]="favoritesService.isFavorite(area.id)"
+              [title]="favoritesService.isFavorite(area.id) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'"
+              (click)="toggleFavorite($event, area.id)">
+              {{ favoritesService.isFavorite(area.id) ? '♥' : '♡' }}
+            </button>
           </div>
 
           <div class="area-content">
@@ -126,6 +152,8 @@
       }
 
     </div>
+
+    }
 
   }
 
