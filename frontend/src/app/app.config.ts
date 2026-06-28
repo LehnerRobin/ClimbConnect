@@ -9,6 +9,7 @@ import {
 
 import { routes } from './app.routes';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
+import { errorInterceptor } from './interceptors/error.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withFetch(),
-      withInterceptors([jwtInterceptor])
+      withInterceptors([jwtInterceptor, errorInterceptor])
     )
   ]
 };
