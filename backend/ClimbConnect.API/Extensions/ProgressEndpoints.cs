@@ -11,17 +11,26 @@ public static class ProgressEndpoints
 {
     public static void MapProgressEndpoints(this WebApplication app)
     {
-        app.MapGet("/api/progress/me", async (ClaimsPrincipal user, AppDbContext db) =>
+        app.MapGet("/api/progress/me", async (ClaimsPrincipal user, int? page, int? pageSize, AppDbContext db) =>
         {
             if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
                 return Results.Unauthorized();
 
-            var entries = await db.Progresses
-                .Where(p => p.UserId == userId)
-                .Include(p => p.Route)
-                .OrderByDescending(p => p.Date)
+            var p  = Math.Max(1, page ?? 1);
+            var ps = Math.Clamp(pageSize ?? 20, 1, 100);
+
+            var query = db.Progresses
+                .Where(e => e.UserId == userId)
+                .Include(e => e.Route)
+                .OrderByDescending(e => e.Date);
+
+            var total   = await query.CountAsync();
+            var entries = await query
+                .Skip((p - 1) * ps)
+                .Take(ps)
                 .ToListAsync();
-            return Results.Ok(entries);
+
+            return Results.Ok(new { Total = total, Page = p, PageSize = ps, Items = entries });
         })
         .WithName("GetMyProgress")
         .WithTags("Progress")

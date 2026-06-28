@@ -174,7 +174,11 @@ AppDomain.CurrentDomain.SetData("DataDirectory", AppDomain.CurrentDomain.BaseDir
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    // Migrate() nur bei relationalen DBs (SQLite) — nicht bei InMemory (Tests)
+    if (db.Database.IsRelational())
+        db.Database.Migrate();
+    else
+        db.Database.EnsureCreated();
     await SeedData.InitAsync(db);
 }
 
@@ -195,3 +199,6 @@ app.MapUserEndpoints();
 app.MapUploadEndpoints();
 
 app.Run();
+
+// Damit WebApplicationFactory in Tests auf die Program-Klasse zugreifen kann
+public partial class Program { }

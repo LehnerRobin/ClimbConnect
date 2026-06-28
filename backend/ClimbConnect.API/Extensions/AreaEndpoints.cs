@@ -10,10 +10,13 @@ public static class AreaEndpoints
 {
     public static void MapAreaEndpoints(this WebApplication app)
     {
-        app.MapGet("/api/areas", async (string? search, AppDbContext db) =>
+        app.MapGet("/api/areas", async (string? search, int? page, int? pageSize, AppDbContext db) =>
         {
             var today    = DateTime.UtcNow.Date;
             var tomorrow = today.AddDays(1);
+
+            var p  = Math.Max(1, page ?? 1);
+            var ps = Math.Clamp(pageSize ?? 20, 1, 100);
 
             var query = db.Areas.AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
@@ -25,7 +28,12 @@ public static class AreaEndpoints
                     (a.Description != null && a.Description.ToLower().Contains(term)));
             }
 
-            var areas = await query.OrderBy(a => a.Name).ToListAsync();
+            var total = await query.CountAsync();
+            var areas = await query
+                .OrderBy(a => a.Name)
+                .Skip((p - 1) * ps)
+                .Take(ps)
+                .ToListAsync();
 
             var todayAppointments = await db.Appointments
                 .Where(a => a.Date >= today && a.Date < tomorrow)
@@ -39,7 +47,7 @@ public static class AreaEndpoints
                 TodayAppointments = todayAppointments.Count(ap => ap.AreaId == a.Id)
             });
 
-            return Results.Ok(result);
+            return Results.Ok(new { Total = total, Page = p, PageSize = ps, Items = result });
         })
         .WithName("GetAreas")
         .WithTags("Areas");

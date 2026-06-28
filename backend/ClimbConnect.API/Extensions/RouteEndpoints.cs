@@ -13,8 +13,11 @@ public static class RouteEndpoints
     public static void MapRouteEndpoints(this WebApplication app)
     {
         // Globale Routen-Suche über alle Sektoren
-        app.MapGet("/api/routes", async (string? search, string? scale, AppDbContext db) =>
+        app.MapGet("/api/routes", async (string? search, string? scale, int? page, int? pageSize, AppDbContext db) =>
         {
+            var p  = Math.Max(1, page ?? 1);
+            var ps = Math.Clamp(pageSize ?? 20, 1, 100);
+
             var query = db.Routes.Include(r => r.Sector).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -25,9 +28,14 @@ public static class RouteEndpoints
                     (r.Description != null && r.Description.ToLower().Contains(term)));
             }
 
-            var routes = await query.OrderBy(r => r.Name).ToListAsync();
+            var total  = await query.CountAsync();
+            var routes = await query
+                .OrderBy(r => r.Name)
+                .Skip((p - 1) * ps)
+                .Take(ps)
+                .ToListAsync();
 
-            var result = routes.Select(r => new
+            var items = routes.Select(r => new
             {
                 r.Id, r.SectorId,
                 SectorName = r.Sector.Name,
@@ -36,7 +44,7 @@ public static class RouteEndpoints
                 r.LengthMeters, r.Style, r.Description, r.CreatedAtUtc
             });
 
-            return Results.Ok(result);
+            return Results.Ok(new { Total = total, Page = p, PageSize = ps, Items = items });
         })
         .WithName("SearchRoutes")
         .WithTags("Routes");

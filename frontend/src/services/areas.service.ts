@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+
+export interface PagedResponse<T> {
+  total: number;
+  page: number;
+  pageSize: number;
+  items: T[];
+}
 
 export interface Area {
   id: number;
@@ -138,7 +146,9 @@ export class AreasService {
 
   getAreas(search?: string): Observable<Area[]> {
     const params = search ? `?search=${encodeURIComponent(search)}` : '';
-    return this.http.get<Area[]>(`${this.apiUrl}/areas${params}`);
+    return this.http.get<PagedResponse<Area>>(`${this.apiUrl}/areas${params}`).pipe(
+      map(r => r.items)
+    );
   }
 
   getAreaById(id: number): Observable<Area> {
@@ -179,14 +189,16 @@ export class AreasService {
   }
 
   searchRoutes(search: string, scale = 'french'): Observable<ClimbingRoute[]> {
-    return this.http.get<ClimbingRoute[]>(
+    return this.http.get<PagedResponse<ClimbingRoute>>(
       `${this.apiUrl}/routes?search=${encodeURIComponent(search)}&scale=${scale}`
-    );
+    ).pipe(map(r => r.items));
   }
 
   getRoutes(search = '', scale = 'french'): Observable<ClimbingRoute[]> {
     const searchParam = search ? `search=${encodeURIComponent(search)}&` : '';
-    return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/routes?${searchParam}scale=${scale}`);
+    return this.http.get<PagedResponse<ClimbingRoute>>(`${this.apiUrl}/routes?${searchParam}scale=${scale}`).pipe(
+      map(r => r.items)
+    );
   }
 
   getRouteById(id: number, scale = 'french'): Observable<ClimbingRoute> {
@@ -244,7 +256,9 @@ export class AreasService {
   // ── Progress ───────────────────────────────────────────────────────────────
 
   getMyProgress(): Observable<ProgressEntry[]> {
-    return this.http.get<ProgressEntry[]>(`${this.apiUrl}/progress/me`);
+    return this.http.get<PagedResponse<ProgressEntry>>(`${this.apiUrl}/progress/me`).pipe(
+      map(r => r.items)
+    );
   }
 
   getProgressById(id: number): Observable<ProgressEntry> {
