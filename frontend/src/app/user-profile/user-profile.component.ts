@@ -41,6 +41,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     favoriteArea: '-'
   };
 
+  areaVisits: { areaId: number; areaName: string; count: number }[] = [];
+
   gradeProgression: { month: string; grade: string }[] = [];
   chartReady = false;
   private chart: Chart | null = null;
@@ -95,6 +97,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         this.stats.openProjects = s.openProjects ?? 0;
         this.stats.favoriteArea = s.favoriteArea ?? '-';
         this.gradeProgression   = s.gradeProgression ?? [];
+        this.areaVisits         = s.areaVisits ?? [];
         this.buildChart();
       },
       error: () => {}

@@ -467,6 +467,62 @@ select:focus {
   cursor: not-allowed;
 }
 
+/* ── Gebiets-Besuche ─────────────────────────────────────────────────────── */
+
+.area-visits-card {
+  grid-column: 1 / -1;
+}
+
+.area-visits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.area-visit-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 48px;
+  align-items: center;
+  gap: 12px;
+}
+
+.area-visit-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.area-visit-name:hover {
+  text-decoration: underline;
+}
+
+.area-visit-bar-wrap {
+  background: #e5e7eb;
+  border-radius: 4px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.area-visit-bar {
+  height: 100%;
+  background: #2563eb;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 4px;
+}
+
+.area-visit-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #374151;
+  text-align: right;
+}
+
 @media (max-width: 700px) {
   .appointment-main,
   .appointment-actions {

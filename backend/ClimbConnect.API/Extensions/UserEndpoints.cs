@@ -99,12 +99,20 @@ public static class UserEndpoints
                 })
                 .ToList();
 
+            // Besuche pro Gebiet: wie oft wurde in jedem Gebiet eine Route geklettert
+            var areaVisits = ascents
+                .GroupBy(p => new { p.Route.Sector.Area.Id, p.Route.Sector.Area.Name })
+                .OrderByDescending(g => g.Count())
+                .Select(g => new { AreaId = g.Key.Id, AreaName = g.Key.Name, Count = g.Count() })
+                .ToList();
+
             return Results.Ok(new
             {
                 TotalClimbed     = ascents.Count,
                 OpenProjects     = projects.Count,
                 FavoriteArea     = favoriteArea,
-                GradeProgression = gradeProgression
+                GradeProgression = gradeProgression,
+                AreaVisits       = areaVisits
             });
         })
         .WithName("GetUserStats")

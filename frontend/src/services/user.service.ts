@@ -7,6 +7,7 @@ export interface UserStats {
   openProjects: number;
   favoriteArea: string | null;
   gradeProgression: { month: string; grade: string }[];
+  areaVisits: { areaId: number; areaName: string; count: number }[];
 }
 
 export interface UserListItem {

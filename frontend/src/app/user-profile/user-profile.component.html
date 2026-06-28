@@ -114,10 +114,35 @@
 
         <div class="stat-item">
           <span>Lieblingsgebiet</span>
-          <strong>{{ stats.favoriteArea }}</strong>
+          <strong>{{ stats.favoriteArea || '-' }}</strong>
         </div>
       </div>
     </aside>
+
+    @if (areaVisits.length > 0) {
+      <aside class="profile-card area-visits-card">
+        <h2>Meine Gebiete</h2>
+        <p class="eyebrow">Wie oft warst du wo?</p>
+
+        <div class="area-visits-list">
+          @for (visit of areaVisits; track visit.areaId) {
+            @let maxCount = areaVisits[0].count;
+            <div class="area-visit-row">
+              <a class="area-visit-name" [routerLink]="['/areas', visit.areaId]">
+                {{ visit.areaName }}
+              </a>
+              <div class="area-visit-bar-wrap">
+                <div
+                  class="area-visit-bar"
+                  [style.width.%]="(visit.count / maxCount) * 100">
+                </div>
+              </div>
+              <span class="area-visit-count">{{ visit.count }}×</span>
+            </div>
+          }
+        </div>
+      </aside>
+    }
 
   </div>
 
