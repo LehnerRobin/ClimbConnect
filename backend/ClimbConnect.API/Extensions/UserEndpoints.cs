@@ -146,6 +146,26 @@ public static class UserEndpoints
         .WithName("GetUserProfile")
         .WithTags("Users");
 
+        // Passwort ändern
+        app.MapPut("/api/users/me/password", async (ChangePasswordDto dto, ClaimsPrincipal user, AppDbContext db) =>
+        {
+            if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Results.Unauthorized();
+
+            var u = await db.Users.FindAsync(userId);
+            if (u is null) return Results.NotFound();
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, u.PasswordHash))
+                return Results.BadRequest(new { error = "Aktuelles Passwort ist falsch" });
+
+            u.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            await db.SaveChangesAsync();
+            return Results.NoContent();
+        })
+        .WithName("ChangePassword")
+        .WithTags("Users")
+        .RequireAuthorization("User");
+
         // Benutzerliste (öffentlich)
         app.MapGet("/api/users", async (AppDbContext db) =>
         {

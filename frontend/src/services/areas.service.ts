@@ -42,18 +42,23 @@ export interface ClimbingRoute {
 
 export interface RouteComment {
   id: number;
+  userId?: number;
   text: string;
   authorName?: string | null;
+  user?: { username?: string | null };
   photoUrl?: string | null;
   createdAtUtc?: string | null;
 }
 
 export interface AreaComment {
   id: number;
+  userId?: number;
   text: string;
   authorName?: string | null;
+  user?: { username?: string | null };
   authorPhotoUrl?: string | null;
   createdAt?: string | null;
+  createdAtUtc?: string | null;
 }
 
 export interface SafetyReport {
@@ -219,6 +224,10 @@ export class AreasService {
 
   addRouteComment(routeId: number, text: string, photoUrl?: string | null): Observable<any> {
     return this.http.post(`${this.apiUrl}/routes/${routeId}/comments`, { text, photoUrl });
+  }
+
+  deleteComment(commentId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/comments/${commentId}`);
   }
 
   getRouteReports(routeId: number): Observable<SafetyReport[]> {

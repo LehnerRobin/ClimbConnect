@@ -64,6 +64,40 @@
       </div>
     </section>
 
+    <section class="profile-card password-card">
+      <h2>Passwort ändern</h2>
+
+      <div class="form-group">
+        <label>Aktuelles Passwort</label>
+        <input type="password" [(ngModel)]="passwordForm.current" autocomplete="current-password">
+      </div>
+      <div class="form-group">
+        <label>Neues Passwort</label>
+        <input type="password" [(ngModel)]="passwordForm.newPw" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label>Neues Passwort bestätigen</label>
+        <input type="password" [(ngModel)]="passwordForm.confirm" autocomplete="new-password">
+      </div>
+
+      @if (passwordSuccess) {
+        <p class="success-msg">Passwort erfolgreich geändert!</p>
+      }
+      @if (passwordError) {
+        <p class="error-msg">{{ passwordError }}</p>
+      }
+
+      <div class="button-row">
+        <button
+          type="button"
+          class="save-button"
+          [disabled]="!passwordForm.current || !passwordForm.newPw || !passwordForm.confirm"
+          (click)="changePassword()">
+          Passwort ändern
+        </button>
+      </div>
+    </section>
+
     <aside class="profile-card statistics-card">
       <h2>Statistiken</h2>
 

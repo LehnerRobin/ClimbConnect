@@ -57,6 +57,11 @@ export class UserService {
     return this.http.get<PublicProfile>(`${this.apiUrl}/api/users/${userId}/profile?scale=${scale}`);
   }
 
+  /// Passwort ändern (PUT /api/users/me/password)
+  changePassword(currentPassword: string, newPassword: string) {
+    return this.http.put(`${this.apiUrl}/api/users/me/password`, { currentPassword, newPassword });
+  }
+
   /// Öffentliche User-Liste abrufen (GET /api/users)
   getUsers() {
     return this.http.get<UserListItem[]>(`${this.apiUrl}/api/users`);

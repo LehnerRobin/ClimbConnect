@@ -104,12 +104,21 @@
 
       @for (comment of comments; track comment.id) {
         <div class="comment-item">
-          <div class="comment-author">{{ comment.authorName }}</div>
+          <div class="comment-author">{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</div>
           <p>{{ comment.text }}</p>
           @if (comment.photoUrl) {
             <img [src]="comment.photoUrl" alt="Kommentar Foto" class="comment-photo">
           }
           <small>{{ comment.createdAtUtc | date:'dd.MM.yyyy' }}</small>
+          @if (isOwnComment(comment)) {
+            <button
+              type="button"
+              class="btn-delete-comment"
+              [disabled]="deletingCommentId === comment.id"
+              (click)="deleteComment(comment.id)">
+              {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
+            </button>
+          }
         </div>
       }
     </section>
