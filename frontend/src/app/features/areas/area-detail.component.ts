@@ -53,6 +53,7 @@ export class AreaDetailComponent implements OnInit {
   commentText = '';
   commentSending = false;
   commentError = '';
+  deletingCommentId: number | null = null;
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getUserId();
@@ -186,6 +187,22 @@ export class AreaDetailComponent implements OnInit {
         appointment.participantCount = Math.max((appointment.participantCount ?? 1) - 1, 0);
       },
       error: () => {}
+    });
+  }
+
+  isOwnComment(comment: { userId?: number }): boolean {
+    return !!this.currentUserId && comment.userId === this.currentUserId;
+  }
+
+  deleteComment(commentId: number): void {
+    if (!window.confirm('Kommentar wirklich löschen?')) return;
+    this.deletingCommentId = commentId;
+    this.areasService.deleteComment(commentId).subscribe({
+      next: () => {
+        this.comments = this.comments.filter(c => c.id !== commentId);
+        this.deletingCommentId = null;
+      },
+      error: () => { this.deletingCommentId = null; }
     });
   }
 

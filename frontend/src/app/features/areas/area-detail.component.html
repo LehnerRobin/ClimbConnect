@@ -301,18 +301,28 @@
                     @if (comment.authorPhotoUrl) {
                       <img [src]="comment.authorPhotoUrl" [alt]="comment.authorName || 'User'">
                     } @else {
-                      <span>{{ (comment.authorName || 'U').charAt(0) }}</span>
+                      <span>{{ (comment.user?.username || comment.authorName || 'U').charAt(0) }}</span>
                     }
 
                     <div>
-                      <strong>{{ comment.authorName || 'Unbekannter User' }}</strong>
-                      @if (comment.createdAt) {
-                        <small>{{ comment.createdAt | date:'dd.MM.yyyy' }}</small>
+                      <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
+                      @if (comment.createdAtUtc || comment.createdAt) {
+                        <small>{{ (comment.createdAtUtc || comment.createdAt) | date:'dd.MM.yyyy' }}</small>
                       }
                     </div>
                   </div>
 
                   <p>{{ comment.text }}</p>
+
+                  @if (isOwnComment(comment)) {
+                    <button
+                      type="button"
+                      class="btn-delete-comment"
+                      [disabled]="deletingCommentId === comment.id"
+                      (click)="deleteComment(comment.id)">
+                      {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
+                    </button>
+                  }
 
                 </article>
               }

@@ -41,6 +41,8 @@ export class RouteDetailComponent implements OnInit {
   reportSuccess = false;
 
   gradeScale = 'french';
+  currentUserId: number | null = null;
+  deletingCommentId: number | null = null;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -51,6 +53,7 @@ export class RouteDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentUserId = this.authService.getUserId();
     const id = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     if (!id) {
       this.errorMessage = 'Ungültige Routen-ID.';
@@ -105,6 +108,22 @@ export class RouteDetailComponent implements OnInit {
 
   get routeId(): number {
     return Number(this.activatedRoute.snapshot.paramMap.get('id'));
+  }
+
+  isOwnComment(comment: { userId?: number }): boolean {
+    return !!this.currentUserId && comment.userId === this.currentUserId;
+  }
+
+  deleteComment(commentId: number): void {
+    if (!window.confirm('Kommentar wirklich löschen?')) return;
+    this.deletingCommentId = commentId;
+    this.areasService.deleteComment(commentId).subscribe({
+      next: () => {
+        this.comments = this.comments.filter(c => c.id !== commentId);
+        this.deletingCommentId = null;
+      },
+      error: () => { this.deletingCommentId = null; }
+    });
   }
 
   severityClass(severity: string): string {
