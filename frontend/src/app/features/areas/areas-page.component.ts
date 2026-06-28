@@ -1,18 +1,23 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Area, AreasService } from '../../../services/areas.service';
+import { FavoritesService } from '../../../services/favorites.service';
 
 @Component({
   selector: 'app-areas-page',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, CommonModule],
   templateUrl: './areas-page.component.html',
   styleUrl: './areas-page.component.css',
 })
 export class AreasPageComponent implements OnInit {
 
   private areasService = inject(AreasService);
+  favoritesService = inject(FavoritesService);
+
+  showOnlyFavorites = false;
 
   areas: Area[] = [];
   loading = true;
@@ -79,5 +84,16 @@ export class AreasPageComponent implements OnInit {
 
   getInitial(area: Area): string {
     return area.name?.trim().charAt(0).toUpperCase() || '?';
+  }
+
+  get displayedAreas(): Area[] {
+    if (!this.showOnlyFavorites) return this.areas;
+    return this.areas.filter(a => this.favoritesService.isFavorite(a.id));
+  }
+
+  toggleFavorite(event: Event, areaId: number): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.favoritesService.toggle(areaId);
   }
 }
