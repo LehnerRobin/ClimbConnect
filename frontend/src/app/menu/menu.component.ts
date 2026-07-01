@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationStart, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -11,10 +11,20 @@ import { AuthService } from '../../services/auth.service';
 })
 export class MenuComponent {
 
+  /** Steuert das aufklappbare Mobile-Menü (Hamburger). */
+  mobileOpen = false;
+
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+    // Menü beim Navigieren automatisch schließen (z. B. nach Tap auf einen Link).
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.mobileOpen = false;
+      }
+    });
+  }
 
   get authenticated(): boolean {
     return this.authService.isAuthenticated();
@@ -24,8 +34,26 @@ export class MenuComponent {
     return this.authService.hasRole('admin');
   }
 
+  get username(): string | null {
+    return this.authService.getUsername();
+  }
+
+  /** Erstes Zeichen des Usernamens für den Avatar-Chip. */
+  get userInitial(): string {
+    return (this.username || '?').charAt(0).toUpperCase();
+  }
+
+  toggleMobileMenu(): void {
+    this.mobileOpen = !this.mobileOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.mobileOpen = false;
+  }
+
   logout(): void {
     this.authService.logout();
+    this.closeMobileMenu();
     this.router.navigate(['/login']);
   }
 }

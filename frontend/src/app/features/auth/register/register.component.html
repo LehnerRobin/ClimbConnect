@@ -2,6 +2,13 @@
 
   <div class="auth-card">
 
+    <svg class="auth-mark" viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="14" fill="var(--ink-950)"/>
+      <path d="M8 46 L24 20 L31 31 L38 16 L56 46 Z" fill="var(--amber-500)"/>
+      <path d="M14 46 Q24 32 30 33 T39 21" fill="none" stroke="var(--paper-50)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.2 6"/>
+      <circle cx="39" cy="21" r="3" fill="var(--paper-50)"/>
+    </svg>
+
     <div class="auth-header">
       <p class="eyebrow">ClimbConnect</p>
       <h1>Registrieren</h1>
@@ -58,7 +65,7 @@
         </div>
       }
 
-      <button type="submit" class="auth-button">
+      <button type="submit" class="btn btn-primary auth-button">
         Konto erstellen
       </button>
 
@@ -66,7 +73,7 @@
 
     <p class="auth-switch">
       Du hast schon ein Konto?
-      <a href="/login">Jetzt anmelden</a>
+      <a routerLink="/login">Jetzt anmelden</a>
     </p>
 
   </div>

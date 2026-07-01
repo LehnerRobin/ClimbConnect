@@ -64,4 +64,18 @@ export class PublicProfileComponent implements OnInit {
     };
     return map[status] ?? status;
   }
+
+  /** Farbklasse passend zur Begehungsart (gesendet / Projekt / Toprope). */
+  statusClass(status: string): string {
+    switch (status) {
+      case 'Rotpunkt':
+      case 'Flash':
+      case 'Onsight':
+        return 'status-sent';
+      case 'Projekt':
+        return 'status-project';
+      default:
+        return 'status-toprope';
+    }
+  }
 }

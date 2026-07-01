@@ -1,9 +1,15 @@
 <section class="home-page">
 
-  <section class="hero-section">
+  <section class="hero-section topo-surface">
+
+    <svg class="hero-ridge" viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true">
+      <path class="ridge-fill" d="M0 360 L0 230 L120 120 L195 190 L300 70 L370 150 L470 40 L560 140 L650 95 L760 220 L760 360 Z"/>
+      <path class="ridge-line" d="M30 250 Q160 175 220 178 T372 96 Q420 70 470 80 T 560 150" fill="none"/>
+      <circle class="ridge-summit" cx="470" cy="40" r="5"/>
+    </svg>
 
     <div class="hero-content">
-      <p class="eyebrow">ClimbConnect</p>
+      <p class="eyebrow">ClimbConnect · Oberösterreich</p>
 
       @if (username) {
         <h1>Willkommen zurück, {{ username }}!</h1>
@@ -16,18 +22,21 @@
       </p>
 
       <div class="hero-actions">
-        <a routerLink="/areas" class="primary-action">Gebiete erkunden</a>
+        <a routerLink="/areas" class="btn btn-primary">Gebiete erkunden</a>
 
         @if (isAuthenticated()) {
-          <a routerLink="/profile" class="secondary-action">Profil öffnen</a>
+          <a routerLink="/profile" class="btn btn-outline-light">Profil öffnen</a>
         } @else {
-          <a routerLink="/register" class="secondary-action">Registrieren</a>
+          <a routerLink="/register" class="btn btn-outline-light">Registrieren</a>
         }
       </div>
     </div>
 
     <div class="hero-card">
-      <span class="card-label">Nächste Session</span>
+      <span class="card-label">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3.5 9h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Nächste Session
+      </span>
 
       @if (loading) {
         <p class="card-title">Daten werden geladen...</p>
@@ -52,23 +61,26 @@
   @if (errorMessage) {
     <div class="message-box error-box">
       <p>{{ errorMessage }}</p>
-      <button type="button" (click)="loadHomeData()">Nochmal laden</button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="loadHomeData()">Nochmal laden</button>
     </div>
   }
 
   <section class="stats-grid" aria-label="Kurzstatistiken">
     <article class="stat-card">
-      <span>{{ areaCount }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20 L9 9 L12.5 14.5 L16 7 L21 20Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="tnum">{{ areaCount }}</span>
       <p>Gebiete</p>
     </article>
 
     <article class="stat-card">
-      <span>{{ routeCount }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21c3-5 2-9-1-11M19 3c-3 5-2 9 1 11M9 21c4-7 2-15 2-18M15 3c2 5 0 13-2 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span class="tnum">{{ routeCount }}</span>
       <p>Routen</p>
     </article>
 
     <article class="stat-card">
-      <span>{{ userCount }}</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="tnum">{{ userCount }}</span>
       <p>User</p>
     </article>
   </section>
@@ -133,7 +145,10 @@
         @for (appointment of upcomingAppointments; track appointment.id) {
           <a class="session-card" [routerLink]="['/areas', appointment.areaId]">
             <div>
-              <p class="session-date">{{ appointment.date | date:'dd.MM.yyyy, HH:mm' }}</p>
+              <p class="session-date">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3.5 9h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                {{ appointment.date | date:'dd.MM.yyyy, HH:mm' }}
+              </p>
               <h3>{{ appointment.title }}</h3>
               <p>
                 {{ appointment.areaName }}
@@ -143,7 +158,7 @@
               </p>
             </div>
 
-            <span>{{ appointment.participantCount ?? 0 }} Teilnehmer</span>
+            <span class="participant-count">{{ appointment.participantCount ?? 0 }} Teilnehmer</span>
           </a>
         }
       </div>

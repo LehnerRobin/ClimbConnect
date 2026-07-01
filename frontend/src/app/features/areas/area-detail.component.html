@@ -1,7 +1,8 @@
 <section class="area-detail">
 
   <a routerLink="/areas" class="back-link">
-    ← Zurück zu Areas
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Zurück zu Gebieten
   </a>
 
   @if (loading) {
@@ -35,7 +36,7 @@
       </div>
 
       <div class="area-hero-content">
-        <p class="eyebrow">Area Details</p>
+        <p class="eyebrow">Gebiet</p>
         <h1>{{ area.name }}</h1>
 
         <p class="hero-location">
@@ -47,10 +48,22 @@
         </p>
 
         <div class="hero-meta">
-          <span>📍 {{ area.location || 'Unbekannt' }}</span>
-          <span>🧗 {{ sectors.length }} Sektoren</span>
-          <span>📅 {{ appointments.length }} Termine</span>
-          <span>💬 {{ comments.length }} Kommentare</span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            {{ area.location || 'Unbekannt' }}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            {{ sectors.length }} Sektoren
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3.5 9h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {{ appointments.length }} Termine
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            {{ comments.length }} Kommentare
+          </span>
         </div>
       </div>
 
@@ -84,7 +97,9 @@
               <article class="sector-card" [class.expanded]="sector.expanded">
 
                 <button class="sector-header" type="button" (click)="toggleSector(sector)">
-                  <span class="sector-icon">▣</span>
+                  <span class="sector-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </span>
 
                   <span class="sector-text">
                     <strong>{{ sector.name }}</strong>
@@ -92,11 +107,8 @@
                   </span>
 
                   <span class="sector-action">
-                    @if (sector.expanded) {
-                      Einklappen ▲
-                    } @else {
-                      Routen anzeigen ▼
-                    }
+                    {{ sector.expanded ? 'Einklappen' : 'Routen anzeigen' }}
+                    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </span>
                 </button>
 
@@ -107,7 +119,7 @@
                     @if (sector.loadingRoutes) {
 
                       <div class="mini-loading">
-                        <div class="mini-spinner"></div>
+                        <div class="spinner spinner-sm"></div>
                         <span>Routen werden geladen...</span>
                       </div>
 
@@ -167,7 +179,7 @@
 
             @if (isLoggedIn()) {
               <a
-                class="create-appointment-button"
+                class="btn btn-primary btn-sm"
                 [routerLink]="['/areas', area.id, 'appointments', 'new']">
                 + Session
               </a>
@@ -192,10 +204,13 @@
             <div class="appointment-list">
               @for (appointment of appointments; track appointment.id) {
                 <article class="appointment-card">
-                  <div class="appointment-topline" (click)="toggleAppointmentDetail(appointment.id)" style="cursor:pointer">
+                  <button type="button" class="appointment-topline" (click)="toggleAppointmentDetail(appointment.id)">
                     <h3>{{ appointment.title }}</h3>
-                    <span>{{ appointment.participantCount ?? 0 }} TN {{ expandedAppointmentId === appointment.id ? '▲' : '▼' }}</span>
-                  </div>
+                    <span class="topline-meta">
+                      {{ appointment.participantCount ?? 0 }} TN
+                      <svg class="chevron" [class.rotated]="expandedAppointmentId === appointment.id" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                  </button>
 
                   <p class="appointment-date">
                     @if (appointment.date) {
@@ -282,7 +297,7 @@
             </div>
 
             @if (isLoggedIn()) {
-              <button type="button" class="comment-button" (click)="showCommentForm = !showCommentForm">
+              <button type="button" class="btn btn-secondary btn-sm" (click)="showCommentForm = !showCommentForm">
                 {{ showCommentForm ? 'Abbrechen' : 'Schreiben' }}
               </button>
             }
@@ -300,7 +315,7 @@
               }
               <button
                 type="button"
-                class="comment-submit"
+                class="btn btn-dark btn-sm comment-submit"
                 [disabled]="commentSending || !commentText.trim()"
                 (click)="submitComment()">
                 {{ commentSending ? 'Wird gespeichert...' : 'Absenden' }}

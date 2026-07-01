@@ -1,7 +1,7 @@
 .profile-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 32px 20px 64px;
 }
 
 .profile-header {
@@ -9,23 +9,12 @@
 }
 
 .profile-header h1 {
-  margin: 0;
-  font-size: 36px;
-  color: #111827;
+  font-size: clamp(1.9rem, 4vw, 2.4rem);
 }
 
 .profile-header p {
   margin: 8px 0 0;
-  color: #6b7280;
-}
-
-.eyebrow {
-  margin: 0 0 6px !important;
-  color: #f97316 !important;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 13px;
+  color: var(--ink-500);
 }
 
 .profile-layout {
@@ -36,29 +25,34 @@
 }
 
 .profile-card {
-  background: #ffffff;
-  border-radius: 18px;
+  background: var(--paper-0);
+  border-radius: var(--radius-xl);
   padding: 28px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--paper-200);
 }
 
 .profile-card h2 {
   margin: 0 0 22px;
-  font-size: 26px;
-  color: #111827;
+  font-size: 1.55rem;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
+  gap: 20px;
 }
 
-.form-field {
+.form-field,
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
+  margin-bottom: 0;
+}
+
+.form-group {
+  margin-bottom: 16px;
 }
 
 .full-width {
@@ -66,79 +60,98 @@
 }
 
 label {
-  color: #374151;
+  color: var(--ink-700);
   font-weight: 700;
+  font-size: 14px;
 }
 
 textarea,
 input,
 select {
   width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
+  border: 1px solid var(--paper-300);
+  border-radius: var(--radius-md);
   padding: 11px 12px;
-  background: #f9fafb;
-  color: #111827;
+  background: var(--paper-50);
+  color: var(--ink-950);
   outline: none;
+  font: inherit;
+}
+
+input:disabled {
+  color: var(--ink-500);
+  background: var(--paper-100);
+  cursor: not-allowed;
 }
 
 textarea {
-  min-height: 130px;
+  min-height: 110px;
   resize: vertical;
 }
 
 textarea:focus,
 input:focus,
 select:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.16);
-  background: #ffffff;
+  border-color: var(--amber-500);
+  box-shadow: 0 0 0 3px rgba(195, 121, 31, 0.16);
+  background: var(--paper-0);
 }
 
 .button-row {
-  margin-top: 24px;
+  margin-top: 22px;
   display: flex;
   justify-content: flex-end;
 }
 
-.save-button {
-  border: none;
-  border-radius: 10px;
-  padding: 11px 18px;
-  background: #f97316;
-  color: white;
-  font-weight: 800;
-  cursor: pointer;
+.success-msg {
+  margin: 14px 0 0;
+  color: var(--pine-600);
+  font-size: 13.5px;
+  font-weight: 700;
 }
 
-.save-button:hover {
-  background: #ea580c;
+.error-msg {
+  margin: 14px 0 0;
+  color: var(--brick-600);
+  font-size: 13.5px;
+  font-weight: 700;
 }
 
+/* ============ Stats sidebar ============ */
 .stat-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .stat-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border-radius: 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  border-radius: var(--radius-md);
+  background: var(--paper-50);
+  border: 1px solid var(--paper-200);
+}
+
+.stat-item svg {
+  width: 19px;
+  height: 19px;
+  flex: none;
+  color: var(--amber-500);
 }
 
 .stat-item span {
-  color: #6b7280;
-  font-weight: 700;
+  flex: 1;
+  color: var(--ink-600);
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .stat-item strong {
-  color: #111827;
+  color: var(--ink-950);
+  font-family: var(--font-display);
+  font-weight: 800;
 }
 
 @media (max-width: 900px) {
@@ -149,11 +162,7 @@ select:focus {
 
 @media (max-width: 600px) {
   .profile-page {
-    padding: 24px 18px;
-  }
-
-  .profile-header h1 {
-    font-size: 30px;
+    padding: 24px 16px 48px;
   }
 
   .profile-card {
@@ -168,16 +177,18 @@ select:focus {
     justify-content: stretch;
   }
 
-  .save-button {
+  .button-row .btn {
     width: 100%;
   }
 }
 
+/* ============ Begehungen ============ */
 .progress-card {
   margin-top: 1.5rem;
 }
 
-.progress-header {
+.progress-header,
+.appointments-header {
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -185,29 +196,34 @@ select:focus {
   margin-bottom: 18px;
 }
 
-.progress-header h2 {
+.progress-header h2,
+.appointments-header h2 {
   margin-bottom: 8px;
 }
 
-.progress-header p:last-child {
+.progress-header p:last-child,
+.appointments-header p:last-child {
   margin: 0;
-  color: #6b7280;
+  color: var(--ink-500);
   line-height: 1.5;
 }
 
-.progress-list {
+.progress-list,
+.appointment-list {
   display: grid;
   gap: 14px;
 }
 
-.progress-item {
+.progress-item,
+.appointment-item {
   padding: 18px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: #f8fafc;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-lg);
+  background: var(--paper-50);
 }
 
-.progress-main {
+.progress-main,
+.appointment-main {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -217,24 +233,40 @@ select:focus {
 .route-link {
   display: inline-block;
   margin-bottom: 8px;
-  font-size: 18px;
-  font-weight: 850;
-  color: #2563eb;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink-950);
   text-decoration: none;
 }
 
 .route-link:hover {
-  text-decoration: underline;
+  color: var(--amber-600);
 }
 
 .status-badge {
-  background: #eef2ff;
-  color: #3730a3;
-  padding: 7px 11px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 950;
+  padding: 6px 11px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
   white-space: nowrap;
+  background: var(--paper-100);
+  color: var(--ink-700);
+}
+
+.status-badge.status-sent {
+  background: var(--pine-100);
+  color: var(--pine-700);
+}
+
+.status-badge.status-project {
+  background: var(--amber-100);
+  color: var(--amber-700);
+}
+
+.status-badge.status-toprope {
+  background: var(--glacier-100);
+  color: var(--glacier-700);
 }
 
 .progress-meta {
@@ -245,18 +277,18 @@ select:focus {
 
 .progress-meta span,
 .progress-grade span {
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  color: #4b5563;
-  font-size: 13px;
-  font-weight: 800;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--paper-0);
+  border: 1px solid var(--paper-200);
+  color: var(--ink-600);
+  font-size: 12.5px;
+  font-weight: 600;
 }
 
 .progress-notes {
   margin: 14px 0 0;
-  color: #4b5563;
+  color: var(--ink-600);
   line-height: 1.55;
 }
 
@@ -267,7 +299,8 @@ select:focus {
   margin-top: 14px;
 }
 
-.progress-actions {
+.progress-actions,
+.appointment-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
@@ -275,129 +308,107 @@ select:focus {
 }
 
 .edit-progress-button,
-.delete-progress-button {
-  min-width: 120px;
-  border-radius: 11px;
-  padding: 10px 14px;
-  font-weight: 900;
+.delete-progress-button,
+.edit-appointment-button,
+.delete-appointment-button {
+  min-width: 110px;
+  border-radius: var(--radius-sm);
+  padding: 9px 14px;
+  font-weight: 700;
+  font-size: 13.5px;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
+  border: 1px solid transparent;
 }
 
-.edit-progress-button {
-  border: 1px solid #bfdbfe;
-  background: #eff6ff;
-  color: #1d4ed8;
+.edit-progress-button,
+.edit-appointment-button {
+  border-color: var(--amber-200);
+  background: var(--amber-100);
+  color: var(--amber-700);
 }
 
-.edit-progress-button:hover {
-  background: #dbeafe;
+.edit-progress-button:hover,
+.edit-appointment-button:hover {
+  background: var(--amber-200);
 }
 
-.delete-progress-button {
-  border: 1px solid #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
+.delete-progress-button,
+.delete-appointment-button {
+  border-color: rgba(161, 64, 45, 0.25);
+  background: var(--brick-100);
+  color: var(--brick-700);
 }
 
-.delete-progress-button:hover:not(:disabled) {
-  background: #fee2e2;
+.delete-progress-button:hover:not(:disabled),
+.delete-appointment-button:hover:not(:disabled) {
+  background: #ecccc0;
 }
 
-.delete-progress-button:disabled {
-  opacity: 0.65;
+.delete-progress-button:disabled,
+.delete-appointment-button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
 .empty-hint {
-  color: #9ca3af;
+  color: var(--ink-400);
   font-style: italic;
 }
 
 .empty-chart-hint {
-  color: #9ca3af;
+  color: var(--ink-400);
   font-style: italic;
   margin-top: 0.5rem;
 }
 
 @media (max-width: 700px) {
   .progress-main,
-  .progress-actions {
+  .progress-actions,
+  .appointment-main,
+  .appointment-actions {
     flex-direction: column;
   }
 
   .status-badge,
+  .appointment-date-badge,
   .edit-progress-button,
-  .delete-progress-button {
+  .delete-progress-button,
+  .edit-appointment-button,
+  .delete-appointment-button {
     width: 100%;
   }
 }
 
+/* ============ Termine ============ */
 .appointments-card {
   margin-top: 1.5rem;
 }
 
-.appointments-header {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
-  margin-bottom: 18px;
-}
-
-.appointments-header h2 {
-  margin-bottom: 8px;
-}
-
-.appointments-header p:last-child {
-  margin: 0;
-  color: #6b7280;
-  line-height: 1.5;
-}
-
-.appointment-list {
-  display: grid;
-  gap: 14px;
-}
-
-.appointment-item {
-  padding: 18px;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  background: #f8fafc;
-}
-
-.appointment-main {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  align-items: flex-start;
-}
-
 .appointment-main h3 {
   margin: 0 0 6px;
-  color: #111827;
-  font-size: 19px;
+  font-size: 1.18rem;
 }
 
 .area-link {
-  color: #c2410c;
-  font-weight: 850;
+  color: var(--amber-600);
+  font-weight: 700;
   text-decoration: none;
 }
 
 .area-link:hover {
-  color: #f97316;
+  color: var(--amber-500);
 }
 
 .appointment-date-badge {
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: #fff7ed;
-  color: #c2410c;
-  font-size: 12px;
-  font-weight: 950;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--amber-100);
+  color: var(--amber-700);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -409,73 +420,30 @@ select:focus {
 }
 
 .appointment-meta span {
-  padding: 7px 10px;
-  border-radius: 999px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  color: #4b5563;
-  font-size: 13px;
-  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--paper-0);
+  border: 1px solid var(--paper-200);
+  color: var(--ink-600);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.appointment-meta svg {
+  width: 14px;
+  height: 14px;
 }
 
 .appointment-description {
   margin: 14px 0 0;
-  color: #4b5563;
+  color: var(--ink-600);
   line-height: 1.55;
 }
 
-.appointment-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.edit-appointment-button,
-.delete-appointment-button {
-  min-width: 120px;
-  border-radius: 11px;
-  padding: 10px 14px;
-  font-weight: 900;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-}
-
-.edit-appointment-button {
-  border: 1px solid #fed7aa;
-  background: #fff7ed;
-  color: #c2410c;
-}
-
-.edit-appointment-button:hover {
-  background: #ffedd5;
-}
-
-.delete-appointment-button {
-  border: 1px solid #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
-}
-
-.delete-appointment-button:hover:not(:disabled) {
-  background: #fee2e2;
-}
-
-.delete-appointment-button:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-@media (max-width: 700px) {
-  .appointment-main,
-  .appointment-actions {
-    flex-direction: column;
-  }
-
-  .appointment-date-badge,
-  .edit-appointment-button,
-  .delete-appointment-button {
-    width: 100%;
-  }
+/* ============ Chart ============ */
+.chart-card canvas {
+  max-height: 320px;
 }

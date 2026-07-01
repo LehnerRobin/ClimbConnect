@@ -95,7 +95,12 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         this.stats.openProjects = s.openProjects ?? 0;
         this.stats.favoriteArea = s.favoriteArea ?? '-';
         this.gradeProgression   = s.gradeProgression ?? [];
-        this.buildChart();
+
+        // Das <canvas> existiert erst, nachdem @if(gradeProgression.length > 0)
+        // neu gerendert wurde. Wir warten daher einen Tick, bis Angular die
+        // Änderung verarbeitet und @ViewChild('gradeChart') aufgelöst hat,
+        // bevor wir versuchen den Chart darauf zu zeichnen.
+        setTimeout(() => this.buildChart());
       },
       error: () => {}
     });
@@ -204,6 +209,24 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Liefert eine CSS-Klasse passend zum Begehungs-Status, damit gesendete
+   * Routen (Rotpunkt/Flash/Onsight) optisch von offenen Projekten und
+   * reinen Toprope-Begehungen unterschieden werden können.
+   */
+  statusClass(status: string): string {
+    switch (status) {
+      case 'Rotpunkt':
+      case 'Flash':
+      case 'Onsight':
+        return 'status-sent';
+      case 'Projekt':
+        return 'status-project';
+      default:
+        return 'status-toprope';
+    }
+  }
+
   private getAppointmentTime(appointment: Appointment): number {
     if (!appointment.date) {
       return 0;
@@ -228,8 +251,12 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         datasets: [{
           label: 'Höchster Grad',
           data: this.gradeProgression.map((_, i) => i + 1),
-          borderColor: '#2563eb',
-          backgroundColor: 'rgba(37,99,235,0.1)',
+          borderColor: '#C3791F',
+          backgroundColor: 'rgba(195, 121, 31, 0.12)',
+          pointBackgroundColor: '#17150F',
+          pointBorderColor: '#F7F4EB',
+          pointBorderWidth: 2,
+          pointHoverRadius: 7,
           tension: 0.3,
           fill: true,
           pointRadius: 5
@@ -238,6 +265,11 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
       options: {
         plugins: {
           tooltip: {
+            backgroundColor: '#17150F',
+            titleFont: { family: "'IBM Plex Sans', sans-serif", weight: 600 },
+            bodyFont: { family: "'IBM Plex Mono', monospace" },
+            padding: 10,
+            cornerRadius: 8,
             callbacks: {
               label: (ctx) => this.gradeProgression[ctx.dataIndex]?.grade ?? ''
             }
@@ -245,8 +277,15 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
           legend: { display: false }
         },
         scales: {
+          x: {
+            grid: { color: 'rgba(23, 21, 15, 0.06)' },
+            ticks: { color: '#756C53', font: { family: "'IBM Plex Sans', sans-serif", size: 12 } }
+          },
           y: {
+            grid: { color: 'rgba(23, 21, 15, 0.06)' },
             ticks: {
+              color: '#756C53',
+              font: { family: "'IBM Plex Mono', monospace", size: 12 },
               callback: (_, i) => this.gradeProgression[i]?.grade ?? ''
             }
           }

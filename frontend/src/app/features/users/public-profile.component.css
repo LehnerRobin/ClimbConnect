@@ -1,76 +1,130 @@
 .public-profile-page {
   max-width: 700px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 32px 16px 64px;
+}
+
+.state-box {
+  padding: 40px;
+  text-align: center;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-sm);
+}
+
+.state-box .spinner {
+  margin: 0 auto 14px;
+}
+
+.error-state {
+  border-color: rgba(161, 64, 45, 0.25);
+  background: var(--brick-100);
 }
 
 .profile-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   margin-bottom: 2rem;
 }
 
-.eyebrow {
-  font-size: 0.85rem;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ink-950);
+  color: var(--amber-500);
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 800;
 }
 
 .member-since {
-  color: #6b7280;
+  color: var(--ink-500);
   margin-top: 0.25rem;
 }
 
 .ascents-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
+  background: var(--paper-0);
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  padding: 1.6rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .ascent-item {
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #f3f4f6;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--paper-100);
 }
 
-.ascent-item:last-child { border-bottom: none; }
+.ascent-item:last-child {
+  border-bottom: none;
+}
 
 .ascent-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.25rem;
+  gap: 12px;
+  margin-bottom: 0.3rem;
 }
 
 .ascent-route {
-  font-weight: 600;
-  color: #111827;
+  font-weight: 700;
+  color: var(--ink-950);
 }
 
 .ascent-grade {
-  background: #2563eb;
-  color: #fff;
-  padding: 0.2rem 0.6rem;
-  border-radius: 1rem;
-  font-size: 0.85rem;
-  font-weight: 700;
+  background: var(--ink-950);
+  color: var(--paper-0);
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .ascent-meta {
   display: flex;
-  gap: 1rem;
+  gap: 0.9rem;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--ink-500);
   flex-wrap: wrap;
 }
 
 .status-badge {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.1rem 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
+  padding: 0.12rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--paper-100);
+  color: var(--ink-700);
 }
 
-.empty-hint { color: #9ca3af; font-style: italic; }
-.loading-msg { color: #6b7280; }
-.error-msg { color: #ef4444; }
+.status-badge.status-sent    { background: var(--pine-100);    color: var(--pine-700); }
+.status-badge.status-project { background: var(--amber-100);   color: var(--amber-700); }
+.status-badge.status-toprope { background: var(--glacier-100); color: var(--glacier-700); }
+
+.empty-hint  { color: var(--ink-400); font-style: italic; }
+.loading-msg { margin: 0; color: var(--ink-500); }
+.error-msg   { margin: 0; color: var(--brick-600); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ascent-main,
+  .ascent-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

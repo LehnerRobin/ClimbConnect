@@ -1,6 +1,7 @@
 <div class="admin-page">
 
   <div class="admin-header">
+    <p class="eyebrow">ClimbConnect · Verwaltung</p>
     <h1>Admin-Bereich</h1>
     <p>Gebiete, Sektoren und Routen verwalten</p>
   </div>
@@ -10,10 +11,22 @@
 
   <!-- Tabs -->
   <div class="tabs">
-    <button [class.active]="activeTab === 'areas'"   (click)="setTab('areas')">Gebiete</button>
-    <button [class.active]="activeTab === 'sectors'" (click)="setTab('sectors')">Sektoren</button>
-    <button [class.active]="activeTab === 'routes'"  (click)="setTab('routes')">Routen</button>
-    <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">Reports</button>
+    <button [class.active]="activeTab === 'areas'"   (click)="setTab('areas')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20 L9 9 L12.5 14.5 L16 7 L21 20Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      Gebiete
+    </button>
+    <button [class.active]="activeTab === 'sectors'" (click)="setTab('sectors')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Sektoren
+    </button>
+    <button [class.active]="activeTab === 'routes'"  (click)="setTab('routes')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21c3-5 2-9-1-11M19 3c-3 5-2 9 1 11M9 21c4-7 2-15 2-18M15 3c2 5 0 13-2 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      Routen
+    </button>
+    <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      Reports
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════ -->
@@ -24,7 +37,7 @@
 
       <div class="section-toolbar">
         <h2>Klettergebiete</h2>
-        <button class="btn-add" (click)="startCreateArea()">+ Neues Gebiet</button>
+        <button class="btn btn-primary btn-sm" (click)="startCreateArea()">+ Neues Gebiet</button>
       </div>
 
       @if (showAreaForm) {
@@ -49,38 +62,40 @@
           </div>
 
           <div class="form-actions">
-            <button class="btn-cancel" (click)="showAreaForm = false">Abbrechen</button>
-            <button class="btn-save" (click)="saveArea()">Speichern</button>
+            <button class="btn btn-secondary btn-sm" (click)="showAreaForm = false">Abbrechen</button>
+            <button class="btn btn-dark btn-sm" (click)="saveArea()">Speichern</button>
           </div>
         </div>
       }
 
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Ort</th>
-            <th>Beschreibung</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (area of areas; track area.id) {
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
             <tr>
-              <td><strong>{{ area.name }}</strong></td>
-              <td>{{ area.location ?? '-' }}</td>
-              <td class="desc-cell">{{ area.description ?? '-' }}</td>
-              <td class="actions-cell">
-                <button class="btn-edit"   (click)="startEditArea(area)">Bearbeiten</button>
-                <button class="btn-delete" (click)="deleteArea(area)">Löschen</button>
-              </td>
+              <th>Name</th>
+              <th>Ort</th>
+              <th>Beschreibung</th>
+              <th></th>
             </tr>
-          }
-          @if (areas.length === 0) {
-            <tr><td colspan="4" class="empty-row">Noch keine Gebiete vorhanden.</td></tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (area of areas; track area.id) {
+              <tr>
+                <td><strong>{{ area.name }}</strong></td>
+                <td>{{ area.location ?? '-' }}</td>
+                <td class="desc-cell">{{ area.description ?? '-' }}</td>
+                <td class="actions-cell">
+                  <button class="btn-edit"   (click)="startEditArea(area)">Bearbeiten</button>
+                  <button class="btn-delete" (click)="deleteArea(area)">Löschen</button>
+                </td>
+              </tr>
+            }
+            @if (areas.length === 0) {
+              <tr><td colspan="4" class="empty-row">Noch keine Gebiete vorhanden.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
     </section>
   }
@@ -110,7 +125,7 @@
 
         <div class="section-toolbar sub-toolbar">
           <span>{{ selectedAreaForSectors.name }}</span>
-          <button class="btn-add" (click)="startCreateSector()">+ Neuer Sektor</button>
+          <button class="btn btn-primary btn-sm" (click)="startCreateSector()">+ Neuer Sektor</button>
         </div>
 
         @if (showSectorForm) {
@@ -127,36 +142,38 @@
             </div>
 
             <div class="form-actions">
-              <button class="btn-cancel" (click)="showSectorForm = false">Abbrechen</button>
-              <button class="btn-save"   (click)="saveSector()">Speichern</button>
+              <button class="btn btn-secondary btn-sm" (click)="showSectorForm = false">Abbrechen</button>
+              <button class="btn btn-dark btn-sm"   (click)="saveSector()">Speichern</button>
             </div>
           </div>
         }
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Beschreibung</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (sector of sectors; track sector.id) {
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
               <tr>
-                <td><strong>{{ sector.name }}</strong></td>
-                <td class="desc-cell">{{ sector.description ?? '-' }}</td>
-                <td class="actions-cell">
-                  <button class="btn-edit"   (click)="startEditSector(sector)">Bearbeiten</button>
-                  <button class="btn-delete" (click)="deleteSector(sector)">Löschen</button>
-                </td>
+                <th>Name</th>
+                <th>Beschreibung</th>
+                <th></th>
               </tr>
-            }
-            @if (sectors.length === 0) {
-              <tr><td colspan="3" class="empty-row">Keine Sektoren für dieses Gebiet.</td></tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (sector of sectors; track sector.id) {
+                <tr>
+                  <td><strong>{{ sector.name }}</strong></td>
+                  <td class="desc-cell">{{ sector.description ?? '-' }}</td>
+                  <td class="actions-cell">
+                    <button class="btn-edit"   (click)="startEditSector(sector)">Bearbeiten</button>
+                    <button class="btn-delete" (click)="deleteSector(sector)">Löschen</button>
+                  </td>
+                </tr>
+              }
+              @if (sectors.length === 0) {
+                <tr><td colspan="3" class="empty-row">Keine Sektoren für dieses Gebiet.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
 
       }
 
@@ -198,7 +215,7 @@
 
         <div class="section-toolbar sub-toolbar">
           <span>{{ selectedAreaForRoutes.name }} › {{ selectedSectorForRoutes.name }}</span>
-          <button class="btn-add" (click)="startCreateRoute()">+ Neue Route</button>
+          <button class="btn btn-primary btn-sm" (click)="startCreateRoute()">+ Neue Route</button>
         </div>
 
         @if (showRouteForm) {
@@ -234,40 +251,42 @@
             </div>
 
             <div class="form-actions">
-              <button class="btn-cancel" (click)="showRouteForm = false">Abbrechen</button>
-              <button class="btn-save"   (click)="saveRoute()">Speichern</button>
+              <button class="btn btn-secondary btn-sm" (click)="showRouteForm = false">Abbrechen</button>
+              <button class="btn btn-dark btn-sm"   (click)="saveRoute()">Speichern</button>
             </div>
           </div>
         }
 
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Grad</th>
-              <th>Stil</th>
-              <th>Länge</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (route of routes; track route.id) {
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
               <tr>
-                <td><strong>{{ route.name }}</strong></td>
-                <td><span class="grade-chip">{{ route.grade }}</span></td>
-                <td>{{ route.style ?? '-' }}</td>
-                <td>{{ route.lengthMeters ? route.lengthMeters + ' m' : '-' }}</td>
-                <td class="actions-cell">
-                  <button class="btn-edit"   (click)="startEditRoute(route)">Bearbeiten</button>
-                  <button class="btn-delete" (click)="deleteRoute(route)">Löschen</button>
-                </td>
+                <th>Name</th>
+                <th>Grad</th>
+                <th>Stil</th>
+                <th>Länge</th>
+                <th></th>
               </tr>
-            }
-            @if (routes.length === 0) {
-              <tr><td colspan="5" class="empty-row">Keine Routen in diesem Sektor.</td></tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (route of routes; track route.id) {
+                <tr>
+                  <td><strong>{{ route.name }}</strong></td>
+                  <td><span class="grade-chip">{{ route.grade }}</span></td>
+                  <td>{{ route.style ?? '-' }}</td>
+                  <td>{{ route.lengthMeters ? route.lengthMeters + ' m' : '-' }}</td>
+                  <td class="actions-cell">
+                    <button class="btn-edit"   (click)="startEditRoute(route)">Bearbeiten</button>
+                    <button class="btn-delete" (click)="deleteRoute(route)">Löschen</button>
+                  </td>
+                </tr>
+              }
+              @if (routes.length === 0) {
+                <tr><td colspan="5" class="empty-row">Keine Routen in diesem Sektor.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
 
       }
 
@@ -290,49 +309,55 @@
       @if (visibleReports.length === 0) {
         <p class="empty-hint">Keine offenen Reports vorhanden.</p>
       } @else {
-        @for (report of visibleReports; track report.id) {
-          <div class="report-item" [class]="severityClass(report.severity)" [class.resolved]="report.status === 'Resolved'">
-            <div class="report-header">
-              <span class="report-severity-badge">{{ report.severity }}</span>
-              <span class="report-status" [class.status-resolved]="report.status === 'Resolved'">
-                {{ report.status === 'Resolved' ? 'Erledigt' : 'Offen' }}
-              </span>
-              <small>{{ report.createdAtUtc | date:'dd.MM.yyyy HH:mm' }}</small>
+        <div class="report-grid">
+          @for (report of visibleReports; track report.id) {
+            <div class="report-item" [class]="severityClass(report.severity)" [class.resolved]="report.status === 'Resolved'">
+              <div class="report-header">
+                <span class="report-severity-badge">{{ report.severity }}</span>
+                <span class="report-status" [class.status-resolved]="report.status === 'Resolved'">
+                  {{ report.status === 'Resolved' ? 'Erledigt' : 'Offen' }}
+                </span>
+                <small>{{ report.createdAtUtc | date:'dd.MM.yyyy HH:mm' }}</small>
+              </div>
+
+              <p class="report-text">{{ report.text }}</p>
+
+              @if (report.user?.username) {
+                <small class="report-author">Gemeldet von: {{ report.user.username }}</small>
+              }
+
+              @if (report.routeId) {
+                <small>Route-ID: {{ report.routeId }}</small>
+              }
+              @if (report.areaId) {
+                <small>Gebiet-ID: {{ report.areaId }}</small>
+              }
+
+              @if (report.photoUrl) {
+                <img [src]="report.photoUrl" alt="Report Foto" class="report-photo">
+              }
+
+              @if (report.status !== 'Resolved') {
+                <button class="btn-resolve" (click)="resolveReport(report)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Als erledigt markieren
+                </button>
+              }
             </div>
-
-            <p class="report-text">{{ report.text }}</p>
-
-            @if (report.user?.username) {
-              <small class="report-author">Gemeldet von: {{ report.user.username }}</small>
-            }
-
-            @if (report.routeId) {
-              <small>Route-ID: {{ report.routeId }}</small>
-            }
-            @if (report.areaId) {
-              <small>Gebiet-ID: {{ report.areaId }}</small>
-            }
-
-            @if (report.photoUrl) {
-              <img [src]="report.photoUrl" alt="Report Foto" class="report-photo">
-            }
-
-            @if (report.status !== 'Resolved') {
-              <button class="btn-resolve" (click)="resolveReport(report)">
-                ✓ Als erledigt markieren
-              </button>
-            }
-          </div>
-        }
+          }
+        </div>
       }
     </section>
   }
 
   <!-- Gefahrenzone -->
   <details class="danger-zone">
-    <summary>⚠ Gefahrenzone</summary>
+    <summary>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      Gefahrenzone
+    </summary>
     <p>Setzt die gesamte Datenbank zurück und lädt Seed-Daten neu. <strong>Alle Einträge werden gelöscht.</strong></p>
-    <button class="btn-danger" (click)="initDatabase()">Datenbank zurücksetzen</button>
+    <button class="btn btn-danger" (click)="initDatabase()">Datenbank zurücksetzen</button>
   </details>
 
 </div>

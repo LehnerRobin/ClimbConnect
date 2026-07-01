@@ -1,72 +1,116 @@
 <nav class="menu">
 
-  <a routerLink="/home" class="logo">
-    ClimbConnect
-  </a>
+  <div class="menu-bar">
 
-  <div class="actions">
-
-    <a
-      routerLink="/home"
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: true }"
-      class="action-item">
-      Home
+    <a routerLink="/home" class="logo" (click)="closeMobileMenu()">
+      <svg class="logo-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="var(--ink-950)"/>
+        <path d="M8 46 L24 20 L31 31 L38 16 L56 46 Z" fill="var(--amber-500)"/>
+        <path d="M14 46 Q24 32 30 33 T39 21" fill="none" stroke="var(--paper-50)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.2 6"/>
+        <circle cx="39" cy="21" r="3" fill="var(--paper-50)"/>
+      </svg>
+      <span class="logo-text">Climb<strong>Connect</strong></span>
     </a>
 
-    <a
-      routerLink="/areas"
-      routerLinkActive="active"
-      class="action-item">
-      Areas
-    </a>
+    <button
+      type="button"
+      class="menu-toggle"
+      [class.is-open]="mobileOpen"
+      (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="mobileOpen"
+      aria-label="Menü öffnen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-    <a
-      routerLink="/climbers"
-      routerLinkActive="active"
-      class="action-item">
-      Kletterer
-    </a>
+    <div class="actions" [class.open]="mobileOpen">
 
-    @if (isAdmin) {
-      <a
-        routerLink="/admin"
-        routerLinkActive="active"
-        class="action-item">
-        Admin
-      </a>
-    }
+      <div class="nav-links">
 
-    <a
-      routerLink="/profile"
-      routerLinkActive="active"
-      class="action-item">
-      Profile
-    </a>
+        <a
+          routerLink="/home"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="action-item"
+          (click)="closeMobileMenu()">
+          Home
+        </a>
 
-    @if (!authenticated) {
+        <a
+          routerLink="/areas"
+          routerLinkActive="active"
+          class="action-item"
+          (click)="closeMobileMenu()">
+          Gebiete
+        </a>
 
-      <a
-        routerLink="/login"
-        routerLinkActive="active"
-        class="action-item">
-        Login
-      </a>
+        <a
+          routerLink="/climbers"
+          routerLinkActive="active"
+          class="action-item"
+          (click)="closeMobileMenu()">
+          Kletterer
+        </a>
 
-      <a
-        routerLink="/register"
-        routerLinkActive="active"
-        class="action-item">
-        Register
-      </a>
+        @if (isAdmin) {
+          <a
+            routerLink="/admin"
+            routerLinkActive="active"
+            class="action-item"
+            (click)="closeMobileMenu()">
+            Admin
+          </a>
+        }
 
-    } @else {
+        <a
+          routerLink="/profile"
+          routerLinkActive="active"
+          class="action-item"
+          (click)="closeMobileMenu()">
+          Profil
+        </a>
 
-      <button class="action-item logout-btn" type="button" (click)="logout()">
-        Logout
-      </button>
+      </div>
 
-    }
+      <div class="auth-area">
+
+        @if (!authenticated) {
+
+          <a
+            routerLink="/login"
+            routerLinkActive="active"
+            class="action-item"
+            (click)="closeMobileMenu()">
+            Anmelden
+          </a>
+
+          <a
+            routerLink="/register"
+            class="action-item cta-item"
+            (click)="closeMobileMenu()">
+            Registrieren
+          </a>
+
+        } @else {
+
+          <a routerLink="/profile" class="user-chip" (click)="closeMobileMenu()">
+            <span class="user-avatar">{{ userInitial }}</span>
+            <span class="user-name">{{ username }}</span>
+          </a>
+
+          <button class="logout-btn" type="button" (click)="logout()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Abmelden</span>
+          </button>
+
+        }
+
+      </div>
+
+    </div>
 
   </div>
 

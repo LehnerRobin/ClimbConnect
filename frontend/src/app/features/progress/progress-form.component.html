@@ -9,7 +9,8 @@
   </div>
 
   @if (loading) {
-    <div class="form-card">
+    <div class="form-card loading-card">
+      <div class="spinner"></div>
       <p class="loading-msg">Begehung wird geladen...</p>
     </div>
   } @else {
@@ -68,8 +69,8 @@
       }
 
       <div class="button-row">
-        <button type="button" class="btn-secondary" (click)="cancel()">Abbrechen</button>
-        <button type="button" class="btn-primary" (click)="submit()" [disabled]="submitting">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">Abbrechen</button>
+        <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="submitting">
           @if (submitting) {
             Wird gespeichert...
           } @else if (isEditMode) {

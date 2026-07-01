@@ -1,8 +1,8 @@
 <section class="areas-page">
 
-  <header class="areas-hero">
+  <header class="areas-hero topo-surface">
     <div class="hero-copy">
-      <p class="eyebrow">ClimbConnect Areas</p>
+      <p class="eyebrow">ClimbConnect · Gebiete</p>
       <h1>Klettergebiete entdecken</h1>
       <p>
         Finde passende Klettergebiete, sieh dir kommende Sessions an und öffne direkt die Details
@@ -12,17 +12,17 @@
 
     <div class="hero-stats">
       <div class="stat-card">
-        <strong>{{ areas.length }}</strong>
+        <strong class="tnum">{{ areas.length }}</strong>
         <span>Gebiete</span>
       </div>
 
       <div class="stat-card">
-        <strong>{{ totalVisitorsToday }}</strong>
+        <strong class="tnum">{{ totalVisitorsToday }}</strong>
         <span>Besucher heute</span>
       </div>
 
       <div class="stat-card">
-        <strong>{{ totalAppointmentsToday }}</strong>
+        <strong class="tnum">{{ totalAppointmentsToday }}</strong>
         <span>Termine heute</span>
       </div>
     </div>
@@ -30,7 +30,7 @@
 
   <form class="areas-toolbar" (ngSubmit)="searchAreas()">
     <div class="search-box">
-      <span aria-hidden="true">⌕</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       <input
         name="areaSearch"
         type="search"
@@ -39,23 +39,24 @@
         placeholder="Nach Gebiet, Ort oder Beschreibung suchen...">
     </div>
 
-    <button type="submit" class="toolbar-button primary-button">
+    <button type="submit" class="btn btn-primary">
       Suchen
     </button>
 
     @if (searchTerm) {
-      <button type="button" class="toolbar-button ghost-button" (click)="clearSearch()">
+      <button type="button" class="btn btn-secondary" (click)="clearSearch()">
         Zurücksetzen
       </button>
     }
 
     <button
       type="button"
-      class="toolbar-button"
-      [class.primary-button]="showOnlyFavorites"
-      [class.ghost-button]="!showOnlyFavorites"
+      class="btn favorite-toggle"
+      [class.btn-primary]="showOnlyFavorites"
+      [class.btn-secondary]="!showOnlyFavorites"
       (click)="showOnlyFavorites = !showOnlyFavorites">
-      {{ showOnlyFavorites ? '♥ Alle anzeigen' : '♡ Favoriten' }}
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-10-9.3C.5 7.8 2.3 4.5 5.8 4c2-.3 4 .6 6.2 3 2.2-2.4 4.2-3.3 6.2-3 3.5.5 5.3 3.8 3.8 7.2-2.5 4.7-10 9.3-10 9.3Z" [attr.fill]="showOnlyFavorites ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      {{ showOnlyFavorites ? 'Alle anzeigen' : 'Favoriten' }}
     </button>
   </form>
 
@@ -71,7 +72,7 @@
     <div class="error-box state-box">
       <h2>Ups, da ist etwas schiefgelaufen.</h2>
       <p>{{ errorMessage }}</p>
-      <button type="button" (click)="loadAreas()">Nochmal versuchen</button>
+      <button type="button" class="btn btn-dark" (click)="loadAreas()">Nochmal versuchen</button>
     </div>
 
   } @else if (areas.length === 0) {
@@ -79,7 +80,7 @@
     <div class="empty-box state-box">
       <h2>Keine Gebiete gefunden</h2>
       <p>Ändere deine Suche oder setze den Filter zurück.</p>
-      <button type="button" (click)="clearSearch()">Alle Gebiete anzeigen</button>
+      <button type="button" class="btn btn-dark" (click)="clearSearch()">Alle Gebiete anzeigen</button>
     </div>
 
   } @else {
@@ -90,14 +91,14 @@
         <h2>{{ showOnlyFavorites ? 'Meine Favoriten' : 'Verfügbare Klettergebiete' }}</h2>
       </div>
 
-      <span>{{ displayedAreas.length }} Treffer</span>
+      <span class="result-count tnum">{{ displayedAreas.length }} Treffer</span>
     </div>
 
     @if (showOnlyFavorites && displayedAreas.length === 0) {
       <div class="empty-box state-box">
         <h2>Keine Favoriten gespeichert</h2>
-        <p>Klicke auf das ♡-Symbol bei einem Gebiet um es zu speichern.</p>
-        <button type="button" (click)="showOnlyFavorites = false">Alle Gebiete anzeigen</button>
+        <p>Klicke auf das Herz-Symbol bei einem Gebiet, um es zu speichern.</p>
+        <button type="button" class="btn btn-dark" (click)="showOnlyFavorites = false">Alle Gebiete anzeigen</button>
       </div>
     } @else {
 
@@ -126,7 +127,7 @@
               [class.is-favorite]="favoritesService.isFavorite(area.id)"
               [title]="favoritesService.isFavorite(area.id) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'"
               (click)="toggleFavorite($event, area.id)">
-              {{ favoritesService.isFavorite(area.id) ? '♥' : '♡' }}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-10-9.3C.5 7.8 2.3 4.5 5.8 4c2-.3 4 .6 6.2 3 2.2-2.4 4.2-3.3 6.2-3 3.5.5 5.3 3.8 3.8 7.2-2.5 4.7-10 9.3-10 9.3Z" [attr.fill]="favoritesService.isFavorite(area.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
             </button>
           </div>
 

@@ -1,18 +1,26 @@
 <section class="public-profile-page">
 
   @if (loading) {
-    <p class="loading-msg">Profil wird geladen...</p>
+    <div class="state-box">
+      <div class="spinner"></div>
+      <p class="loading-msg">Profil wird geladen...</p>
+    </div>
   }
 
   @if (errorMessage) {
-    <p class="error-msg">{{ errorMessage }}</p>
+    <div class="state-box error-state">
+      <p class="error-msg">{{ errorMessage }}</p>
+    </div>
   }
 
   @if (!loading && profile) {
     <div class="profile-header">
-      <p class="eyebrow">ClimbConnect</p>
-      <h1>{{ profile.username }}</h1>
-      <p class="member-since">Mitglied seit {{ profile.memberSince }}</p>
+      <div class="profile-avatar">{{ profile.username.charAt(0).toUpperCase() }}</div>
+      <div>
+        <p class="eyebrow">ClimbConnect-Profil</p>
+        <h1>{{ profile.username }}</h1>
+        <p class="member-since">Mitglied seit {{ profile.memberSince }}</p>
+      </div>
     </div>
 
     <div class="ascents-card">
@@ -30,7 +38,7 @@
           </div>
           <div class="ascent-meta">
             <span>{{ ascent.area }}</span>
-            <span class="status-badge">{{ statusLabel(ascent.status) }}</span>
+            <span class="status-badge" [class]="statusClass(ascent.status)">{{ statusLabel(ascent.status) }}</span>
             <span>{{ ascent.date | date:'dd.MM.yyyy' }}</span>
           </div>
         </div>

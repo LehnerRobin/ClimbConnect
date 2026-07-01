@@ -1,3 +1,72 @@
+/* ============================================================
+   ClimbConnect — Design Tokens & Basisstile
+   Palette: warmes Kalkstein-Papier + Tinten-Schiefer + Bernstein
+   (Route-Markierung), Tanne (Erfolg) & Gletscher (Community/Info).
+   Typografie: Archivo (Display) / IBM Plex Sans (Text) /
+   IBM Plex Mono (Grade, Zahlen, Eyebrows — wirkt wie Vermessung).
+   ============================================================ */
+
+:root {
+  /* ---- Neutrals: warmes Papier (hell) ---- */
+  --paper-0: #FFFFFF;
+  --paper-50: #F7F4EB;
+  --paper-100: #EFE9D8;
+  --paper-200: #E3DBC2;
+  --paper-300: #D2C7A4;
+
+  /* ---- Neutrals: Tinte (dunkel, warmer Schiefer statt Blau-Schwarz) ---- */
+  --ink-950: #17150F;
+  --ink-900: #1F1C15;
+  --ink-800: #2B271D;
+  --ink-700: #423C2C;
+  --ink-600: #5B5440;
+  --ink-500: #756C53;
+  --ink-400: #948B6C;
+
+  /* ---- Akzent: Bernstein / Route-Markierung ---- */
+  --amber-100: #F3E2C2;
+  --amber-200: #EAC993;
+  --amber-500: #C3791F;
+  --amber-600: #A6611A;
+  --amber-700: #804B16;
+
+  /* ---- Tanne: Erfolg / gesendete Routen ---- */
+  --pine-100: #DCE8DA;
+  --pine-500: #3E6B49;
+  --pine-600: #2F5239;
+  --pine-700: #25402D;
+
+  /* ---- Gletscher: Community-Werte / Info ---- */
+  --glacier-100: #DCE9E9;
+  --glacier-500: #3B707A;
+  --glacier-600: #2C5A63;
+  --glacier-700: #21454C;
+
+  /* ---- Ziegel: Warnung / Löschen / hohe Severity ---- */
+  --brick-100: #F2DCD2;
+  --brick-500: #A1402D;
+  --brick-600: #863525;
+  --brick-700: #642A1F;
+
+  /* ---- Schatten (mit Tinte statt Standard-Grau eingefärbt) ---- */
+  --shadow-sm: 0 1px 2px rgba(23, 21, 15, 0.07), 0 1px 1px rgba(23, 21, 15, 0.04);
+  --shadow-md: 0 10px 24px rgba(23, 21, 15, 0.09), 0 2px 8px rgba(23, 21, 15, 0.05);
+  --shadow-lg: 0 24px 56px rgba(23, 21, 15, 0.16), 0 8px 20px rgba(23, 21, 15, 0.07);
+  --shadow-amber: 0 10px 22px rgba(166, 97, 26, 0.30);
+
+  /* ---- Radius ---- */
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* ---- Typografie ---- */
+  --font-display: 'Archivo', 'Arial Narrow', Arial, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -6,17 +75,34 @@ html,
 body {
   min-height: 100%;
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f8fafc;
-  color: #111827;
 }
 
 body {
   overflow-x: hidden;
+  background: var(--paper-50);
+  color: var(--ink-950);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 img {
   max-width: 100%;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--ink-950);
+}
+
+a {
+  color: var(--amber-500);
 }
 
 button,
@@ -24,4 +110,245 @@ input,
 textarea,
 select {
   font: inherit;
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--amber-200);
+  color: var(--ink-950);
+}
+
+/* Sichtbarer Fokusring für Tastatur-Navigation (Barrierefreiheit) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2.5px solid var(--amber-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--amber-500);
+}
+
+/* ---- Eyebrow: kleine Mono-Kennzeichnung über Überschriften ---- */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber-500);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn svg {
+  flex: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-primary {
+  background: var(--amber-500);
+  color: var(--paper-0);
+  box-shadow: var(--shadow-amber);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--amber-600);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--paper-0);
+  border-color: var(--paper-300);
+  color: var(--ink-900);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--paper-100);
+  border-color: var(--ink-400);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-600);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--paper-100);
+  color: var(--ink-950);
+}
+
+.btn-dark {
+  background: var(--ink-950);
+  color: var(--paper-0);
+}
+
+.btn-dark:hover:not(:disabled) {
+  background: var(--ink-800);
+}
+
+.btn-danger {
+  background: var(--brick-100);
+  border-color: rgba(161, 64, 45, 0.35);
+  color: var(--brick-700);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #ecccc0;
+}
+
+/* Für CTAs auf dunklen Hero-Flächen (heller Outline-Button) */
+.btn-outline-light {
+  background: transparent;
+  border-color: rgba(247, 244, 235, 0.38);
+  color: var(--paper-50);
+}
+
+.btn-outline-light:hover:not(:disabled) {
+  background: rgba(247, 244, 235, 0.12);
+  border-color: var(--paper-50);
+}
+
+.btn-sm {
+  min-height: 36px;
+  padding: 0 13px;
+  font-size: 13px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Badges / Tags (Mono — wirken wie gemessene Werte) ---- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.badge-amber  { background: var(--amber-100); color: var(--amber-700); }
+.badge-pine   { background: var(--pine-100);   color: var(--pine-700); }
+.badge-glacier{ background: var(--glacier-100);color: var(--glacier-700); }
+.badge-brick  { background: var(--brick-100);  color: var(--brick-700); }
+.badge-ink    { background: var(--ink-950);    color: var(--paper-50); }
+.badge-neutral{ background: var(--paper-100);  color: var(--ink-700); border: 1px solid var(--paper-200); }
+
+/* ---- Card-Grundgerüst ---- */
+.card {
+  background: var(--paper-0);
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ---- Spinner (global, von allen Komponenten wiederverwendet) ---- */
+@keyframes climb-spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 38px;
+  height: 38px;
+  border: 3.5px solid var(--paper-200);
+  border-top-color: var(--amber-500);
+  border-radius: 50%;
+  animation: climb-spin 0.75s linear infinite;
+}
+
+.spinner-sm {
+  width: 18px;
+  height: 18px;
+  border-width: 2.5px;
+}
+
+/* ---- Topo-Kontur-Textur: dezente Höhenlinien für dunkle Flächen ---- */
+.topo-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.topo-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    repeating-radial-gradient(circle at 12% 18%, transparent 0, transparent 17px, rgba(247, 244, 235, 0.05) 18px, rgba(247, 244, 235, 0.05) 19px),
+    repeating-radial-gradient(circle at 88% 82%, transparent 0, transparent 23px, rgba(247, 244, 235, 0.045) 24px, rgba(247, 244, 235, 0.045) 25px),
+    repeating-radial-gradient(circle at 95% 5%, transparent 0, transparent 13px, rgba(247, 244, 235, 0.04) 14px, rgba(247, 244, 235, 0.04) 15px);
+}
+
+.topo-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Tabellarische Ziffern für Statistiken/Zahlen ---- */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

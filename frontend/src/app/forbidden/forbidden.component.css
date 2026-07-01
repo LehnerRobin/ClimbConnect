@@ -1,10 +1,47 @@
-header h1 {
-  margin-bottom: 0.5em;
-  color: #d9534f;
+.forbidden-page {
+  min-height: calc(100vh - 73px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background:
+    radial-gradient(circle at 84% 18%, rgba(195, 121, 31, 0.07), transparent 38%),
+    var(--paper-50);
+}
+
+.forbidden-card {
+  max-width: 440px;
+  text-align: center;
+  padding: 44px 36px;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-lg);
+}
+
+.forbidden-icon {
+  display: block;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 18px;
+  color: var(--brick-500);
+}
+
+.eyebrow {
+  justify-content: center;
+  color: var(--brick-600);
+}
+
+.forbidden-page h1 {
+  font-size: 1.9rem;
 }
 
 .error-message {
-  font-size: 1.2em;
-  margin-bottom: 1.5em;
-  color: #555;
+  margin: 14px 0 0;
+  color: var(--ink-500);
+  line-height: 1.6;
+}
+
+.home-link {
+  margin-top: 26px;
 }

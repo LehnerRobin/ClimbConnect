@@ -58,7 +58,7 @@
       }
 
       <div class="button-row">
-        <button type="button" class="save-button" (click)="saveProfile()">
+        <button type="button" class="btn btn-primary" (click)="saveProfile()">
           Profil speichern
         </button>
       </div>
@@ -90,7 +90,7 @@
       <div class="button-row">
         <button
           type="button"
-          class="save-button"
+          class="btn btn-primary"
           [disabled]="!passwordForm.current || !passwordForm.newPw || !passwordForm.confirm"
           (click)="changePassword()">
           Passwort ändern
@@ -103,16 +103,19 @@
 
       <div class="stat-list">
         <div class="stat-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span>Begehungen</span>
-          <strong>{{ stats.totalAscents }}</strong>
+          <strong class="tnum">{{ stats.totalAscents }}</strong>
         </div>
 
         <div class="stat-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
           <span>Projekte</span>
-          <strong>{{ stats.openProjects }}</strong>
+          <strong class="tnum">{{ stats.openProjects }}</strong>
         </div>
 
         <div class="stat-item">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
           <span>Lieblingsgebiet</span>
           <strong>{{ stats.favoriteArea }}</strong>
         </div>
@@ -162,14 +165,14 @@
 
             <div class="appointment-meta">
               @if (appointment.areaLocation) {
-                <span>📍 {{ appointment.areaLocation }}</span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>{{ appointment.areaLocation }}</span>
               }
 
               @if (appointment.meetingPoint) {
-                <span>🤝 {{ appointment.meetingPoint }}</span>
+                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3.5 9h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ appointment.meetingPoint }}</span>
               }
 
-              <span>👥 {{ appointment.minParticipants ?? '-' }}–{{ appointment.maxParticipants ?? '-' }} TN</span>
+              <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ appointment.minParticipants ?? '-' }}–{{ appointment.maxParticipants ?? '-' }} TN</span>
             </div>
 
             @if (appointment.description) {
@@ -246,7 +249,7 @@
                 </div>
               </div>
 
-              <span class="status-badge">{{ p.status }}</span>
+              <span class="status-badge" [class]="statusClass(p.status)">{{ p.status }}</span>
             </div>
 
             @if (p.notes) {

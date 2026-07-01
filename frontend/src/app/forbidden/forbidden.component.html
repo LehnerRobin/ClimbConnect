@@ -1,10 +1,19 @@
-<div class="section">
-  <header>
-    <h1>403 - Forbidden</h1>
-  </header>
+<section class="forbidden-page">
+  <div class="forbidden-card">
 
-  <main>
-    <p class="error-message">You do not have permission to access this page.</p>
-    <a class="home-link" routerLink="/">Go to Home</a>
-  </main>
-</div>
+    <svg class="forbidden-icon" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="30" fill="none" stroke="currentColor" stroke-width="3"/>
+      <path d="M13 13 51 51" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+
+    <p class="eyebrow">Fehler 403</p>
+    <h1>Hier geht's nicht weiter</h1>
+    <p class="error-message">
+      Diese Seite ist nur für Admins zugänglich. Wenn du glaubst, dass das ein Irrtum ist,
+      melde dich mit einem Admin-Konto an.
+    </p>
+
+    <a class="btn btn-primary home-link" routerLink="/">Zurück zur Startseite</a>
+
+  </div>
+</section>

@@ -1,188 +1,280 @@
 .route-detail-page {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 32px 16px 64px;
 }
 
+.state-box {
+  padding: 40px;
+  text-align: center;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-sm);
+}
+
+.state-box .spinner {
+  margin: 0 auto 14px;
+}
+
+.error-state {
+  border-color: rgba(161, 64, 45, 0.25);
+  background: var(--brick-100);
+}
+
+/* ============ Header ============ */
 .route-header {
-  margin-bottom: 2rem;
+  margin-bottom: 28px;
 }
 
-.eyebrow {
-  font-size: 0.85rem;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.25rem;
+.route-header h1 {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
 }
 
 .route-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.75rem 0;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+.grade-badge,
+.community-grade,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .grade-badge {
-  background: #2563eb;
-  color: #fff;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-weight: 700;
-  font-size: 1rem;
+  background: var(--ink-950);
+  color: var(--paper-0);
+  font-size: 14px;
 }
 
 .community-grade {
-  background: #f59e0b;
-  color: #fff;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.9rem;
+  background: var(--glacier-100);
+  color: var(--glacier-700);
 }
 
 .tag {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.9rem;
+  background: var(--paper-100);
+  color: var(--ink-700);
+  border: 1px solid var(--paper-200);
 }
 
 .route-description {
-  color: #4b5563;
-  line-height: 1.6;
-  margin-top: 0.75rem;
+  max-width: 65ch;
+  margin: 16px 0 0;
+  color: var(--ink-600);
+  line-height: 1.65;
 }
 
+.btn-log-ascent {
+  margin-top: 20px;
+}
+
+/* ============ Section cards ============ */
 .section-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 24px;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
-/* Safety Reports */
+.section-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1.3rem;
+}
+
+.section-header h2 svg {
+  width: 21px;
+  height: 21px;
+  color: var(--amber-500);
+  flex: none;
+}
+
+/* ============ Forms (report + comment) ============ */
+.report-form,
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--paper-300);
+}
+
+textarea,
+select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--paper-300);
+  border-radius: var(--radius-md);
+  background: var(--paper-50);
+  color: var(--ink-950);
+  font-family: inherit;
+  font-size: 14.5px;
+  resize: vertical;
+}
+
+textarea {
+  min-height: 90px;
+}
+
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--amber-500);
+  box-shadow: 0 0 0 3px rgba(195, 121, 31, 0.16);
+  background: var(--paper-0);
+}
+
+.file-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
+.file-field input {
+  font-size: 13.5px;
+  color: var(--ink-600);
+}
+
+.photo-preview {
+  max-height: 150px;
+  border-radius: var(--radius-md);
+}
+
+.report-submit,
+.comment-submit {
+  align-self: flex-start;
+}
+
+/* ============ Safety reports ============ */
 .report-item {
-  border-left: 4px solid #d1d5db;
-  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--paper-300);
+  padding: 0.85rem 1rem;
   margin-bottom: 0.75rem;
-  border-radius: 0.25rem;
-  background: #f9fafb;
+  border-radius: var(--radius-sm);
+  background: var(--paper-50);
 }
 
-.severity-high   { border-color: #ef4444; background: #fef2f2; }
-.severity-medium { border-color: #f59e0b; background: #fffbeb; }
-.severity-low    { border-color: #10b981; background: #f0fdf4; }
+.report-item p {
+  margin: 0.3rem 0;
+  color: var(--ink-700);
+  line-height: 1.5;
+}
+
+.severity-high   { border-color: var(--brick-500); background: var(--brick-100); }
+.severity-medium { border-color: var(--amber-500); background: var(--amber-100); }
+.severity-low    { border-color: var(--pine-500);  background: var(--pine-100); }
 
 .report-severity-badge {
-  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: 0.25rem;
-  color: #6b7280;
+  color: var(--ink-600);
+}
+
+.report-item small {
+  color: var(--ink-500);
+  font-size: 12.5px;
 }
 
 .report-photo,
 .comment-photo {
   max-width: 100%;
   max-height: 300px;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   margin-top: 0.5rem;
   cursor: pointer;
 }
 
-/* Kommentare */
+/* ============ Comments ============ */
 .comment-item {
-  border-bottom: 1px solid #f3f4f6;
-  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--paper-100);
+  padding: 0.85rem 0;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
 }
 
 .comment-author {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #374151;
-  margin-bottom: 0.25rem;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-800);
+  margin-bottom: 0.3rem;
 }
 
-/* Formulare */
-.comment-form,
-.report-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-textarea {
-  width: 100%;
-  min-height: 80px;
-  padding: 0.6rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-family: inherit;
-  font-size: 0.95rem;
-  resize: vertical;
-  box-sizing: border-box;
-}
-
-select {
-  padding: 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-}
-
-.photo-preview {
-  max-height: 150px;
-  border-radius: 0.5rem;
-}
-
-.btn-primary {
-  padding: 0.6rem 1.25rem;
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.95rem;
-  align-self: flex-start;
-}
-
-.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-
-.btn-outline {
-  padding: 0.4rem 0.9rem;
-  background: transparent;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-
-.btn-log-ascent {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.55rem 1.1rem;
-  background: #16a34a;
-  color: #fff;
-  border-radius: 0.5rem;
+.comment-author a {
+  color: var(--ink-950);
   text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
 }
 
-.empty-hint { color: #9ca3af; font-style: italic; }
-.loading-msg { color: #6b7280; }
-.error-msg { color: #ef4444; }
-.success-msg { color: #10b981; }
+.comment-author a:hover {
+  color: var(--amber-600);
+}
+
+.comment-item > p {
+  margin: 0;
+  color: var(--ink-600);
+  line-height: 1.55;
+}
+
+.comment-item > small {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-500);
+  font-size: 12.5px;
+}
+
+.btn-delete-comment {
+  margin-top: 0.6rem;
+  padding: 6px 12px;
+  background: var(--brick-100);
+  color: var(--brick-700);
+  border: 1px solid rgba(161, 64, 45, 0.25);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.btn-delete-comment:hover:not(:disabled) {
+  background: #ecccc0;
+}
+
+.btn-delete-comment:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============ Misc states ============ */
+.empty-hint   { color: var(--ink-400); font-style: italic; }
+.loading-msg  { margin: 0; color: var(--ink-500); }
+.error-msg    { color: var(--brick-600); font-size: 0.9rem; font-weight: 600; }
+.success-msg  { color: var(--pine-600); font-size: 0.9rem; font-weight: 600; }

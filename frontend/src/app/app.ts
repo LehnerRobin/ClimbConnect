@@ -10,4 +10,5 @@ import { MenuComponent } from './menu/menu.component';
 })
 export class App {
   protected readonly title = signal('demosypui');
+  protected readonly currentYear = new Date().getFullYear();
 }

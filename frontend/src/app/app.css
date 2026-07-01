@@ -2,7 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f8fafc;
+  background: var(--paper-50);
 }
 
 .app-main {
@@ -12,22 +12,32 @@
 
 .app-footer {
   margin-top: auto;
-  padding: 16px 32px;
-  border-top: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #6b7280;
-  font-size: 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 20px 32px;
+  border-top: 1px solid var(--paper-200);
+  background: var(--paper-0);
+  color: var(--ink-500);
+  font-size: 13.5px;
+}
+
+.app-footer-brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--ink-800);
+  letter-spacing: -0.01em;
 }
 
 .app-footer span {
-  display: block;
   max-width: 1200px;
-  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
   .app-footer {
-    padding: 14px 20px;
+    padding: 16px 20px;
+    flex-direction: column;
+    gap: 2px;
     text-align: center;
   }
 }
