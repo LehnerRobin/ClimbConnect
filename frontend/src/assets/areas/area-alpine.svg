@@ -1,0 +1,127 @@
+<svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="a1-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#07090F"/>
+      <stop offset="52%"  stop-color="#151009"/>
+      <stop offset="78%"  stop-color="#2A1808"/>
+      <stop offset="100%" stop-color="#5A3010"/>
+    </linearGradient>
+    <linearGradient id="a1-rock-lit" x1="0.25" y1="0" x2="0.85" y2="1">
+      <stop offset="0%"   stop-color="#D4C9A8"/>
+      <stop offset="45%"  stop-color="#9A8865"/>
+      <stop offset="100%" stop-color="#3A2A14"/>
+    </linearGradient>
+    <linearGradient id="a1-rock-shadow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#1C1407"/>
+      <stop offset="100%" stop-color="#3A2A14"/>
+    </linearGradient>
+    <linearGradient id="a1-lake" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2C4055"/>
+      <stop offset="100%" stop-color="#0E1A24"/>
+    </linearGradient>
+    <radialGradient id="a1-glow" cx="0.48" cy="0.76" r="0.58">
+      <stop offset="0%"   stop-color="#C8761E" stop-opacity="0.5"/>
+      <stop offset="55%"  stop-color="#8B4A08" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#C8761E" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="450" fill="url(#a1-sky)"/>
+
+  <!-- Horizon amber glow -->
+  <rect width="800" height="450" fill="url(#a1-glow)"/>
+
+  <!-- Stars -->
+  <circle cx="95"  cy="34"  r="1.2" fill="white" opacity="0.75"/>
+  <circle cx="183" cy="56"  r="0.9" fill="white" opacity="0.6"/>
+  <circle cx="292" cy="27"  r="1.4" fill="white" opacity="0.82"/>
+  <circle cx="512" cy="43"  r="1.0" fill="white" opacity="0.65"/>
+  <circle cx="626" cy="21"  r="1.3" fill="white" opacity="0.7"/>
+  <circle cx="716" cy="51"  r="1.0" fill="white" opacity="0.55"/>
+  <circle cx="757" cy="29"  r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="54"  cy="82"  r="0.8" fill="white" opacity="0.45"/>
+  <circle cx="458" cy="17"  r="0.9" fill="white" opacity="0.7"/>
+  <circle cx="148" cy="44"  r="0.7" fill="white" opacity="0.5"/>
+  <circle cx="680" cy="38"  r="1.1" fill="white" opacity="0.6"/>
+
+  <!-- Far background mountains (very dark) -->
+  <path d="M0 295 L70 240 L130 267 L195 215 L258 252 L322 200 L388 235 L442 195 L507 232 L572 200 L637 238 L693 205 L752 236 L800 216 L800 450 L0 450Z"
+        fill="#0E100A"/>
+
+  <!-- Main peak – shadow (left) face -->
+  <path d="M382 52 L268 288 L312 274 L332 256 L362 288 L382 52Z"
+        fill="url(#a1-rock-shadow)"/>
+
+  <!-- Main peak – lit (right) face -->
+  <path d="M382 52 L494 288 L452 274 L432 256 L402 288 L382 52Z"
+        fill="url(#a1-rock-lit)"/>
+
+  <!-- Amber sunset glow on lit face -->
+  <path d="M382 52 L494 288 L452 274 L382 52Z" fill="#C8761E" opacity="0.18"/>
+
+  <!-- Secondary rock features -->
+  <path d="M382 52 L312 274 L332 256 L348 282 L362 262 L372 288 L382 52Z"
+        fill="#241A0B" opacity="0.65"/>
+
+  <!-- Snow patches -->
+  <path d="M382 52 L368 87 L382 76 L398 92 L382 52Z" fill="white" opacity="0.95"/>
+  <path d="M363 128 L372 113 L383 130 L376 145 L363 128Z" fill="white" opacity="0.75"/>
+  <path d="M396 106 L405 95 L414 113 L405 124 L396 106Z" fill="white" opacity="0.65"/>
+  <path d="M348 170 L357 158 L366 170 L360 183 L348 170Z" fill="white" opacity="0.5"/>
+  <path d="M418 148 L425 138 L433 150 L428 160 L418 148Z" fill="white" opacity="0.45"/>
+
+  <!-- Mid-ground mountains -->
+  <path d="M0 335 L92 278 L168 312 L244 264 L322 307 L398 296 L468 270 L544 306 L618 278 L682 308 L748 280 L800 302 L800 450 L0 450Z"
+        fill="#161208"/>
+
+  <!-- Pine trees left -->
+  <g fill="#0C1A0D">
+    <path d="M56 336 L70 304 L84 336Z"/>
+    <path d="M59 325 L70 294 L81 325Z"/>
+    <path d="M82 340 L95 307 L108 340Z"/>
+    <path d="M85 330 L95 297 L105 330Z"/>
+    <path d="M26 343 L38 312 L50 343Z"/>
+    <path d="M29 332 L38 301 L47 332Z"/>
+    <path d="M107 337 L118 308 L129 337Z"/>
+    <path d="M110 327 L118 298 L126 327Z"/>
+  </g>
+
+  <!-- Pine trees right -->
+  <g fill="#0C1A0D">
+    <path d="M688 332 L700 300 L712 332Z"/>
+    <path d="M691 321 L700 290 L709 321Z"/>
+    <path d="M712 336 L723 306 L734 336Z"/>
+    <path d="M715 326 L723 296 L731 326Z"/>
+    <path d="M732 333 L742 304 L752 333Z"/>
+    <path d="M668 337 L677 308 L686 337Z"/>
+    <path d="M671 327 L677 297 L683 327Z"/>
+  </g>
+
+  <!-- Lake -->
+  <path d="M128 392 Q400 374 672 390 L682 422 Q400 440 118 424Z"
+        fill="url(#a1-lake)" opacity="0.95"/>
+
+  <!-- Lake peak reflection -->
+  <path d="M348 395 L362 422 L376 406 L390 426 L402 410 L414 426 L428 406 L442 422 L456 395"
+        fill="none" stroke="#4A6878" stroke-width="1" opacity="0.45"/>
+
+  <!-- Water shimmer -->
+  <line x1="200" y1="401" x2="292" y2="404" stroke="white" stroke-width="0.7" opacity="0.22"/>
+  <line x1="512" y1="398" x2="604" y2="401" stroke="white" stroke-width="0.7" opacity="0.22"/>
+  <line x1="338" y1="416" x2="462" y2="419" stroke="white" stroke-width="0.9" opacity="0.18"/>
+
+  <!-- Topo contour lines on peak (subtle amber) -->
+  <path d="M335 221 Q347 215 358 218 Q368 221 378 217 Q386 214 394 217"
+        fill="none" stroke="#C8761E" stroke-width="0.8" opacity="0.38"/>
+  <path d="M314 253 Q327 247 340 250 Q354 253 368 248 Q381 244 393 248 Q403 251 413 247"
+        fill="none" stroke="#C8761E" stroke-width="0.8" opacity="0.35"/>
+
+  <!-- Summit marker -->
+  <circle cx="382" cy="52" r="5.5" fill="#C8761E"/>
+  <circle cx="382" cy="52" r="2.5" fill="white"/>
+
+  <!-- Foreground ground -->
+  <path d="M0 400 L62 388 L152 396 L282 382 L402 390 L522 380 L652 390 L752 384 L800 392 L800 450 L0 450Z"
+        fill="#090D07"/>
+</svg>

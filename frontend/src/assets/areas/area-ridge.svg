@@ -1,0 +1,115 @@
+<svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="a3-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#08152A"/>
+      <stop offset="48%"  stop-color="#16305A"/>
+      <stop offset="100%" stop-color="#264870"/>
+    </linearGradient>
+    <linearGradient id="a3-ridge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#3C3C3C"/>
+      <stop offset="100%" stop-color="#18150E"/>
+    </linearGradient>
+    <linearGradient id="a3-far" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#2A3D52"/>
+      <stop offset="100%" stop-color="#1A2A38"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="450" fill="url(#a3-sky)"/>
+
+  <!-- Atmospheric cirrus clouds -->
+  <path d="M0 70 Q200 55 400 68 Q600 55 800 70 L800 90 Q600 78 400 88 Q200 78 0 90Z"
+        fill="white" opacity="0.06"/>
+  <path d="M100 42 Q300 30 480 44"
+        fill="none" stroke="white" stroke-width="8" opacity="0.04" stroke-linecap="round"/>
+
+  <!-- Stars -->
+  <circle cx="82"  cy="28"  r="1.2" fill="white" opacity="0.7"/>
+  <circle cx="168" cy="48"  r="0.9" fill="white" opacity="0.55"/>
+  <circle cx="302" cy="22"  r="1.4" fill="white" opacity="0.75"/>
+  <circle cx="464" cy="38"  r="0.8" fill="white" opacity="0.6"/>
+  <circle cx="588" cy="18"  r="1.2" fill="white" opacity="0.7"/>
+  <circle cx="692" cy="44"  r="1.0" fill="white" opacity="0.55"/>
+  <circle cx="742" cy="28"  r="1.3" fill="white" opacity="0.68"/>
+  <circle cx="35"  cy="58"  r="0.7" fill="white" opacity="0.45"/>
+  <circle cx="512" cy="14"  r="0.9" fill="white" opacity="0.65"/>
+
+  <!-- Very far mountains (misty, light blue-gray) -->
+  <path d="M0 282 L102 228 L182 262 L262 208 L362 247 L462 198 L562 236 L662 204 L762 242 L800 218 L800 450 L0 450Z"
+        fill="url(#a3-far)" opacity="0.65"/>
+
+  <!-- Mid mountains (darker) -->
+  <path d="M0 312 L82 265 L162 297 L252 250 L342 282 L432 262 L522 292 L612 257 L702 288 L800 268 L800 450 L0 450Z"
+        fill="#1E2C3A" opacity="0.9"/>
+
+  <!-- Glaciers / snowfields mid-ground -->
+  <path d="M198 297 Q278 286 350 302 Q372 313 356 333 Q330 347 280 342 Q230 337 210 322Z"
+        fill="#C0D8E8" opacity="0.68"/>
+  <path d="M478 282 Q538 271 600 287 Q617 297 602 318 Q577 328 532 322 Q496 314 478 300Z"
+        fill="#C0D8E8" opacity="0.58"/>
+  <!-- Crevasse lines on glacier -->
+  <path d="M230 312 L260 315 L280 310" fill="none" stroke="#8AB0C8" stroke-width="1" opacity="0.5"/>
+  <path d="M312 320 L335 323 L355 318" fill="none" stroke="#8AB0C8" stroke-width="1" opacity="0.5"/>
+  <path d="M498 302 L522 305 L542 300" fill="none" stroke="#8AB0C8" stroke-width="0.8" opacity="0.45"/>
+
+  <!-- Main ridge -->
+  <path d="M0 352 L62 295 L102 322 L152 275 L212 307 L262 260 L322 296 L382 244 L452 280 L522 240 L582 268 L642 228 L702 262 L762 226 L800 250 L800 450 L0 450Z"
+        fill="url(#a3-ridge)"/>
+
+  <!-- Snow patches on peaks -->
+  <!-- Peak 1 – highest, at x=642 -->
+  <path d="M642 228 L629 254 L638 248 L644 265 L652 248 L660 256 L650 250 L642 228Z"
+        fill="white" opacity="0.92"/>
+  <!-- Peak 2 at x=522 -->
+  <path d="M522 240 L511 265 L520 258 L526 274 L532 257 L540 266 L530 259 L522 240Z"
+        fill="white" opacity="0.86"/>
+  <!-- Peak 3 at x=382 -->
+  <path d="M382 244 L372 267 L379 261 L385 274 L391 260 L398 269 L387 262 L382 244Z"
+        fill="white" opacity="0.8"/>
+  <!-- Peak 4 at x=762 -->
+  <path d="M762 226 L752 250 L760 244 L765 257 L772 243 L780 252 L768 245 L762 226Z"
+        fill="white" opacity="0.75"/>
+  <!-- Ridge snow between peaks -->
+  <path d="M562 264 Q582 256 604 262 Q583 272 562 270Z" fill="white" opacity="0.58"/>
+  <path d="M682 243 Q702 237 722 244 Q702 254 682 252Z" fill="white" opacity="0.56"/>
+  <path d="M432 274 Q452 267 472 274 Q452 281 432 280Z" fill="white" opacity="0.52"/>
+  <path d="M312 279 Q332 273 352 279 Q332 287 312 285Z" fill="white" opacity="0.48"/>
+  <path d="M138 285 Q155 278 172 286 Q155 293 138 291Z" fill="white" opacity="0.44"/>
+
+  <!-- Dark rock features / couloirs -->
+  <path d="M352 276 Q360 282 358 298 Q353 308 348 303 Q350 292 352 276Z"
+        fill="#0A0E14" opacity="0.5"/>
+  <path d="M587 266 Q594 272 592 288 Q588 296 584 292 Q586 280 587 266Z"
+        fill="#0A0E14" opacity="0.44"/>
+  <path d="M660 242 Q666 247 664 260 Q661 267 657 263 Q659 254 660 242Z"
+        fill="#0A0E14" opacity="0.4"/>
+
+  <!-- Atmospheric haze band -->
+  <path d="M0 335 Q200 325 400 330 Q600 325 800 335 L800 350 Q600 343 400 346 Q200 343 0 350Z"
+        fill="white" opacity="0.05"/>
+
+  <!-- Route marked in amber (traversing the ridge to the summit) -->
+  <circle cx="800" cy="254" r="3.5" fill="#C8761E" opacity="0.82"/>
+  <circle cx="762" cy="234" r="3.5" fill="#C8761E" opacity="0.82"/>
+  <circle cx="722" cy="246" r="3.0" fill="#C8761E" opacity="0.78"/>
+  <circle cx="682" cy="241" r="3.0" fill="#C8761E" opacity="0.78"/>
+  <circle cx="642" cy="237" r="4.5" fill="#C8761E"/>
+  <line x1="800" y1="254" x2="642" y2="237"
+        stroke="#C8761E" stroke-width="1.3" stroke-dasharray="6 5" opacity="0.48"/>
+
+  <!-- Summit marker -->
+  <circle cx="642" cy="228" r="6"   fill="#C8761E"/>
+  <circle cx="642" cy="228" r="2.8" fill="white"/>
+
+  <!-- Foreground talus / moraine -->
+  <path d="M0 392 L82 375 L162 388 L244 370 L324 383 L404 368 L482 380 L562 370 L644 382 L722 372 L800 384 L800 450 L0 450Z"
+        fill="#13110C"/>
+
+  <!-- Talus rocks texture -->
+  <path d="M102 402 L118 390 L134 403Z" fill="#1E1C14" opacity="0.68"/>
+  <path d="M252 397 L270 383 L288 397Z" fill="#1E1C14" opacity="0.58"/>
+  <path d="M452 393 L468 380 L484 394Z" fill="#1E1C14" opacity="0.62"/>
+  <path d="M632 398 L650 385 L668 399Z" fill="#1E1C14" opacity="0.58"/>
+  <path d="M360 402 L375 390 L390 403Z" fill="#1E1C14" opacity="0.52"/>
+</svg>

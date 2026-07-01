@@ -109,13 +109,7 @@
         <a class="area-card" [routerLink]="['/areas', area.id]">
 
           <div class="area-image">
-            @if (area.imageUrl) {
-              <img [src]="area.imageUrl" [alt]="area.name">
-            } @else {
-              <div class="area-image-placeholder">
-                {{ getInitial(area) }}
-              </div>
-            }
+            <img [src]="getAreaImage(area)" [alt]="area.name" (error)="onImageError($event, area)">
 
             <span class="image-badge">
               {{ area.todayVisitors ?? 0 }} heute

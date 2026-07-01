@@ -24,13 +24,7 @@
     <header class="area-hero-card">
 
       <div class="area-hero-image">
-        @if (area.imageUrl) {
-          <img [src]="area.imageUrl" [alt]="area.name">
-        } @else {
-          <div class="area-image-placeholder">
-            {{ area.name.charAt(0) }}
-          </div>
-        }
+        <img [src]="getAreaImage(area)" [alt]="area.name" (error)="onImageError($event, area)">
 
         <span class="hero-image-badge">Klettergebiet</span>
       </div>

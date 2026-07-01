@@ -1,0 +1,114 @@
+<svg viewBox="0 0 800 450" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="a2-sky" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#1A2840"/>
+      <stop offset="38%"  stop-color="#3A5878"/>
+      <stop offset="72%"  stop-color="#7090A8"/>
+      <stop offset="100%" stop-color="#C87820"/>
+    </linearGradient>
+    <linearGradient id="a2-rock" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#2A2418"/>
+      <stop offset="28%"  stop-color="#4A4030"/>
+      <stop offset="64%"  stop-color="#7A7060"/>
+      <stop offset="84%"  stop-color="#A88A60"/>
+      <stop offset="100%" stop-color="#C8A050"/>
+    </linearGradient>
+    <linearGradient id="a2-rock-v" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1A1510" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#1A1510" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="a2-base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A3010"/>
+      <stop offset="100%" stop-color="#0A150A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky strip at top -->
+  <rect width="800" height="112" fill="url(#a2-sky)"/>
+
+  <!-- Morning sun burst (top right) -->
+  <ellipse cx="770" cy="38" rx="190" ry="75" fill="#E09020" opacity="0.22"/>
+  <ellipse cx="770" cy="22" rx="85"  ry="34" fill="#F0B030" opacity="0.18"/>
+
+  <!-- Rock face (fills most of canvas) -->
+  <rect x="0" y="80" width="800" height="370" fill="url(#a2-rock)"/>
+  <rect x="0" y="80" width="800" height="370" fill="url(#a2-rock-v)"/>
+
+  <!-- Rock planes and facets – large dark slabs -->
+  <path d="M0 82 L185 124 L162 208 L0 182Z"          fill="#1E1A10" opacity="0.58"/>
+  <path d="M608 80 L800 80 L800 165 L625 122Z"        fill="#C8A050" opacity="0.25"/>
+  <path d="M100 142 L255 112 L242 285 L82 315Z"       fill="#1E1A12" opacity="0.38"/>
+  <path d="M620 128 L800 106 L800 322 L642 354Z"      fill="#DDB870" opacity="0.12"/>
+  <path d="M0 215 L205 194 L225 235 L0 255Z"          fill="#0E0C08" opacity="0.48"/>
+  <path d="M556 178 L800 158 L800 198 L548 218Z"      fill="#0E0C08" opacity="0.38"/>
+  <path d="M340 82 L385 255 L362 355 L338 450 L308 450 L332 355 L318 255 L342 82Z"
+        fill="#1A1510" opacity="0.65"/>
+
+  <!-- Main crack system -->
+  <path d="M362 80 Q368 158 356 258 Q348 335 354 450"
+        fill="none" stroke="#0A0808" stroke-width="2.8" opacity="0.78"/>
+  <!-- Left cracks -->
+  <path d="M182 122 Q178 205 188 305 Q192 375 184 425"
+        fill="none" stroke="#0A0808" stroke-width="1.5" opacity="0.48"/>
+  <path d="M222 142 Q220 225 228 315"
+        fill="none" stroke="#0A0808" stroke-width="1.0" opacity="0.38"/>
+  <!-- Right crack -->
+  <path d="M562 102 Q568 188 556 295 Q552 364 560 432"
+        fill="none" stroke="#0A0808" stroke-width="1.8" opacity="0.48"/>
+  <!-- Horizontal breaks -->
+  <path d="M0 248 Q205 232 405 242 Q508 248 608 238"
+        fill="none" stroke="#0A0808" stroke-width="1.2" opacity="0.38"/>
+  <path d="M0 342 Q202 328 382 338 Q552 346 704 334 Q755 330 800 332"
+        fill="none" stroke="#0A0808" stroke-width="1.0" opacity="0.32"/>
+  <path d="M120 175 Q240 165 360 172"
+        fill="none" stroke="#0A0808" stroke-width="0.8" opacity="0.3"/>
+  <path d="M440 160 Q560 152 680 162"
+        fill="none" stroke="#0A0808" stroke-width="0.8" opacity="0.28"/>
+
+  <!-- Rock micro-features -->
+  <path d="M140 182 L157 176 L160 188Z" fill="#0A0808" opacity="0.38"/>
+  <path d="M422 162 L432 156 L436 170Z" fill="#0A0808" opacity="0.33"/>
+  <path d="M682 202 L695 195 L698 210Z" fill="#0A0808" opacity="0.28"/>
+  <path d="M294 314 L305 308 L308 320Z" fill="#0A0808" opacity="0.32"/>
+  <path d="M508 288 L518 282 L522 295Z" fill="#0A0808" opacity="0.28"/>
+
+  <!-- Bolts along main crack -->
+  <circle cx="360" cy="138" r="3.2" fill="#B0A890"/>
+  <circle cx="357" cy="202" r="3.2" fill="#B0A890"/>
+  <circle cx="354" cy="268" r="3.2" fill="#B0A890"/>
+  <circle cx="352" cy="334" r="3.2" fill="#B0A890"/>
+
+  <!-- Chalk marks -->
+  <ellipse cx="358" cy="134" rx="9"  ry="5.5" fill="white" opacity="0.22"/>
+  <ellipse cx="355" cy="198" rx="8"  ry="5.0" fill="white" opacity="0.18"/>
+  <ellipse cx="352" cy="264" rx="7"  ry="4.5" fill="white" opacity="0.15"/>
+
+  <!-- Climber 1 (leading, higher up) -->
+  <ellipse cx="342" cy="163" rx="5"   ry="5"   fill="#1A150A"/>
+  <line   x1="342" y1="168" x2="342" y2="183" stroke="#1A150A" stroke-width="3" stroke-linecap="round"/>
+  <line   x1="336" y1="173" x2="348" y2="173" stroke="#1A150A" stroke-width="2.5" stroke-linecap="round"/>
+  <line   x1="342" y1="183" x2="337" y2="194" stroke="#1A150A" stroke-width="2.5" stroke-linecap="round"/>
+  <line   x1="342" y1="183" x2="347" y2="194" stroke="#1A150A" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Rope -->
+  <path d="M342 180 Q338 202 340 224 Q342 244 338 264"
+        fill="none" stroke="#C8761E" stroke-width="1.6" opacity="0.8"/>
+
+  <!-- Climber 2 (belayer, lower) -->
+  <ellipse cx="340" cy="270" rx="5.5" ry="5.5" fill="#1A150A"/>
+  <line   x1="340" y1="276" x2="340" y2="293" stroke="#1A150A" stroke-width="3.2" stroke-linecap="round"/>
+  <line   x1="333" y1="282" x2="347" y2="282" stroke="#1A150A" stroke-width="2.8" stroke-linecap="round"/>
+  <line   x1="340" y1="293" x2="334" y2="306" stroke="#1A150A" stroke-width="2.8" stroke-linecap="round"/>
+  <line   x1="340" y1="293" x2="346" y2="306" stroke="#1A150A" stroke-width="2.8" stroke-linecap="round"/>
+
+  <!-- Vegetation base -->
+  <path d="M0 402 Q100 392 200 406 Q352 395 502 408 Q652 398 800 406 L800 450 L0 450Z"
+        fill="url(#a2-base)"/>
+  <path d="M78 408 Q90 396 102 406 Q114 396 126 408"  fill="none" stroke="#1A3010" stroke-width="3.2"/>
+  <path d="M200 402 Q217 389 234 400 Q251 389 268 402" fill="none" stroke="#1A3010" stroke-width="3.2"/>
+  <path d="M582 405 Q598 393 614 403 Q630 393 646 405" fill="none" stroke="#1A3010" stroke-width="3.2"/>
+  <path d="M700 404 Q714 393 726 402 Q738 393 750 404" fill="none" stroke="#1A3010" stroke-width="2.8"/>
+
+  <!-- Distant valley peek (bottom left) -->
+  <path d="M0 385 L112 368 L0 352Z" fill="#2A3A28" opacity="0.45"/>
+</svg>

@@ -2,10 +2,119 @@
 
   <section class="hero-section topo-surface">
 
-    <svg class="hero-ridge" viewBox="0 0 760 360" preserveAspectRatio="none" aria-hidden="true">
-      <path class="ridge-fill" d="M0 360 L0 230 L120 120 L195 190 L300 70 L370 150 L470 40 L560 140 L650 95 L760 220 L760 360 Z"/>
-      <path class="ridge-line" d="M30 250 Q160 175 220 178 T372 96 Q420 70 470 80 T 560 150" fill="none"/>
-      <circle class="ridge-summit" cx="470" cy="40" r="5"/>
+    <!-- Panorama-Illustration im Hero-Hintergrund -->
+    <svg class="hero-panorama" viewBox="0 0 1400 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="hp-sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#060810"/>
+          <stop offset="45%"  stop-color="#111009"/>
+          <stop offset="78%"  stop-color="#281607"/>
+          <stop offset="100%" stop-color="#4A2808"/>
+        </linearGradient>
+        <linearGradient id="hp-glow" x1="0.6" y1="1" x2="0.6" y2="0">
+          <stop offset="0%"   stop-color="#C8761E" stop-opacity="0.42"/>
+          <stop offset="55%"  stop-color="#8B4A08" stop-opacity="0.12"/>
+          <stop offset="100%" stop-color="#C8761E" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="hp-left" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#060810"/>
+          <stop offset="42%"  stop-color="#060810"/>
+          <stop offset="100%" stop-color="#060810" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Sky -->
+      <rect width="1400" height="560" fill="url(#hp-sky)"/>
+      <!-- Horizon glow -->
+      <rect width="1400" height="560" fill="url(#hp-glow)"/>
+
+      <!-- Stars -->
+      <circle cx="880"  cy="42"  r="1.4" fill="white" opacity="0.75"/>
+      <circle cx="960"  cy="28"  r="1.0" fill="white" opacity="0.6"/>
+      <circle cx="1050" cy="55"  r="1.6" fill="white" opacity="0.8"/>
+      <circle cx="1130" cy="22"  r="1.1" fill="white" opacity="0.65"/>
+      <circle cx="1220" cy="48"  r="1.4" fill="white" opacity="0.7"/>
+      <circle cx="1310" cy="32"  r="1.2" fill="white" opacity="0.55"/>
+      <circle cx="1360" cy="62"  r="1.5" fill="white" opacity="0.8"/>
+      <circle cx="1180" cy="75"  r="0.9" fill="white" opacity="0.45"/>
+      <circle cx="1080" cy="18"  r="1.0" fill="white" opacity="0.7"/>
+      <circle cx="920"  cy="88"  r="0.8" fill="white" opacity="0.5"/>
+
+      <!-- Far background peaks (very dark) -->
+      <path d="M400 310 L520 248 L600 278 L688 220 L768 260 L848 208 L920 246 L1008 192 L1096 238 L1180 200 L1260 242 L1340 205 L1400 235 L1400 560 L400 560Z"
+            fill="#0C0E0A"/>
+
+      <!-- Peak 1 - main dramatic spire (right-center) -->
+      <!-- Shadow face -->
+      <path d="M1060 88 L940 320 L982 306 L1002 286 L1036 320 L1060 88Z"
+            fill="#1C1408"/>
+      <!-- Lit face -->
+      <path d="M1060 88 L1180 320 L1138 306 L1118 286 L1088 320 L1060 88Z"
+            fill="#9A8865"/>
+      <!-- Amber sunset glow on lit face -->
+      <path d="M1060 88 L1180 320 L1138 306 L1060 88Z" fill="#C8761E" opacity="0.22"/>
+      <!-- Snow -->
+      <path d="M1060 88 L1046 122 L1060 112 L1076 126 L1060 88Z" fill="white" opacity="0.92"/>
+      <path d="M1042 164 L1051 150 L1062 166 L1056 180 L1042 164Z" fill="white" opacity="0.72"/>
+      <path d="M1078 142 L1086 130 L1095 148 L1086 158 L1078 142Z" fill="white" opacity="0.62"/>
+
+      <!-- Peak 2 - left of main -->
+      <path d="M870 130 L790 298 L818 286 L838 266 L862 298 L870 130Z" fill="#161208"/>
+      <path d="M870 130 L950 298 L922 286 L902 266 L880 298 L870 130Z" fill="#7A7060"/>
+      <path d="M870 130 L858 160 L870 150 L884 162 L870 130Z" fill="white" opacity="0.85"/>
+
+      <!-- Peak 3 - far right taller -->
+      <path d="M1240 112 L1158 295 L1188 282 L1208 262 L1232 295 L1240 112Z" fill="#151208"/>
+      <path d="M1240 112 L1322 295 L1292 282 L1272 262 L1250 295 L1240 112Z" fill="#8A8070"/>
+      <path d="M1240 112 L1228 142 L1240 132 L1255 145 L1240 112Z" fill="white" opacity="0.85"/>
+      <path d="M1225 168 L1232 157 L1242 170 L1236 182 L1225 168Z" fill="white" opacity="0.62"/>
+
+      <!-- Mid-ground mountains -->
+      <path d="M400 360 L480 305 L558 338 L636 290 L716 328 L796 308 L876 280 L956 322 L1036 295 L1116 326 L1196 300 L1276 330 L1356 305 L1400 322 L1400 560 L400 560Z"
+            fill="#141108"/>
+
+      <!-- Pine trees (right area only, near peaks) -->
+      <g fill="#0C1A0D">
+        <path d="M820 360 L834 328 L848 360Z"/>
+        <path d="M823 349 L834 318 L845 349Z"/>
+        <path d="M848 364 L861 332 L874 364Z"/>
+        <path d="M851 354 L861 322 L871 354Z"/>
+        <path d="M876 360 L887 330 L898 360Z"/>
+        <path d="M1280 358 L1293 326 L1306 358Z"/>
+        <path d="M1283 348 L1293 316 L1303 348Z"/>
+        <path d="M1308 362 L1320 330 L1332 362Z"/>
+        <path d="M1335 358 L1346 328 L1357 358Z"/>
+      </g>
+
+      <!-- Lake / water at base (partially visible) -->
+      <path d="M600 432 Q900 414 1200 428 L1210 468 Q900 486 590 470Z"
+            fill="#243850" opacity="0.75"/>
+      <!-- Water shimmer -->
+      <line x1="680"  y1="442" x2="780"  y2="445" stroke="white" stroke-width="0.8" opacity="0.2"/>
+      <line x1="1000" y1="438" x2="1100" y2="442" stroke="white" stroke-width="0.8" opacity="0.2"/>
+      <line x1="840"  y1="458" x2="960"  y2="461" stroke="white" stroke-width="1.0" opacity="0.15"/>
+
+      <!-- Topo contour lines on main peak -->
+      <path d="M1012 248 Q1026 242 1040 245 Q1052 248 1064 244 Q1074 241 1085 244"
+            fill="none" stroke="#C8761E" stroke-width="0.9" opacity="0.35"/>
+      <path d="M990 278 Q1008 271 1024 274 Q1040 277 1056 273 Q1070 269 1084 273"
+            fill="none" stroke="#C8761E" stroke-width="0.9" opacity="0.32"/>
+
+      <!-- Summit marker on main peak -->
+      <circle cx="1060" cy="88"  r="6"   fill="#C8761E"/>
+      <circle cx="1060" cy="88"  r="2.8" fill="white"/>
+      <!-- Secondary summits -->
+      <circle cx="870"  cy="130" r="4.5" fill="#C8761E" opacity="0.8"/>
+      <circle cx="870"  cy="130" r="2"   fill="white"   opacity="0.8"/>
+      <circle cx="1240" cy="112" r="4.5" fill="#C8761E" opacity="0.8"/>
+      <circle cx="1240" cy="112" r="2"   fill="white"   opacity="0.8"/>
+
+      <!-- Foreground dark ridge -->
+      <path d="M400 450 L500 432 L620 446 L740 428 L860 442 L980 426 L1100 440 L1220 428 L1340 442 L1400 434 L1400 560 L400 560Z"
+            fill="#08100A"/>
+
+      <!-- Dark left overlay so text stays readable -->
+      <rect width="1400" height="560" fill="url(#hp-left)"/>
     </svg>
 
     <div class="hero-content">
@@ -104,11 +213,7 @@
         @for (area of featuredAreas; track area.id) {
           <a class="area-card" [routerLink]="['/areas', area.id]">
             <div class="area-image">
-              @if (area.imageUrl) {
-                <img [src]="area.imageUrl" [alt]="area.name">
-              } @else {
-                <span>{{ area.name.charAt(0) }}</span>
-              }
+              <img [src]="getAreaImage(area)" [alt]="area.name" (error)="onImageError($event, area)">
             </div>
 
             <div class="area-card-body">

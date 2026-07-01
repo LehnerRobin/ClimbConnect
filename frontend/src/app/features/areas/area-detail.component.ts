@@ -241,4 +241,28 @@ export class AreaDetailComponent implements OnInit {
       }
     });
   }
+
+  /** Gibt das echte Bild zurück oder wählt eine lokale SVG-Illustration als Fallback. */
+  getAreaImage(area: { id: number; imageUrl?: string | null }): string {
+    if (area.imageUrl) return area.imageUrl;
+    const imgs = [
+      '/assets/areas/area-alpine.svg',
+      '/assets/areas/area-wall.svg',
+      '/assets/areas/area-ridge.svg'
+    ];
+    return imgs[area.id % imgs.length];
+  }
+  /** Fallback auf lokale SVG-Illustration wenn imageUrl nicht geladen werden kann. */
+  onImageError(event: Event, area: { id: number }): void {
+    const img = event.target as HTMLImageElement;
+    const imgs = [
+      '/assets/areas/area-alpine.svg',
+      '/assets/areas/area-wall.svg',
+      '/assets/areas/area-ridge.svg'
+    ];
+    // Verhindern dass der Fehler-Handler sich selbst aufruft wenn die SVG auch nicht lädt
+    img.onerror = null;
+    img.src = imgs[area.id % imgs.length];
+  }
+
 }
