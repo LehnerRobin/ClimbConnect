@@ -76,7 +76,8 @@ public static class SeedData
             Name        = "Steinwandklamm",
             Location    = "Gaming, NÖ/OÖ-Grenze",
             Description = "Großartiges Gebiet an der Grenze zu NÖ. " +
-                          "Gut erschlossene Wände mit vielen Linien von 5 bis 8a."
+                          "Gut erschlossene Wände mit vielen Linien von 5 bis 8a.",
+            ImageUrl    = "https://images.unsplash.com/photo-1757496106192-baa0ce99f014?w=800&q=80"
         };
 
         var steinwandSektor1 = new Sector
@@ -114,7 +115,8 @@ public static class SeedData
             Name        = "Dürnsteiner Wand",
             Location    = "Dürnstein, OÖ",
             Description = "Sonnige Kalkwände nahe Dürnstein. " +
-                          "Mittlere Schwierigkeiten, familienfreundliches Ambiente."
+                          "Mittlere Schwierigkeiten, familienfreundliches Ambiente.",
+            ImageUrl    = "https://images.unsplash.com/photo-1480970653448-02835da67676?w=800&q=80"
         };
 
         var durnsteinSektor1 = new Sector
