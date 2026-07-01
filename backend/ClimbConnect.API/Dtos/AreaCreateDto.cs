@@ -6,5 +6,7 @@ public record AreaCreateDto(
     [Required] [StringLength(200, MinimumLength = 1)] string  Name,
     [MaxLength(200)]                                  string? Location,
     [MaxLength(2000)]                                 string? Description,
-    [MaxLength(500)]                                  string? ImageUrl
+    [MaxLength(500)]                                  string? ImageUrl,
+    [Range(-90, 90)]                                  double? Latitude,
+    [Range(-180, 180)]                                double? Longitude
 );

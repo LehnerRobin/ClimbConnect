@@ -4,6 +4,11 @@
   padding: 36px 0 56px;
 }
 
+app-area-map {
+  display: block;
+  margin-bottom: 24px;
+}
+
 /* ============ Hero ============ */
 .areas-hero {
   position: relative;

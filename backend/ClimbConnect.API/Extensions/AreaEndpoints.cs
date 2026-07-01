@@ -42,7 +42,7 @@ public static class AreaEndpoints
 
             var result = areas.Select(a => new
             {
-                a.Id, a.Name, a.Location, a.Description, a.ImageUrl, a.CreatedAtUtc,
+                a.Id, a.Name, a.Location, a.Description, a.ImageUrl, a.Latitude, a.Longitude, a.CreatedAtUtc,
                 TodayVisitors     = todayAppointments.Where(ap => ap.AreaId == a.Id).Sum(ap => ap.AppointmentUsers.Count),
                 TodayAppointments = todayAppointments.Count(ap => ap.AreaId == a.Id)
             });
@@ -72,7 +72,9 @@ public static class AreaEndpoints
                 Name        = dto.Name.Trim(),
                 Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim(),
                 Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim(),
-                ImageUrl    = string.IsNullOrWhiteSpace(dto.ImageUrl)    ? null : dto.ImageUrl.Trim()
+                ImageUrl    = string.IsNullOrWhiteSpace(dto.ImageUrl)    ? null : dto.ImageUrl.Trim(),
+                Latitude    = dto.Latitude,
+                Longitude   = dto.Longitude
             };
             db.Areas.Add(area);
             await db.SaveChangesAsync();
@@ -93,6 +95,8 @@ public static class AreaEndpoints
             area.Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim();
             area.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
             area.ImageUrl    = string.IsNullOrWhiteSpace(dto.ImageUrl)    ? null : dto.ImageUrl.Trim();
+            area.Latitude    = dto.Latitude;
+            area.Longitude   = dto.Longitude;
 
             await db.SaveChangesAsync();
             return Results.Ok(area);

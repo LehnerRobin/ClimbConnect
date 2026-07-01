@@ -16,6 +16,12 @@ public class Area
     /// <summary>URL zu einem Bild des Gebiets (z.B. /uploads/abc123.jpg).</summary>
     public string? ImageUrl { get; set; }
 
+    /// <summary>Breitengrad des Gebiets für die Kartenanzeige (z.B. 47.9022).</summary>
+    public double? Latitude { get; set; }
+
+    /// <summary>Längengrad des Gebiets für die Kartenanzeige (z.B. 14.1272).</summary>
+    public double? Longitude { get; set; }
+
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     // Navigation

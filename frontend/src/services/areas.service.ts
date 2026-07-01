@@ -17,6 +17,8 @@ export interface Area {
   location?: string | null;
   description?: string | null;
   imageUrl?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   todayVisitors?: number;
   todayAppointments?: number;
   createdAtUtc?: string;

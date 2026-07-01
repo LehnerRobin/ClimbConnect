@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Area, AreasService } from '../../../services/areas.service';
 import { FavoritesService } from '../../../services/favorites.service';
+import { AreaMapComponent } from './area-map.component';
 
 @Component({
   selector: 'app-areas-page',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule],
+  imports: [RouterLink, FormsModule, CommonModule, AreaMapComponent],
   templateUrl: './areas-page.component.html',
   styleUrl: './areas-page.component.css',
 })
