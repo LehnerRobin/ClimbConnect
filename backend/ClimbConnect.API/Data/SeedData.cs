@@ -38,7 +38,7 @@ public static class SeedData
             Location    = "Kirchdorf an der Krems, OÖ",
             Description = "Beliebtes Klettergebiet in der Nähe von Kirchdorf. " +
                           "Kompakter Kalk, viele Routen im mittleren Schwierigkeitsbereich.",
-            ImageUrl    = "https://images.unsplash.com/photo-1695721780706-083fe3692424?w=800&q=80"
+            ImageUrl    = "/assets/areas/sandwand.jpg"
         };
 
         var sandwandSektor1 = new Sector
@@ -77,7 +77,7 @@ public static class SeedData
             Location    = "Gaming, NÖ/OÖ-Grenze",
             Description = "Großartiges Gebiet an der Grenze zu NÖ. " +
                           "Gut erschlossene Wände mit vielen Linien von 5 bis 8a.",
-            ImageUrl    = "https://images.unsplash.com/photo-1757496106192-baa0ce99f014?w=800&q=80"
+            ImageUrl    = "/assets/areas/steinwandklamm.jpg"
         };
 
         var steinwandSektor1 = new Sector
@@ -116,7 +116,7 @@ public static class SeedData
             Location    = "Dürnstein, OÖ",
             Description = "Sonnige Kalkwände nahe Dürnstein. " +
                           "Mittlere Schwierigkeiten, familienfreundliches Ambiente.",
-            ImageUrl    = "https://images.unsplash.com/photo-1480970653448-02835da67676?w=800&q=80"
+            ImageUrl    = "/assets/areas/duernstein.jpg"
         };
 
         var durnsteinSektor1 = new Sector
