@@ -113,45 +113,86 @@ public static class SeedData
             new Route { Sector = steinwandSektor2, Name = "Mittelweg Turm",     Grade = "7a",  LengthMeters = 22, Style = "Vorstieg", Description = "Guter Einstieg in die 7er-Welt" }
         );
 
-        // ---- AREA 3: Dürnsteiner Wand ----
-        var durnstein = new Area
+        // ---- AREA 3: Weißensteinerwand ----
+        var weissenstein = new Area
         {
-            Name        = "Dürnsteiner Wand",
-            Location    = "Dürnstein, OÖ",
-            Description = "Sonnige Kalkwände nahe Dürnstein. " +
-                          "Mittlere Schwierigkeiten, familienfreundliches Ambiente.",
-            ImageUrl    = "/assets/areas/duernstein.jpg",
-            Latitude    = 48.3986,
-            Longitude   = 15.5218
+            Name        = "Weißensteinerwand",
+            Location    = "Voralpen bei Steyr, OÖ",
+            Description = "Traditionelles Klettergebiet in den Voralpen bei Steyr. " +
+                          "Fester Kalk, alpiner Charakter, teils lange Mehrseillängen-Routen.",
+            ImageUrl    = "/assets/areas/weissensteinerwand.jpg",
+            Latitude    = 47.919428,
+            Longitude   = 14.347211
         };
 
-        var durnsteinSektor1 = new Sector
+        var weissensteinSektor1 = new Sector
         {
-            Area        = durnstein,
-            Name        = "Sonnenseite",
-            Description = "Ganztags Sonne, trocknet schnell, 5b–7a"
+            Area        = weissenstein,
+            Name        = "Vorbau",
+            Description = "Kurze Einstiegsrouten, ideal zum Einklettern, 5a–6b"
         };
-        var durnsteinSektor2 = new Sector
+        var weissensteinSektor2 = new Sector
         {
-            Area        = durnstein,
-            Name        = "Schattenwand",
-            Description = "Ideal im Sommer, 6a–7b"
+            Area        = weissenstein,
+            Name        = "Hauptwand",
+            Description = "Anspruchsvolle Mehrseillängen, alpines Flair, 6a–7b"
         };
 
-        db.Sectors.AddRange(durnsteinSektor1, durnsteinSektor2);
+        db.Sectors.AddRange(weissensteinSektor1, weissensteinSektor2);
 
         db.Routes.AddRange(
-            new Route { Sector = durnsteinSektor1, Name = "Morgensonne",        Grade = "5b",  LengthMeters = 16, Style = "Toprope",  Description = "Warmup-Route" },
-            new Route { Sector = durnsteinSektor1, Name = "Sonnenplatte",       Grade = "6a",  LengthMeters = 18, Style = "Vorstieg", Description = "Schöne Reibungsplatte" },
-            new Route { Sector = durnsteinSektor1, Name = "Risse",              Grade = "6b+", LengthMeters = 20, Style = "Vorstieg", Description = "Risskletterei, OÖ-Stil" },
-            new Route { Sector = durnsteinSektor1, Name = "Sonnenschein",       Grade = "6c",  LengthMeters = 22, Style = "Vorstieg", Description = "Kompakte Züge" },
-            new Route { Sector = durnsteinSektor1, Name = "Dürnstein-Direttissima", Grade = "7a", LengthMeters = 30, Style = "Vorstieg", Description = "Direkter Weg durch die Wand" },
+            new Route { Sector = weissensteinSektor1, Name = "Einstieg leicht",       Grade = "5a",  LengthMeters = 15, Style = "Toprope",  Description = "Guter Warmup" },
+            new Route { Sector = weissensteinSektor1, Name = "Reibungsplatte",        Grade = "5b+", LengthMeters = 18, Style = "Toprope",  Description = "Reibungskletterei auf Platte" },
+            new Route { Sector = weissensteinSektor1, Name = "Steyrtal-Klassiker",    Grade = "5c",  LengthMeters = 20, Style = "Vorstieg", Description = "Beliebter Einstiegsklassiker" },
+            new Route { Sector = weissensteinSektor1, Name = "Voralpenkante",         Grade = "6a",  LengthMeters = 22, Style = "Vorstieg", Description = "Schöne Kantenführung" },
+            new Route { Sector = weissensteinSektor1, Name = "Erste Seillänge",       Grade = "6a+", LengthMeters = 24, Style = "Vorstieg", Description = "Einstieg in die Hauptwand" },
 
-            new Route { Sector = durnsteinSektor2, Name = "Schattenläufer",    Grade = "6a+", LengthMeters = 20, Style = "Vorstieg", Description = "Kühl und angenehm im Sommer" },
-            new Route { Sector = durnsteinSektor2, Name = "Kühle Kante",       Grade = "6b",  LengthMeters = 18, Style = "Vorstieg", Description = "Kantenkletterei" },
-            new Route { Sector = durnsteinSektor2, Name = "Schattenriß",       Grade = "6c+", LengthMeters = 24, Style = "Vorstieg", Description = "Langer Riss im Schatten" },
-            new Route { Sector = durnsteinSektor2, Name = "Abend-Ausdauer",    Grade = "7a+", LengthMeters = 32, Style = "Vorstieg", Description = "Für Ausdauerfans" },
-            new Route { Sector = durnsteinSektor2, Name = "Schattenprojekt",   Grade = "7b",  LengthMeters = 26, Style = "Vorstieg", Description = "Klassisches Sommer-Projekt" }
+            new Route { Sector = weissensteinSektor2, Name = "Ausdauerriss",          Grade = "6b+", LengthMeters = 32, Style = "Vorstieg", Description = "Langer Riss, viel Ausdauer nötig" },
+            new Route { Sector = weissensteinSektor2, Name = "Weißenstein-Verschneidung", Grade = "6c", LengthMeters = 35, Style = "Vorstieg", Description = "Klassische Verschneidung" },
+            new Route { Sector = weissensteinSektor2, Name = "Steyrblick",            Grade = "6c+", LengthMeters = 38, Style = "Vorstieg", Description = "Aussicht ins Steyrtal" },
+            new Route { Sector = weissensteinSektor2, Name = "Alpine Kante",          Grade = "7a",  LengthMeters = 40, Style = "Vorstieg", Description = "Alpine Mehrseillängenroute" },
+            new Route { Sector = weissensteinSektor2, Name = "Voralpenprojekt",       Grade = "7b",  LengthMeters = 45, Style = "Vorstieg", Description = "Schwerstes Projekt der Wand" }
+        );
+
+        // ---- AREA 4: Klettergarten Steinbruch Dörnbach ----
+        var doernbach = new Area
+        {
+            Name        = "Klettergarten Steinbruch Dörnbach",
+            Location    = "Dörnbach bei Hörsching, OÖ",
+            Description = "Ehemaliger Steinbruch nahe Hörsching, gut von Linz erreichbar. " +
+                          "Kompakter Fels, viele kurze Sportkletterrouten.",
+            ImageUrl    = "/assets/areas/steinbruch-doernbach.jpg",
+            Latitude    = 48.28484,
+            Longitude   = 14.21167
+        };
+
+        var doernbachSektor1 = new Sector
+        {
+            Area        = doernbach,
+            Name        = "Alter Bruch",
+            Description = "Sonnig, kompakter Fels, 4c–6b"
+        };
+        var doernbachSektor2 = new Sector
+        {
+            Area        = doernbach,
+            Name        = "Neuer Bruch",
+            Description = "Steilerer Abschnitt, technisch, 6b–7c"
+        };
+
+        db.Sectors.AddRange(doernbachSektor1, doernbachSektor2);
+
+        db.Routes.AddRange(
+            new Route { Sector = doernbachSektor1, Name = "Warmup Dörnbach",     Grade = "4c",  LengthMeters = 10, Style = "Toprope",  Description = "Einfache Aufwärmroute" },
+            new Route { Sector = doernbachSektor1, Name = "Bruchkante",          Grade = "5a",  LengthMeters = 12, Style = "Vorstieg", Description = "Kante am Bruchrand" },
+            new Route { Sector = doernbachSektor1, Name = "Steinbruch-Klassiker", Grade = "5c", LengthMeters = 15, Style = "Vorstieg", Description = "Der Klassiker im alten Bruch" },
+            new Route { Sector = doernbachSektor1, Name = "Sonnenwand Dörnbach", Grade = "6a",  LengthMeters = 14, Style = "Vorstieg", Description = "Sonnige Wandflucht" },
+            new Route { Sector = doernbachSektor1, Name = "Erstbegehung",        Grade = "6b",  LengthMeters = 16, Style = "Vorstieg", Description = "Technische Erstbegehung" },
+
+            new Route { Sector = doernbachSektor2, Name = "Technikroute",        Grade = "6b+", LengthMeters = 14, Style = "Vorstieg", Description = "Feine Tritte, viel Technik" },
+            new Route { Sector = doernbachSektor2, Name = "Steiler Zahn",        Grade = "6c",  LengthMeters = 18, Style = "Vorstieg", Description = "Steiler Zacken im Fels" },
+            new Route { Sector = doernbachSektor2, Name = "Überhang Dörnbach",   Grade = "7a",  LengthMeters = 16, Style = "Vorstieg", Description = "Kurzer, kräftiger Überhang" },
+            new Route { Sector = doernbachSektor2, Name = "Kraftakt",           Grade = "7b",  LengthMeters = 18, Style = "Vorstieg", Description = "Reine Kraftroute" },
+            new Route { Sector = doernbachSektor2, Name = "Projektwand",        Grade = "7c",  LengthMeters = 20, Style = "Vorstieg", Description = "Schwerstes Projekt im Steinbruch" }
         );
 
         await db.SaveChangesAsync();
