@@ -37,7 +37,8 @@ public static class SeedData
             Name        = "Sandwand",
             Location    = "Kirchdorf an der Krems, OÖ",
             Description = "Beliebtes Klettergebiet in der Nähe von Kirchdorf. " +
-                          "Kompakter Kalk, viele Routen im mittleren Schwierigkeitsbereich."
+                          "Kompakter Kalk, viele Routen im mittleren Schwierigkeitsbereich.",
+            ImageUrl    = "https://images.unsplash.com/photo-1695721780706-083fe3692424?w=800&q=80"
         };
 
         var sandwandSektor1 = new Sector
