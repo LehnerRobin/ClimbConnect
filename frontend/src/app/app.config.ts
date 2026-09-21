@@ -1,17 +1,25 @@
+import { ApplicationConfig } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideHttpClient, withInterceptors, withFetch } from '@angular/common/http';
-import { includeBearerTokenInterceptor } from 'keycloak-angular';
 
-import { provideKeycloakAngular } from './keycloak.config';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors
+} from '@angular/common/http';
+
 import { routes } from './app.routes';
+import { jwtInterceptor } from './interceptors/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(),
-    provideKeycloakAngular(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes,withComponentInputBinding()),
-    provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor]))
+    provideRouter(
+      routes,
+      withComponentInputBinding()
+    ),
+
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([jwtInterceptor])
+    )
   ]
 };

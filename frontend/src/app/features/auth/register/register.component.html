@@ -1,0 +1,35 @@
+<h2>Register</h2>
+
+<input
+  #username
+  type="text"
+  placeholder="Username">
+
+<input
+  #email
+  type="email"
+  placeholder="Email">
+
+<input
+  #password
+  type="password"
+  placeholder="Password">
+
+<input
+  #confirmPassword
+  type="password"
+  placeholder="Repeat Password">
+
+<button
+  (click)="register(
+    username.value,
+    email.value,
+    password.value,
+    confirmPassword.value
+  )">
+  Register
+</button>
+
+@if (errorMessage) {
+  <p>{{ errorMessage }}</p>
+}

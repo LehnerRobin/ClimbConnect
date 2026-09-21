@@ -1,30 +1,21 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { User } from '../../models/user.model';
-import Keycloak from 'keycloak-js';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-profile',
-  templateUrl: 'user-profile.component.html',
-  styleUrls: [`user-profile.component.css`]
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './user-profile.component.html',
+  styleUrls: ['./user-profile.component.css']
 })
-export class UserProfileComponent implements OnInit {
-  private readonly keycloak = inject(Keycloak);
+export class UserProfileComponent {
 
-  user: User | undefined;
+  user = {
+    username: '',
+    email: '',
+    bio: '',
+    preferredGradeScale: 'UIAA',
+    averageGrade: ''
+  };
 
-  async ngOnInit() {
-    if (this.keycloak?.authenticated) {
-      const profile = await this.keycloak.loadUserProfile();
-
-      console.log('User Profile:', profile);
-      console.log(await this.keycloak.hasResourceRole('myUserRole'));
-      console.log(await this.keycloak.hasResourceRole('view-profile'));
-
-      this.user = {
-        name: `${profile?.firstName} ${profile.lastName}`,
-        email: profile?.email,
-        username: profile?.username
-      };
-    }
-  }
 }

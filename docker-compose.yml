@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      context: ./backend/ClimbConnect.API
+      dockerfile: Dockerfile
+    ports:
+      - "5004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Data Source=/app/Data/ClimbConnect.db;
+      - Jwt__Key=ClimbConnect-SuperSecret-Key-MinLength-32-Chars!
+      - Jwt__Issuer=climbconnect-api
+      - Jwt__Audience=climbconnect-ui
+      - Jwt__ExpiryHours=24
+    volumes:
+      - climbconnect-data:/app/Data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  climbconnect-data:
