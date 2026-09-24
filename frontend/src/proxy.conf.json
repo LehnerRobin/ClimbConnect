@@ -1,11 +1,8 @@
 {
   "/api": {
-    "target": "https://h-aitenbichler.cloud.htl-leonding.ac.at/demosypapi",
+    "target": "http://localhost:5004",
     "secure": false,
     "changeOrigin": true,
-    "pathRewrite": {
-     "^/api": ""  
-    },
     "logLevel": "debug"
   }
 }

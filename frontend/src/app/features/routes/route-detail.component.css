@@ -1,0 +1,280 @@
+.route-detail-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.state-box {
+  padding: 40px;
+  text-align: center;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-sm);
+}
+
+.state-box .spinner {
+  margin: 0 auto 14px;
+}
+
+.error-state {
+  border-color: rgba(161, 64, 45, 0.25);
+  background: var(--brick-100);
+}
+
+/* ============ Header ============ */
+.route-header {
+  margin-bottom: 28px;
+}
+
+.route-header h1 {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+}
+
+.route-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+.grade-badge,
+.community-grade,
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.grade-badge {
+  background: var(--ink-950);
+  color: var(--paper-0);
+  font-size: 14px;
+}
+
+.community-grade {
+  background: var(--glacier-100);
+  color: var(--glacier-700);
+}
+
+.tag {
+  background: var(--paper-100);
+  color: var(--ink-700);
+  border: 1px solid var(--paper-200);
+}
+
+.route-description {
+  max-width: 65ch;
+  margin: 16px 0 0;
+  color: var(--ink-600);
+  line-height: 1.65;
+}
+
+.btn-log-ascent {
+  margin-top: 20px;
+}
+
+/* ============ Section cards ============ */
+.section-card {
+  padding: 24px;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.section-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1.3rem;
+}
+
+.section-header h2 svg {
+  width: 21px;
+  height: 21px;
+  color: var(--amber-500);
+  flex: none;
+}
+
+/* ============ Forms (report + comment) ============ */
+.report-form,
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed var(--paper-300);
+}
+
+textarea,
+select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--paper-300);
+  border-radius: var(--radius-md);
+  background: var(--paper-50);
+  color: var(--ink-950);
+  font-family: inherit;
+  font-size: 14.5px;
+  resize: vertical;
+}
+
+textarea {
+  min-height: 90px;
+}
+
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--amber-500);
+  box-shadow: 0 0 0 3px rgba(195, 121, 31, 0.16);
+  background: var(--paper-0);
+}
+
+.file-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-600);
+}
+
+.file-field input {
+  font-size: 13.5px;
+  color: var(--ink-600);
+}
+
+.photo-preview {
+  max-height: 150px;
+  border-radius: var(--radius-md);
+}
+
+.report-submit,
+.comment-submit {
+  align-self: flex-start;
+}
+
+/* ============ Safety reports ============ */
+.report-item {
+  border-left: 4px solid var(--paper-300);
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--paper-50);
+}
+
+.report-item p {
+  margin: 0.3rem 0;
+  color: var(--ink-700);
+  line-height: 1.5;
+}
+
+.severity-high   { border-color: var(--brick-500); background: var(--brick-100); }
+.severity-medium { border-color: var(--amber-500); background: var(--amber-100); }
+.severity-low    { border-color: var(--pine-500);  background: var(--pine-100); }
+
+.report-severity-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+  color: var(--ink-600);
+}
+
+.report-item small {
+  color: var(--ink-500);
+  font-size: 12.5px;
+}
+
+.report-photo,
+.comment-photo {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: var(--radius-md);
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+/* ============ Comments ============ */
+.comment-item {
+  border-bottom: 1px solid var(--paper-100);
+  padding: 0.85rem 0;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-author {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-800);
+  margin-bottom: 0.3rem;
+}
+
+.comment-author a {
+  color: var(--ink-950);
+  text-decoration: none;
+}
+
+.comment-author a:hover {
+  color: var(--amber-600);
+}
+
+.comment-item > p {
+  margin: 0;
+  color: var(--ink-600);
+  line-height: 1.55;
+}
+
+.comment-item > small {
+  display: block;
+  margin-top: 6px;
+  color: var(--ink-500);
+  font-size: 12.5px;
+}
+
+.btn-delete-comment {
+  margin-top: 0.6rem;
+  padding: 6px 12px;
+  background: var(--brick-100);
+  color: var(--brick-700);
+  border: 1px solid rgba(161, 64, 45, 0.25);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.btn-delete-comment:hover:not(:disabled) {
+  background: #ecccc0;
+}
+
+.btn-delete-comment:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============ Misc states ============ */
+.empty-hint   { color: var(--ink-400); font-style: italic; }
+.loading-msg  { margin: 0; color: var(--ink-500); }
+.error-msg    { color: var(--brick-600); font-size: 0.9rem; font-weight: 600; }
+.success-msg  { color: var(--pine-600); font-size: 0.9rem; font-weight: 600; }

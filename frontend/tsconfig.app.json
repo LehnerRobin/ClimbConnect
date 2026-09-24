@@ -4,11 +4,12 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
+    "rootDir": "./src",
     "types": []
   },
   "include": [
     "src/**/*.ts"
-, "src/app/features/areas/areas-page/areas-page.spec.component.ts.bak"  ],
+  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

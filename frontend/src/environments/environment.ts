@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://h-aitenbichler.cloud.htl-leonding.ac.at/demosypapi'
+  apiUrl: 'https://r-lehner.cloud.htl-leonding.ac.at/climbconnectapi'
 };

@@ -1,0 +1,130 @@
+.public-profile-page {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.state-box {
+  padding: 40px;
+  text-align: center;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  background: var(--paper-0);
+  box-shadow: var(--shadow-sm);
+}
+
+.state-box .spinner {
+  margin: 0 auto 14px;
+}
+
+.error-state {
+  border-color: rgba(161, 64, 45, 0.25);
+  background: var(--brick-100);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 2rem;
+}
+
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ink-950);
+  color: var(--amber-500);
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.member-since {
+  color: var(--ink-500);
+  margin-top: 0.25rem;
+}
+
+.ascents-card {
+  background: var(--paper-0);
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-xl);
+  padding: 1.6rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.ascent-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--paper-100);
+}
+
+.ascent-item:last-child {
+  border-bottom: none;
+}
+
+.ascent-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 0.3rem;
+}
+
+.ascent-route {
+  font-weight: 700;
+  color: var(--ink-950);
+}
+
+.ascent-grade {
+  background: var(--ink-950);
+  color: var(--paper-0);
+  padding: 0.22rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ascent-meta {
+  display: flex;
+  gap: 0.9rem;
+  font-size: 0.85rem;
+  color: var(--ink-500);
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  padding: 0.12rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--paper-100);
+  color: var(--ink-700);
+}
+
+.status-badge.status-sent    { background: var(--pine-100);    color: var(--pine-700); }
+.status-badge.status-project { background: var(--amber-100);   color: var(--amber-700); }
+.status-badge.status-toprope { background: var(--glacier-100); color: var(--glacier-700); }
+
+.empty-hint  { color: var(--ink-400); font-style: italic; }
+.loading-msg { margin: 0; color: var(--ink-500); }
+.error-msg   { margin: 0; color: var(--brick-600); font-weight: 600; }
+
+@media (max-width: 480px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ascent-main,
+  .ascent-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+}

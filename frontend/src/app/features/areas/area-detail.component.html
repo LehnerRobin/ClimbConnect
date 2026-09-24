@@ -1,0 +1,380 @@
+<section class="area-detail">
+
+  <a routerLink="/areas" class="back-link">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Zurück zu Gebieten
+  </a>
+
+  @if (loading) {
+
+    <div class="state-box loading-box">
+      <div class="spinner"></div>
+      <p>Gebiet wird geladen...</p>
+    </div>
+
+  } @else if (errorMessage) {
+
+    <div class="state-box error-box">
+      <h2>Gebiet konnte nicht geladen werden</h2>
+      <p>{{ errorMessage }}</p>
+    </div>
+
+  } @else if (area) {
+
+    <header class="area-hero-card">
+
+      <div class="area-hero-image">
+        <img [src]="getAreaImage(area)" [alt]="area.name" (error)="onImageError($event, area)">
+
+        <span class="hero-image-badge">Klettergebiet</span>
+      </div>
+
+      <div class="area-hero-content">
+        <p class="eyebrow">Gebiet</p>
+        <h1>{{ area.name }}</h1>
+
+        <p class="hero-location">
+          {{ area.location || 'Kein Standort angegeben' }}
+        </p>
+
+        <p class="hero-description">
+          {{ area.description || 'Keine Beschreibung vorhanden.' }}
+        </p>
+
+        <div class="hero-meta">
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            {{ area.location || 'Unbekannt' }}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            {{ sectors.length }} Sektoren
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3.5 9h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {{ appointments.length }} Termine
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            {{ comments.length }} Kommentare
+          </span>
+        </div>
+      </div>
+
+    </header>
+
+    <div class="content-grid">
+
+      <section class="detail-section routes-section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Routenübersicht</p>
+            <h2>Sektoren & Routen</h2>
+          </div>
+
+          <span class="section-pill">{{ sectors.length }} Sektoren</span>
+        </div>
+
+        @if (sectors.length === 0) {
+
+          <div class="empty-card">
+            <strong>Noch keine Sektoren</strong>
+            <p>Für dieses Gebiet wurden noch keine Sektoren eingetragen.</p>
+          </div>
+
+        } @else {
+
+          <div class="sector-list">
+
+            @for (sector of sectors; track sector.id) {
+
+              <article class="sector-card" [class.expanded]="sector.expanded">
+
+                <button class="sector-header" type="button" (click)="toggleSector(sector)">
+                  <span class="sector-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5ZM2 12l10 5 10-5M2 16l10 5 10-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </span>
+
+                  <span class="sector-text">
+                    <strong>{{ sector.name }}</strong>
+                    <small>{{ sector.description || 'Keine Beschreibung vorhanden.' }}</small>
+                  </span>
+
+                  <span class="sector-action">
+                    {{ sector.expanded ? 'Einklappen' : 'Routen anzeigen' }}
+                    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </span>
+                </button>
+
+                @if (sector.expanded) {
+
+                  <div class="routes-box">
+
+                    @if (sector.loadingRoutes) {
+
+                      <div class="mini-loading">
+                        <div class="spinner spinner-sm"></div>
+                        <span>Routen werden geladen...</span>
+                      </div>
+
+                    } @else if (sector.routes.length === 0) {
+
+                      <p class="empty-text">Keine Routen vorhanden.</p>
+
+                    } @else {
+
+                      <div class="route-cards">
+                        @for (route of sector.routes; track route.id) {
+                          <a class="route-card" [routerLink]="['/routes', route.id]">
+                            <span class="route-main">
+                              <strong>{{ route.name }}</strong>
+                              <small>{{ route.style || 'Stil nicht angegeben' }}</small>
+                            </span>
+
+                            <span class="route-grade">
+                              {{ route.grade || '-' }}
+                            </span>
+
+                            <span class="route-length">
+                              @if (route.lengthMeters) {
+                                {{ route.lengthMeters }} m
+                              } @else {
+                                Länge offen
+                              }
+                            </span>
+                          </a>
+                        }
+                      </div>
+
+                    }
+
+                  </div>
+
+                }
+
+              </article>
+
+            }
+
+          </div>
+
+        }
+
+      </section>
+
+      <aside class="side-column">
+
+        <section class="detail-section side-card appointments-card">
+          <div class="side-header">
+            <div>
+              <p class="eyebrow">Sessions</p>
+              <h2>Kommende Termine</h2>
+            </div>
+
+            @if (isLoggedIn()) {
+              <a
+                class="btn btn-primary btn-sm"
+                [routerLink]="['/areas', area.id, 'appointments', 'new']">
+                + Session
+              </a>
+            }
+          </div>
+
+          @if (appointmentActionError) {
+            <div class="appointment-error">
+              {{ appointmentActionError }}
+            </div>
+          }
+
+          @if (appointments.length === 0) {
+
+            <div class="empty-card compact">
+              <strong>Keine Termine</strong>
+              <p>Aktuell ist hier keine Klettersession geplant.</p>
+            </div>
+
+          } @else {
+
+            <div class="appointment-list">
+              @for (appointment of appointments; track appointment.id) {
+                <article class="appointment-card">
+                  <button type="button" class="appointment-topline" (click)="toggleAppointmentDetail(appointment.id)">
+                    <h3>{{ appointment.title }}</h3>
+                    <span class="topline-meta">
+                      {{ appointment.participantCount ?? 0 }} TN
+                      <svg class="chevron" [class.rotated]="expandedAppointmentId === appointment.id" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                  </button>
+
+                  <p class="appointment-date">
+                    @if (appointment.date) {
+                      {{ appointment.date | date:'dd.MM.yyyy, HH:mm' }} Uhr
+                    } @else {
+                      Kein Datum angegeben
+                    }
+                  </p>
+
+                  @if (appointment.meetingPoint) {
+                    <p class="appointment-meeting">Treffpunkt: {{ appointment.meetingPoint }}</p>
+                  }
+
+                  @if (expandedAppointmentId === appointment.id) {
+                    @let detail = appointmentDetails[appointment.id];
+                    @if (detail) {
+                      <div class="appointment-detail">
+                        @if (detail.description) {
+                          <p class="appointment-description">{{ detail.description }}</p>
+                        }
+                        @if (detail.averageGrade) {
+                          <p class="appointment-avg-grade">Ø Grad der Gruppe: <strong>{{ detail.averageGrade }}</strong></p>
+                        }
+                        @if (detail.participants?.length > 0) {
+                          <div class="participant-list">
+                            <strong>Teilnehmer:</strong>
+                            @for (p of detail.participants; track p.userId) {
+                              <span class="participant-chip">{{ p.username }}</span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <p class="loading-detail">Lädt...</p>
+                    }
+                  }
+
+                  @if (isOwnAppointment(appointment)) {
+                    <div class="appointment-owner-actions">
+                      <a
+                        class="btn-edit-appointment"
+                        [routerLink]="['/areas', area.id, 'appointments', appointment.id, 'edit']">
+                        Bearbeiten
+                      </a>
+
+                      <button
+                        type="button"
+                        class="btn-delete-appointment"
+                        [disabled]="deletingAppointmentId === appointment.id"
+                        (click)="deleteAppointment(appointment)">
+                        @if (deletingAppointmentId === appointment.id) {
+                          Löscht...
+                        } @else {
+                          Löschen
+                        }
+                      </button>
+                    </div>
+                  }
+
+                  @if (isLoggedIn()) {
+                    @if (isSubscribed(appointment.id)) {
+                      <button class="btn-unsubscribe" (click)="unsubscribe(appointment)">
+                        Austreten
+                      </button>
+                    } @else {
+                      <button class="btn-subscribe" (click)="subscribe(appointment)">
+                        Beitreten
+                      </button>
+                    }
+                  }
+                </article>
+              }
+            </div>
+
+          }
+
+        </section>
+
+        <section class="detail-section side-card comments-card">
+          <div class="side-header comments-header">
+            <div>
+              <p class="eyebrow">Community</p>
+              <h2>Kommentare</h2>
+            </div>
+
+            @if (isLoggedIn()) {
+              <button type="button" class="btn btn-secondary btn-sm" (click)="showCommentForm = !showCommentForm">
+                {{ showCommentForm ? 'Abbrechen' : 'Schreiben' }}
+              </button>
+            }
+          </div>
+
+          @if (showCommentForm) {
+            <div class="comment-form">
+              <textarea
+                [(ngModel)]="commentText"
+                placeholder="Dein Kommentar zu diesem Gebiet..."
+                rows="3">
+              </textarea>
+              @if (commentError) {
+                <p class="comment-form-error">{{ commentError }}</p>
+              }
+              <button
+                type="button"
+                class="btn btn-dark btn-sm comment-submit"
+                [disabled]="commentSending || !commentText.trim()"
+                (click)="submitComment()">
+                {{ commentSending ? 'Wird gespeichert...' : 'Absenden' }}
+              </button>
+            </div>
+          }
+
+          @if (comments.length === 0) {
+
+            <div class="empty-card compact">
+              <strong>Noch keine Kommentare</strong>
+              <p>Hier gibt es noch keine Hinweise von anderen Usern.</p>
+            </div>
+
+          } @else {
+
+            <div class="comment-list">
+              @for (comment of comments; track comment.id) {
+                <article class="comment-card">
+
+                  <div class="comment-author">
+                    @if (comment.authorPhotoUrl) {
+                      <img [src]="comment.authorPhotoUrl" [alt]="comment.authorName || 'User'">
+                    } @else {
+                      <span>{{ (comment.user?.username || comment.authorName || 'U').charAt(0) }}</span>
+                    }
+
+                    <div>
+                      @if (comment.user?.id) {
+                        <a [routerLink]="['/users', comment.user!.id]" class="author-link">
+                          {{ comment.user?.username || comment.authorName || 'Unbekannter User' }}
+                        </a>
+                      } @else {
+                        <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
+                      }
+                      @if (comment.createdAtUtc || comment.createdAt) {
+                        <small>{{ (comment.createdAtUtc || comment.createdAt) | date:'dd.MM.yyyy' }}</small>
+                      }
+                    </div>
+                  </div>
+
+                  <p>{{ comment.text }}</p>
+
+                  @if (isOwnComment(comment)) {
+                    <button
+                      type="button"
+                      class="btn-delete-comment"
+                      [disabled]="deletingCommentId === comment.id"
+                      (click)="deleteComment(comment.id)">
+                      {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
+                    </button>
+                  }
+
+                </article>
+              }
+            </div>
+
+          }
+
+        </section>
+
+      </aside>
+
+    </div>
+
+  }
+
+</section>
