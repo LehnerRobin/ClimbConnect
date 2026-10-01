@@ -90,14 +90,13 @@ Konzeption und Implementierung des domänenspezifischen Datenmodells
 (Gebiete → Sektoren → Routen), der REST-API mit allen Endpunkten, der
 Keycloak-Authentifizierung sowie der CI/CD-Pipeline und des Deployments.
 
-**Mohamed Attia – Frontend-Architektur & Datendarstellung**
-Aufbau der Angular-Anwendung, Komponentenstruktur, Service-Layer für die
-API-Kommunikation, Verwaltungsansichten für Gebiete und Routen sowie die
-interaktiven Charts für die Gradentwicklung.
+**Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
+Profil- und Fortschrittsansichten, Verwaltungsansichten für Gebiete und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen, 
+Kommentarsystem sowie responsive Gestaltung für Desktop und Mobilgerät.
 
-**Faru Hamid – Frontend & Benutzerorientierte Features**
-Profil und Fortschrittsansichten, Terminplaner-UI, Kommentar- und Meldesystem
-mit Bild-Upload sowie responsive Gestaltung für Desktop und Mobilgerät.
+**Faru Hamid – Frontend-Architektur & komplexe Features**
+Aufbau der Angular-Anwendung, Komponentenstruktur, Service-Layer für die API-Kommunikation, 
+interaktive Charts für die Gradentwicklung, Terminplaner-UI sowie Meldesystem mit Bild-Upload.
 
 Alle drei Teammitglieder arbeiten nach einem agilen Vorgehensmodell –
 jeder unterstützt die anderen und ist in alle Bereiche des Projekts eingebunden.
