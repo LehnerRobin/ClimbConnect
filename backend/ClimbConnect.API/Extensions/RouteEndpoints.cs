@@ -10,7 +10,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Kletterrouten.</summary>
 public static class RouteEndpoints
 {
-    public static void MapRouteEndpoints(this WebApplication app)
+    public static void MapRouteEndpoints(this IEndpointRouteBuilder app)
     {
         // Globale Routen-Suche über alle Sektoren
         app.MapGet("/api/routes", async (string? search, string? scale, int? page, int? pageSize, AppDbContext db) =>

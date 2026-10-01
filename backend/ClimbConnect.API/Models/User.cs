@@ -1,10 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace ClimbConnect.API.Models;
 
 public class User
 {
     public int Id { get; set; }
+    // E-Mail und Passwort-Hash dürfen nie mitgeschickt werden, falls ein User
+    // als Teil einer anderen Entity serialisiert wird (z.B. Autor eines Kommentars).
+    [JsonIgnore]
     public string Email { get; set; } = string.Empty;
     public string Username { get; set; } = string.Empty;
+    [JsonIgnore]
     public string PasswordHash { get; set; } = string.Empty;
     public string Role { get; set; } = "user";    // "user" | "admin"
     public string? Bio { get; set; }

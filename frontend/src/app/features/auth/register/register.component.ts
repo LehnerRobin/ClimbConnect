@@ -46,6 +46,8 @@ export class RegisterComponent {
       error: (error: any) => {
         if (error.status === 409) {
           this.errorMessage = error.error?.error ?? 'Benutzer existiert bereits';
+        } else if (error.status === 400) {
+          this.errorMessage = error.error?.error ?? 'Ungültige Eingabe';
         } else {
           this.errorMessage = 'Registrierung fehlgeschlagen';
         }

@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Registrierungs- und Login-Endpoints.</summary>
 public static class AuthEndpoints
 {
-    public static void MapAuthEndpoints(this WebApplication app)
+    public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapPost("/api/auth/register", async (RegisterDto dto, AppDbContext db, JwtService jwt) =>
         {

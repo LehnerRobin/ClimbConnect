@@ -10,7 +10,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Termine (Appointments) und Teilnahme-Verwaltung.</summary>
 public static class AppointmentEndpoints
 {
-    public static void MapAppointmentEndpoints(this WebApplication app)
+    public static void MapAppointmentEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, AppDbContext db) =>
         {
@@ -108,6 +108,8 @@ public static class AppointmentEndpoints
             {
                 AreaId          = id,
                 CreatedByUserId = userId,
+                // Nötig: die Datenbank führt zusätzlich den Fremdschlüssel "CreatedById",
+                // der nur über diese Navigation befüllt wird.
                 CreatedBy       = currentUser,
                 Title           = dto.Title.Trim(),
                 Date            = dto.Date,
@@ -119,7 +121,14 @@ public static class AppointmentEndpoints
 
             db.Appointments.Add(appointment);
             await db.SaveChangesAsync();
-            return Results.Created($"/api/appointments/{appointment.Id}", appointment);
+
+            // Nur die Termin-Felder zurückgeben, nicht den Ersteller als ganze User-Entity
+            return Results.Created($"/api/appointments/{appointment.Id}", new
+            {
+                appointment.Id, appointment.AreaId, appointment.CreatedByUserId,
+                appointment.Title, appointment.Date, appointment.MeetingPoint, appointment.Description,
+                appointment.MinParticipants, appointment.MaxParticipants, appointment.CreatedAtUtc
+            });
         })
         .WithName("CreateAppointment")
         .WithTags("Appointments")

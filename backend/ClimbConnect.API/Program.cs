@@ -72,6 +72,18 @@ builder.Services.AddHttpLogging(logging =>
 // --------------------
 // JWT AUTH
 // --------------------
+// Der Platzhalter aus appsettings.json ist öffentlich bekannt. Außerhalb von Entwicklung
+// und Tests muss ein eigener Key gesetzt sein (Umgebungsvariable Jwt__Key), sonst könnte
+// jeder gültige Tokens erzeugen.
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (!builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("Testing") &&
+    (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.StartsWith("CHANGE_ME") || jwtKey.Length < 32))
+{
+    throw new InvalidOperationException(
+        "Jwt:Key ist nicht gesetzt. Bitte über die Umgebungsvariable Jwt__Key einen eigenen " +
+        "geheimen Schlüssel mit mindestens 32 Zeichen setzen.");
+}
+
 builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -162,7 +174,9 @@ Directory.CreateDirectory(uploadsPath);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
-    RequestPath  = "/uploads"
+    RequestPath  = "/uploads",
+    // Browser sollen den Dateityp nicht selbst erraten (Schutz vor als Bild getarnten Skripten)
+    OnPrepareResponse = ctx => ctx.Context.Response.Headers["X-Content-Type-Options"] = "nosniff"
 });
 
 // Data-Ordner sicherstellen (SQLite braucht das Verzeichnis)
@@ -187,16 +201,19 @@ using (var scope = app.Services.CreateScope())
 // --------------------
 app.MapGet("/api/health", () => Results.Ok(new { status = "ok" })).WithName("Health");
 
-app.MapAuthEndpoints();
-app.MapAreaEndpoints();
-app.MapSectorEndpoints();
-app.MapRouteEndpoints();
-app.MapProgressEndpoints();
-app.MapAppointmentEndpoints();
-app.MapCommentEndpoints();
-app.MapReportEndpoints();
-app.MapUserEndpoints();
-app.MapUploadEndpoints();
+// Alle API-Endpoints laufen durch den ValidationFilter, der die DataAnnotations der DTOs prüft
+var api = app.MapGroup(string.Empty).AddEndpointFilter<ValidationFilter>();
+
+api.MapAuthEndpoints();
+api.MapAreaEndpoints();
+api.MapSectorEndpoints();
+api.MapRouteEndpoints();
+api.MapProgressEndpoints();
+api.MapAppointmentEndpoints();
+api.MapCommentEndpoints();
+api.MapReportEndpoints();
+api.MapUserEndpoints();
+api.MapUploadEndpoints();
 
 app.Run();
 

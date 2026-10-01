@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Safety-Reports (Sicherheitsmeldungen).</summary>
 public static class ReportEndpoints
 {
-    public static void MapReportEndpoints(this WebApplication app)
+    public static void MapReportEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapPost("/api/reports", async (ReportCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
         {
@@ -50,8 +50,13 @@ public static class ReportEndpoints
         app.MapGet("/api/reports", async (AppDbContext db) =>
         {
             var reports = await db.Reports
-                .Include(r => r.User)
                 .OrderByDescending(r => r.CreatedAtUtc)
+                .Select(r => new
+                {
+                    r.Id, r.UserId, r.AreaId, r.RouteId, r.Text, r.PhotoUrl,
+                    r.Severity, r.Status, r.CreatedAtUtc,
+                    User = new { r.User.Id, r.User.Username }
+                })
                 .ToListAsync();
             return Results.Ok(reports);
         })
