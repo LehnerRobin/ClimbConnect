@@ -7,8 +7,6 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { AreasPageComponent } from './features/areas/areas-page.component';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
-<<<<<<< HEAD
-=======
 import { canActivateAuthRole } from './guards/auth-role.guard';
 import { AreaDetailComponent } from './features/areas/area-detail.component';
 import { AppointmentFormComponent } from './features/appointments/appointment-form.component';
@@ -16,7 +14,6 @@ import { RouteDetailComponent } from './features/routes/route-detail.component';
 import { PublicProfileComponent } from './features/users/public-profile.component';
 import { ProgressFormComponent } from './features/progress/progress-form.component';
 import { ClimbersPage } from './features/climbers/climbers-page';
->>>>>>> 56ecca129ad620a40a4704db83f98ca26837e12d
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
