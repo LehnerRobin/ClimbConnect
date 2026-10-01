@@ -83,15 +83,23 @@ Der **User** kann Begehungen eintragen, Termine erstellen, Kommentare schreiben 
 
 ## 5. Mit Docker starten (alternativ)
 
+Einmalig die Datei `.env.example` nach `.env` kopieren und darin einen eigenen
+`JWT_KEY` (mindestens 32 Zeichen) eintragen. Die `.env` wird nicht committet.
+
 ```bash
 # Im Wurzelverzeichnis des Repos
+cp .env.example .env
 docker compose up --build
 ```
 
-| Service  | URL                    |
-|----------|------------------------|
-| Backend  | http://localhost:5004  |
-| Frontend | http://localhost:8080  |
+| Service               | URL                           |
+|-----------------------|-------------------------------|
+| App (Frontend + API)  | http://localhost              |
+| API direkt (Debug)    | http://localhost:5004/api/... |
+
+Das Frontend leitet `/api` und `/uploads` intern an das Backend weiter, daher läuft
+alles unter einer Adresse. Datenbank und hochgeladene Bilder liegen in Docker-Volumes
+und bleiben bei `docker compose down` erhalten.
 
 ---
 
