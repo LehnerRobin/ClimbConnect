@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Fortschrittseinträge (Begehungen) des eingeloggten Users.</summary>
 public static class ProgressEndpoints
 {
-    public static void MapProgressEndpoints(this WebApplication app)
+    public static void MapProgressEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/progress/me", async (ClaimsPrincipal user, int? page, int? pageSize, AppDbContext db) =>
         {

@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Benutzerprofile, Statistiken und die Benutzerliste.</summary>
 public static class UserEndpoints
 {
-    public static void MapUserEndpoints(this WebApplication app)
+    public static void MapUserEndpoints(this IEndpointRouteBuilder app)
     {
         // Eigenes Profil abrufen
         app.MapGet("/api/users/me", async (ClaimsPrincipal user, AppDbContext db) =>
