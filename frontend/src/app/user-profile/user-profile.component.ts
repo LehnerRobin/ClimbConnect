@@ -41,7 +41,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     favoriteArea: '-'
   };
 
-  gradeProgression: { month: string; grade: string }[] = [];
+  gradeProgression: { month: string; grade: string; rank: number }[] = [];
   chartReady = false;
   private chart: Chart | null = null;
 
@@ -244,13 +244,18 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
       this.chart.destroy();
     }
 
+    // Die Höhe eines Punkts ist der Rang des Grads (höher = schwerer). Beschriftet wird
+    // die Y-Achse genau an den Rängen, die vorkommen – mit dem Grad in der Skala des Users.
+    const gradeByRank = new Map(this.gradeProgression.map(p => [p.rank, p.grade]));
+    const ranks = [...gradeByRank.keys()];
+
     this.chart = new Chart(this.gradeChartRef.nativeElement, {
       type: 'line',
       data: {
         labels: this.gradeProgression.map(p => p.month),
         datasets: [{
           label: 'Höchster Grad',
-          data: this.gradeProgression.map((_, i) => i + 1),
+          data: this.gradeProgression.map(p => p.rank),
           borderColor: '#C3791F',
           backgroundColor: 'rgba(195, 121, 31, 0.12)',
           pointBackgroundColor: '#17150F',
@@ -282,11 +287,16 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
             ticks: { color: '#756C53', font: { family: "'IBM Plex Sans', sans-serif", size: 12 } }
           },
           y: {
+            min: Math.min(...ranks) - 1,
+            max: Math.max(...ranks) + 1,
+            afterBuildTicks: (axis) => {
+              axis.ticks = ranks.map(value => ({ value }));
+            },
             grid: { color: 'rgba(23, 21, 15, 0.06)' },
             ticks: {
               color: '#756C53',
               font: { family: "'IBM Plex Mono', monospace", size: 12 },
-              callback: (_, i) => this.gradeProgression[i]?.grade ?? ''
+              callback: (value) => gradeByRank.get(Number(value)) ?? ''
             }
           }
         }

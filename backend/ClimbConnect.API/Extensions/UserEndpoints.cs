@@ -85,7 +85,7 @@ public static class UserEndpoints
             // Grad-Entwicklung: höchster Rotpunkt-/Flash-/Onsight-Grad pro Monat
             var targetScale = scale ?? "french";
             var gradeProgression = ascents
-                .Where(p => p.Route.Grade != null)
+                .Where(p => GradeConversionService.Rank(p.Route.Grade) >= 0)
                 .GroupBy(p => new { p.Date.Year, p.Date.Month })
                 .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g =>
@@ -94,7 +94,9 @@ public static class UserEndpoints
                     return new
                     {
                         Month = $"{g.Key.Year:0000}-{g.Key.Month:00}",
-                        Grade = GradeConversionService.Convert(best.Route.Grade, targetScale)
+                        Grade = GradeConversionService.Convert(best.Route.Grade, targetScale),
+                        // Rang = Position in der Schwierigkeits-Reihenfolge, damit das Diagramm die Höhe richtig zeichnet
+                        Rank  = GradeConversionService.Rank(best.Route.Grade)
                     };
                 })
                 .ToList();

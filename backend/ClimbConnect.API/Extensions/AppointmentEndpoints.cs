@@ -12,17 +12,26 @@ public static class AppointmentEndpoints
 {
     public static void MapAppointmentEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, AppDbContext db) =>
+        app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, ClaimsPrincipal user, AppDbContext db) =>
         {
             if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
 
             // Standardmäßig nur zukünftige Termine; mit ?all=true auch vergangene
             var cutoff = (all == true) ? DateTime.MinValue : DateTime.UtcNow;
 
+            // Der Endpoint ist öffentlich; ist jemand eingeloggt, wird mitgeliefert ob er teilnimmt
+            int? currentUserId = int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var uid) ? uid : null;
+
             var appointments = await db.Appointments
                 .Where(a => a.AreaId == id && a.Date >= cutoff)
-                .Include(a => a.AppointmentUsers)
                 .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
+                })
                 .ToListAsync();
             return Results.Ok(appointments);
         })

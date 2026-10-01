@@ -84,6 +84,8 @@ export interface Appointment {
   minParticipants?: number | null;
   maxParticipants?: number | null;
   participantCount?: number;
+  /** Ob der eingeloggte User an diesem Termin teilnimmt (kommt von der Terminliste). */
+  isSubscribed?: boolean;
 }
 
 export interface AppointmentCreateRequest {
