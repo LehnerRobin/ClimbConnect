@@ -6,7 +6,8 @@ export interface UserStats {
   totalClimbed: number;
   openProjects: number;
   favoriteArea: string | null;
-  gradeProgression: { month: string; grade: string }[];
+  /** rank = Position des Grads in der Schwierigkeits-Reihenfolge (höher = schwerer). */
+  gradeProgression: { month: string; grade: string; rank: number }[];
 }
 
 export interface UserListItem {
