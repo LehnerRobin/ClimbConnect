@@ -22,6 +22,7 @@ Im Fokus stehen:
 - Projektteam:
   - Robin Lehner – Backend & Datenbank
   - Mohamed Attia – Frontend (Angular)
+  - Faru Hamid - Frontend (Angular)
 - Betreuung:
   - [Name Betreuungslehrer:in]
 
