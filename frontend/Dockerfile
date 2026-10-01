@@ -1,12 +1,8 @@
 # =========================================
 # Stage 1: Build the Angular Application
 # =========================================
-# =========================================
-# Stage 1: Build the Angular Application
-# =========================================
 ARG NODE_VERSION=25.0.0-alpine
 ARG NGINX_VERSION=alpine3.22
-ARG APP_PATH=demosyp
 
 # Use a lightweight Node.js image for building (customizable via ARG)
 FROM node:${NODE_VERSION} AS builder
@@ -27,8 +23,7 @@ RUN npm install -g @angular/cli@20.3.2
 COPY . .
 
 # Build the Angular application
-ARG APP_PATH
-RUN ng build --configuration production --base-href /${APP_PATH}/
+RUN ng build --configuration production
 
 # =========================================
 # Stage 2: Prepare Nginx to Serve Static Files

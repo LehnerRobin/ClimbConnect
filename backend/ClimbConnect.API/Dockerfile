@@ -15,6 +15,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 USER root
+# curl wird für den Healthcheck in docker-compose.yml gebraucht
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app/Data /app/uploads && chmod -R 777 /app/Data /app/uploads
 USER $APP_UID
 ENTRYPOINT ["dotnet", "ClimbConnect.API.dll"]
