@@ -29,7 +29,8 @@ export class ProgressFormComponent implements OnInit {
     subjectiveGradeComment: ''
   };
 
-  statuses        = ['Rotpunkt', 'Flash', 'Onsight', 'Projekt', 'Toprope'];
+  // Muss zu ProgressConst.Statuses im Backend passen; Toprope ist eine Begehungsart, kein Status
+  statuses        = ['Rotpunkt', 'Flash', 'Onsight', 'Projekt'];
   climbingStyles  = ['Vorstieg', 'Toprope'];
 
   frenchGrades = [
