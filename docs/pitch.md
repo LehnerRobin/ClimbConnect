@@ -91,12 +91,15 @@ Konzeption und Implementierung des domänenspezifischen Datenmodells
 Keycloak-Authentifizierung sowie der CI/CD-Pipeline und des Deployments.
 
 **Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
-Profil- und Fortschrittsansichten, Verwaltungsansichten für Gebiete und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen, 
-Kommentarsystem sowie responsive Gestaltung für Desktop und Mobilgerät.
+Startseite, Kletterer-Liste, persönliches und öffentliches Profil mit Fortschrittsübersicht, 
+Verwaltungs- und Detailansichten für Gebiete, Sektoren und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen, 
+Formular zum Eintragen von Begehungen mit subjektiver Gradbewertung, Kommentarsystem, Login- und Registrierungsansichten inklusive Formularvalidierung, 
+Benutzereinstellungen zur Wahl der Grad-Skala sowie responsive Gestaltung für Desktop und Mobilgerät.
 
 **Faru Hamid – Frontend-Architektur & komplexe Features**
-Aufbau der Angular-Anwendung, Komponentenstruktur, Service-Layer für die API-Kommunikation, 
-interaktive Charts für die Gradentwicklung, Terminplaner-UI sowie Meldesystem mit Bild-Upload.
+Aufbau der Angular-Anwendung, Komponentenstruktur und Routing-Konzept, Service-Layer für die API-Kommunikation, 
+Authentifizierung im Frontend mit Token-Handling, Route Guards und rollenbasierter Anzeige, interaktive Charts für die Gradentwicklung, 
+Terminplaner-UI, wiederverwendbare Bild-Upload-Komponente sowie Meldesystem mit Bild-Upload.
 
 Alle drei Teammitglieder arbeiten nach einem agilen Vorgehensmodell –
 jeder unterstützt die anderen und ist in alle Bereiche des Projekts eingebunden.
