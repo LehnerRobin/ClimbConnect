@@ -44,23 +44,17 @@ Bereitstellung der Anwendung über eine CI/CD-Pipeline. Zusätzlich wird
 untersucht, wie Fortschrittsdaten aggregiert und als Statistiken (z.B.
 Gradentwicklung über Zeit) aufbereitet werden können.
 
-**Mohamed Attia – Frontend-Architektur & Datendarstellung**
-Im Rahmen der Diplomarbeit wird untersucht, wie eine moderne Single-Page-Application
-mit Angular strukturiert und aufgebaut werden kann. Dabei wird analysiert, wie
-die Anwendung in wiederverwendbare Komponenten aufgeteilt, die Kommunikation
-mit der REST-API über einen zentralen Service-Layer abgewickelt und komplexe
-Daten wie Gradentwicklungen als interaktive Charts dargestellt werden können.
-Ein weiterer Schwerpunkt liegt auf der Verwaltung von Klettergebieten, Sektoren
-und Routen im Frontend sowie auf der Umsetzung einer konsistenten Benutzeroberfläche.
+**Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
+Als Ergebnis entstehen die benutzerorientierten Ansichten der Anwendung: das persönliche Profil mit Fortschrittsübersicht, 
+die Verwaltungs- und Detailansichten für Gebiete, Routen und Begehungen sowie das Kommentarsystem. Mohamed verantwortet 
+dabei insbesondere die Umsetzung der Formulare inklusive Validierung und Fehlerrückmeldung sowie die Such- und Filterfunktionen, 
+mit denen Gebiete und Routen gezielt gefunden werden können. Zusätzlich verantwortet er die responsive Gestaltung der Anwendung, 
+sodass ClimbConnect sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
 
-**Faru Hamid – Frontend & Benutzerorientierte Features**
-Im Rahmen der Diplomarbeit wird untersucht, wie benutzerorientierte Features
-einer Webanwendung – insbesondere Fortschrittstracking, Terminplanung und
-Community-Funktionen – in Angular umgesetzt werden können. Dabei wird analysiert,
-wie Benutzerinteraktionen wie das Eintragen von Begehungen, das Beitreten zu
-Terminen und das Hochladen von Bildern in einer responsiven Oberfläche
-ansprechend und intuitiv gestaltet werden können. Ein weiterer Schwerpunkt
-liegt auf der nutzerfreundlichen Darstellung von Profil- und Statistikseiten.
+**Faru Hamid – Frontend-Architektur & komplexe Features**
+Als Ergebnis entsteht eine strukturierte Angular-Anwendung mit klarer Komponentenarchitektur, zentralem HTTP-Service-Layer 
+und durchgängigem Routing-Konzept. Faru verantwortet dabei insbesondere die Integration der interaktiven Charts zur Darstellung 
+der Gradentwicklung über Zeit, den Terminplaner mit
 
 ---
 
