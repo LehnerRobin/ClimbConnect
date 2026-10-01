@@ -106,7 +106,11 @@ export class AreaDetailComponent implements OnInit {
     });
 
     this.areasService.getAppointmentsByArea(areaId).subscribe({
-      next: (appointments) => { this.appointments = appointments; },
+      next: (appointments) => {
+        this.appointments = appointments;
+        // Beitritts-Status kommt vom Server, damit er auch nach dem Neuladen stimmt
+        this.subscribedIds = new Set(appointments.filter(a => a.isSubscribed).map(a => a.id));
+      },
       error: () => {}
     });
 
@@ -174,22 +178,30 @@ export class AreaDetailComponent implements OnInit {
   }
 
   subscribe(appointment: Appointment): void {
+    this.appointmentActionError = '';
     this.areasService.subscribeToAppointment(appointment.id).subscribe({
       next: () => {
         this.subscribedIds.add(appointment.id);
         appointment.participantCount = (appointment.participantCount ?? 0) + 1;
+        this.reloadAppointmentDetail(appointment.id);
       },
-      error: () => {}
+      error: (error) => {
+        this.appointmentActionError = error?.error?.error ?? 'Beitreten ist fehlgeschlagen.';
+      }
     });
   }
 
   unsubscribe(appointment: Appointment): void {
+    this.appointmentActionError = '';
     this.areasService.unsubscribeFromAppointment(appointment.id).subscribe({
       next: () => {
         this.subscribedIds.delete(appointment.id);
         appointment.participantCount = Math.max((appointment.participantCount ?? 1) - 1, 0);
+        this.reloadAppointmentDetail(appointment.id);
       },
-      error: () => {}
+      error: () => {
+        this.appointmentActionError = 'Austreten ist fehlgeschlagen.';
+      }
     });
   }
 
@@ -200,10 +212,22 @@ export class AreaDetailComponent implements OnInit {
     }
     this.expandedAppointmentId = appointmentId;
     if (!this.appointmentDetails[appointmentId]) {
-      this.areasService.getAppointmentById(appointmentId, this.gradeScale).subscribe({
-        next: (detail) => { this.appointmentDetails[appointmentId] = detail; },
-        error: () => {}
-      });
+      this.loadAppointmentDetail(appointmentId);
+    }
+  }
+
+  private loadAppointmentDetail(appointmentId: number): void {
+    this.areasService.getAppointmentById(appointmentId, this.gradeScale).subscribe({
+      next: (detail) => { this.appointmentDetails[appointmentId] = detail; },
+      error: () => {}
+    });
+  }
+
+  /** Teilnehmerliste und Durchschnittsgrad ändern sich beim Bei- und Austreten → gemerkte Details verwerfen. */
+  private reloadAppointmentDetail(appointmentId: number): void {
+    delete this.appointmentDetails[appointmentId];
+    if (this.expandedAppointmentId === appointmentId) {
+      this.loadAppointmentDetail(appointmentId);
     }
   }
 
