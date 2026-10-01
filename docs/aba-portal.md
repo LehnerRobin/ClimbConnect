@@ -45,16 +45,20 @@ untersucht, wie Fortschrittsdaten aggregiert und als Statistiken (z.B.
 Gradentwicklung über Zeit) aufbereitet werden können.
 
 **Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
-Als Ergebnis entstehen die benutzerorientierten Ansichten der Anwendung: das persönliche Profil mit Fortschrittsübersicht, 
-die Verwaltungs- und Detailansichten für Gebiete, Routen und Begehungen sowie das Kommentarsystem. Mohamed verantwortet 
-dabei insbesondere die Umsetzung der Formulare inklusive Validierung und Fehlerrückmeldung sowie die Such- und Filterfunktionen, 
-mit denen Gebiete und Routen gezielt gefunden werden können. Zusätzlich verantwortet er die responsive Gestaltung der Anwendung, 
-sodass ClimbConnect sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
+Startseite, Kletterer-Liste, persönliches und öffentliches Profil mit
+Fortschrittsübersicht, Verwaltungs- und Detailansichten für Gebiete, Sektoren
+und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen,
+Formular zum Eintragen von Begehungen mit subjektiver Gradbewertung,
+Kommentarsystem, Login- und Registrierungsansichten inklusive
+Formularvalidierung, Benutzereinstellungen zur Wahl der Grad-Skala sowie
+responsive Gestaltung für Desktop und Mobilgerät.
 
 **Faru Hamid – Frontend-Architektur & komplexe Features**
-Als Ergebnis entsteht eine strukturierte Angular-Anwendung mit klarer Komponentenarchitektur, zentralem HTTP-Service-Layer 
-und durchgängigem Routing-Konzept. Faru verantwortet dabei insbesondere die Integration der interaktiven Charts zur Darstellung 
-der Gradentwicklung über Zeit, den Terminplaner mit
+Aufbau der Angular-Anwendung, Komponentenstruktur und Routing-Konzept,
+Service-Layer für die API-Kommunikation, Authentifizierung im Frontend mit
+Token-Handling, Route Guards und rollenbasierter Anzeige, interaktive Charts
+für die Gradentwicklung, Terminplaner-UI, wiederverwendbare
+Bild-Upload-Komponente sowie Meldesystem mit Bild-Upload.
 
 ---
 
@@ -87,22 +91,33 @@ per API wahlweise in der französischen, amerikanischen oder UIAA-Skala
 ausgegeben. Die Anwendung ist durch Keycloak abgesichert und wird über eine
 GitHub Actions CI/CD-Pipeline automatisiert deployed.
 
-**Mohamed Attia – Frontend-Architektur & Datendarstellung**
+**Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
+Als Ergebnis entstehen die benutzerorientierten Ansichten der Anwendung: die
+Startseite als Einstiegspunkt, die Kletterer-Liste, das persönliche Profil mit
+Fortschrittsübersicht sowie die öffentlichen Profile mit den letzten
+Begehungen anderer Benutzer. Dazu kommen die Verwaltungs- und Detailansichten
+für Gebiete, Sektoren und Routen inklusive Darstellung des Community-Grades.
+Mohamed verantwortet dabei insbesondere die Formulare inklusive Validierung
+und Fehlerrückmeldung, darunter die Login- und Registrierungsansichten sowie
+das Formular zum Eintragen einer Begehung mit Status, Begehungsart, Versuchen,
+Notiz und subjektiver Gradbewertung. Ebenfalls in seinem Bereich liegen die
+Such- und Filterfunktionen, mit denen Gebiete und Routen gezielt gefunden
+werden können, das Kommentarsystem, die Benutzereinstellungen zur Wahl der
+bevorzugten Grad-Skala und die responsive Gestaltung der Anwendung, sodass
+ClimbConnect sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
+
+**Faru Hamid – Frontend-Architektur & komplexe Features**
 Als Ergebnis entsteht eine strukturierte Angular-Anwendung mit klarer
 Komponentenarchitektur, zentralem HTTP-Service-Layer und durchgängigem
-Routing-Konzept. Mohamed verantwortet dabei insbesondere die Umsetzung
-der Gebiets- und Routenverwaltung im Frontend sowie die Integration von
-interaktiven Charts zur Darstellung der Gradentwicklung über Zeit.
-Die Anwendung kommuniziert vollständig über die REST-API und ist so
-aufgebaut, dass neue Features ohne großen Aufwand ergänzt werden können.
-
-**Faru Hamid – Frontend & Benutzerorientierte Features**
-Als Ergebnis entstehen die benutzerorientierten Kernbereiche der Anwendung:
-das persönliche Profil mit Fortschrittsübersicht, die Detailansichten für
-Routen und Begehungen, der Terminplaner mit Beitritt-Funktion sowie das
-Kommentar- und Meldesystem inklusive Bild-Upload. Faru verantwortet
-außerdem die responsive Gestaltung der Anwendung, sodass ClimbConnect
-sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
+Routing-Konzept. Faru verantwortet dabei die Authentifizierung im Frontend mit
+Token-Handling, Route Guards und rollenbasierter Anzeige, sodass Bearbeiten-
+und Löschen-Funktionen nur Administratoren zur Verfügung stehen. Weiters
+umfasst sein Bereich die Integration der interaktiven Charts zur Darstellung
+der Gradentwicklung über Zeit, den Terminplaner mit Beitritt-Funktion, das
+Meldesystem inklusive Bild-Upload sowie eine wiederverwendbare
+Upload-Komponente, die auch im Kommentarsystem eingesetzt wird. Die Anwendung
+kommuniziert vollständig über die REST-API und ist so aufgebaut, dass neue
+Features ohne großen Aufwand ergänzt werden können.
 
 **Gemeinsamer agiler Ansatz**
 Die Entwicklung erfolgt nach einem agilen Vorgehensmodell. Alle drei
@@ -110,4 +125,3 @@ Teammitglieder arbeiten iterativ an gemeinsamen User Stories, unterstützen
 sich gegenseitig und sind in alle Bereiche des Projekts eingebunden.
 Die beschriebenen Schwerpunkte spiegeln die jeweilige Hauptverantwortung
 wider, nicht eine strikte Trennung der Aufgaben.
-
