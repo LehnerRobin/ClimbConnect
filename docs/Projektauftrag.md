@@ -20,15 +20,16 @@ Im Fokus stehen:
 
 ## Beteiligte
 - Projektteam:
-  - Robin Lehner – Backend & Datenbank
-  - Mohamed Attia – Frontend (Angular)
-  - Faru Hamid - Frontend (Angular)
+  - Robin Lehner – Backend & Systemarchitektur (API, Datenbank, CI/CD, Deployment)
+  - Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche (Angular)
+  - Faru Hamid – Frontend-Architektur & komplexe Features (Angular)
 - Betreuung:
-  - [Name Betreuungslehrer:in]
+  - Herbert Aitenbichler – Hauptverantwortlicher Betreuer
 
 ## Zeitrahmen
-- Vorbereitungsphase: jetzt bis offiziellem Start der Diplomarbeit
-- Implementierungsphase: geplanter Zeitraum 4./5. Jahrgang (laut Vorgabe der HTL)
+- Vorbereitungsphase: bis zum offiziellen Start der Diplomarbeit
+- Implementierungsphase: 4./5. Jahrgang (laut Vorgabe der HTL), in Sprints organisiert
+- Nächstes Sprint Review: 12.10.2026
 - Abgabe: gemäß offiziellem Diplomarbeits-Terminplan HTL Leonding
 
 ## Erwartete Ergebnisse
