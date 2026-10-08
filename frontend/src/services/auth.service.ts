@@ -126,7 +126,14 @@ export class AuthService {
       }
 
       const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
-      const decoded = atob(normalized);
+
+      // atob liefert pro Byte ein Zeichen und kennt kein UTF-8. Umlaute bestehen in UTF-8
+      // aber aus zwei Bytes, deshalb würde aus "Jörg" sonst "JÃ¶rg". Wir wandeln die Bytes
+      // daher erst in ein Byte-Array um und lassen TextDecoder sie als UTF-8 lesen.
+      const binary = atob(normalized);
+      const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+      const decoded = new TextDecoder('utf-8').decode(bytes);
+
       return JSON.parse(decoded) as JwtPayload;
     } catch {
       return null;
