@@ -38,6 +38,65 @@ public static class AppointmentEndpoints
         .WithName("GetAppointmentsByArea")
         .WithTags("Appointments");
 
+                // Nächste Termine über ALLE Gebiete in einer einzigen Anfrage (für die Startseite)
+        app.MapGet("/api/appointments/upcoming", async (int? limit, ClaimsPrincipal user, AppDbContext db) =>
+        {
+            // Standard: 10 Termine, mindestens 1, höchstens 50
+            var take = Math.Clamp(limit ?? 10, 1, 50);
+
+            // Öffentlich; ist jemand eingeloggt, wird mitgeliefert ob er teilnimmt
+            int? currentUserId = int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var uid) ? uid : null;
+
+            var appointments = await db.Appointments
+                .Where(a => a.Date >= DateTime.UtcNow)
+                .OrderBy(a => a.Date)
+                .Take(take)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    AreaName         = a.Area.Name,
+                    AreaLocation     = a.Area.Location,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
+                })
+                .ToListAsync();
+            return Results.Ok(appointments);
+        })
+        .WithName("GetUpcomingAppointments")
+        .WithTags("Appointments");
+
+        // Eigene Termine: selbst erstellte UND beigetretene (für das Profil)
+        app.MapGet("/api/appointments/me", async (bool? all, ClaimsPrincipal user, AppDbContext db) =>
+        {
+            if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Results.Unauthorized();
+
+            // Standardmäßig nur zukünftige Termine; mit ?all=true auch vergangene
+            var cutoff = (all == true) ? DateTime.MinValue : DateTime.UtcNow;
+
+            var appointments = await db.Appointments
+                .Where(a => a.Date >= cutoff
+                         && (a.CreatedByUserId == userId || a.AppointmentUsers.Any(au => au.UserId == userId)))
+                .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    AreaName         = a.Area.Name,
+                    AreaLocation     = a.Area.Location,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsCreator        = a.CreatedByUserId == userId,
+                    IsSubscribed     = a.AppointmentUsers.Any(au => au.UserId == userId)
+                })
+                .ToListAsync();
+            return Results.Ok(appointments);
+        })
+        .WithName("GetMyAppointments")
+        .WithTags("Appointments")
+        .RequireAuthorization("User");
+        
+
         app.MapGet("/api/appointments/{id:int}", async (int id, string? scale, AppDbContext db) =>
         {
             var appointment = await db.Appointments

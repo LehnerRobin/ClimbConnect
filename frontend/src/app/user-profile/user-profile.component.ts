@@ -2,9 +2,8 @@ import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angula
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { Area, Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
+import { Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -117,39 +116,19 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /** Lädt eigene Termine (erstellt + beigetreten) mit einer einzigen Anfrage. */
   private loadMyAppointments(): void {
     this.loadingAppointments = true;
     this.appointmentError = '';
 
-    this.areasService.getAreas().pipe(
-      switchMap((areas: Area[]) => {
-        if (areas.length === 0) {
-          return of([] as MyAppointment[]);
-        }
-
-        const requests = areas.map((area: Area) =>
-          this.areasService.getAppointmentsByArea(area.id, true).pipe(
-            map((appointments: Appointment[]) => appointments.map((appointment: Appointment): MyAppointment => ({
-              ...appointment,
-              areaId: appointment.areaId ?? area.id,
-              areaName: area.name,
-              areaLocation: area.location ?? null
-            }))),
-            catchError(() => of([] as MyAppointment[]))
-          )
-        );
-
-        return forkJoin(requests).pipe(
-          map((groups: MyAppointment[][]) => groups.flat())
-        );
-      }),
-      map((appointments: MyAppointment[]) => appointments
-        .filter((appointment: MyAppointment) => appointment.createdByUserId === this.user.id)
-        .sort((a: MyAppointment, b: MyAppointment) => this.getAppointmentTime(a) - this.getAppointmentTime(b))
-      )
-    ).subscribe({
+    this.areasService.getMyAppointments(true).subscribe({
       next: (appointments) => {
-        this.myAppointments = appointments;
+        this.myAppointments = appointments.map((appointment): MyAppointment => ({
+          ...appointment,
+          areaId: appointment.areaId ?? 0,
+          areaName: appointment.areaName ?? '',
+          areaLocation: appointment.areaLocation ?? null
+        }));
         this.loadingAppointments = false;
       },
       error: () => {
@@ -225,15 +204,6 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
       default:
         return 'status-toprope';
     }
-  }
-
-  private getAppointmentTime(appointment: Appointment): number {
-    if (!appointment.date) {
-      return 0;
-    }
-
-    const time = new Date(appointment.date).getTime();
-    return Number.isFinite(time) ? time : 0;
   }
 
   private buildChart(): void {
