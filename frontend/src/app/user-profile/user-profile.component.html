@@ -130,7 +130,7 @@
       <div>
         <p class="eyebrow">Sessions</p>
         <h2>Meine Termine</h2>
-        <p>Hier siehst du alle Klettersessions, die du selbst erstellt hast.</p>
+        <p>Hier siehst du alle Klettersessions, die du erstellt hast oder denen du beigetreten bist.</p>
       </div>
     </div>
 
@@ -141,7 +141,7 @@
     @if (loadingAppointments) {
       <p class="empty-hint">Termine werden geladen...</p>
     } @else if (myAppointments.length === 0) {
-      <p class="empty-hint">Du hast noch keine eigenen Termine erstellt.</p>
+      <p class="empty-hint">Du hast noch keine Termine.</p>
     } @else {
       <div class="appointment-list">
         @for (appointment of myAppointments; track appointment.id) {
@@ -179,25 +179,27 @@
               <p class="appointment-description">{{ appointment.description }}</p>
             }
 
-            <div class="appointment-actions">
-              <a
-                class="edit-appointment-button"
-                [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
-                Bearbeiten
-              </a>
+            @if (appointment.isCreator) {
+              <div class="appointment-actions">
+                <a
+                  class="edit-appointment-button"
+                  [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
+                  Bearbeiten
+                </a>
 
-              <button
-                type="button"
-                class="delete-appointment-button"
-                [disabled]="deletingAppointmentId === appointment.id"
-                (click)="deleteOwnAppointment(appointment)">
-                @if (deletingAppointmentId === appointment.id) {
-                  Löscht...
-                } @else {
-                  Löschen
-                }
-              </button>
-            </div>
+                <button
+                  type="button"
+                  class="delete-appointment-button"
+                  [disabled]="deletingAppointmentId === appointment.id"
+                  (click)="deleteOwnAppointment(appointment)">
+                  @if (deletingAppointmentId === appointment.id) {
+                    Löscht...
+                  } @else {
+                    Löschen
+                  }
+                </button>
+              </div>
+            }
           </article>
         }
       </div>

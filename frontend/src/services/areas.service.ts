@@ -86,6 +86,11 @@ export interface Appointment {
   participantCount?: number;
   /** Ob der eingeloggte User an diesem Termin teilnimmt (kommt von der Terminliste). */
   isSubscribed?: boolean;
+  /** Kommt von /upcoming und /me mit, damit das Gebiet nicht extra geladen werden muss. */
+  areaName?: string | null;
+  areaLocation?: string | null;
+  /** Nur bei /me: true, wenn der eingeloggte User den Termin erstellt hat. */
+  isCreator?: boolean;
 }
 
 export interface AppointmentCreateRequest {
@@ -189,6 +194,16 @@ export class AreasService {
 
   deleteAppointment(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/appointments/${id}`);
+  }
+
+  /** Nächste Termine über alle Gebiete in einer einzigen Anfrage. */
+  getUpcomingAppointments(limit = 10): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments/upcoming?limit=${limit}`);
+  }
+
+  /** Eigene Termine (erstellt oder beigetreten). Mit all=true auch vergangene. */
+  getMyAppointments(all = false): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments/me?all=${all}`);
   }
 
   // ── Routen ─────────────────────────────────────────────────────────────────
