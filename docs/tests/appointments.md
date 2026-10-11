@@ -11,13 +11,13 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Erwartetes Ergebnis | Vorhandene Termine werden mit Titel, Datum und Teilnehmeranzahl angezeigt. Wenn keine Termine vorhanden sind, steht „Keine Termine“. |
 | Status | Offen |
 
-## AP-002 – Button „Klettersession erstellen“ nur mit Login
+## AP-002 – Button „+ Session“ nur mit Login
 
 | Feld | Beschreibung |
 |---|---|
 | Voraussetzung | Area existiert. |
 | Schritte | 1. Ausloggen. 2. `/areas/{id}` öffnen. 3. Einloggen. 4. Seite erneut öffnen. |
-| Erwartetes Ergebnis | Ohne Login ist der Button nicht sichtbar. Mit Login ist „Klettersession erstellen“ sichtbar. |
+| Erwartetes Ergebnis | Ohne Login ist der Button nicht sichtbar. Mit Login ist „+ Session“ sichtbar. |
 | Status | Offen |
 
 ## AP-003 – Direkter Zugriff ohne Login blockiert
@@ -34,7 +34,7 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Feld | Beschreibung |
 |---|---|
 | Voraussetzung | User ist eingeloggt. Area existiert. |
-| Schritte | 1. Area-Detailseite öffnen. 2. „Klettersession erstellen“ klicken. |
+| Schritte | 1. Area-Detailseite öffnen. 2. „+ Session“ klicken. |
 | Erwartetes Ergebnis | Formular öffnet sich. Datum ist heute, Uhrzeit ist `18:00`, minimale Teilnehmer ist `1`, maximale Teilnehmer ist `4`. |
 | Status | Offen |
 
