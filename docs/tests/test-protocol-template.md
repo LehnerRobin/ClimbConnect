@@ -38,6 +38,8 @@ User Story: **#25 Manuelle Testfälle definieren**
 | AR-008 | Offen |  |
 | AR-009 | Offen |  |
 | AR-010 | Offen |  |
+| AR-011 | Offen |  |
+| AR-012 | Offen |  |
 | RT-001 | Offen |  |
 | RT-002 | Offen |  |
 | RT-003 | Offen |  |
@@ -47,6 +49,7 @@ User Story: **#25 Manuelle Testfälle definieren**
 | RT-007 | Offen |  |
 | RT-008 | Offen |  |
 | RT-009 | Offen |  |
+| RT-010 | Offen |  |
 | PR-001 | Offen |  |
 | PR-002 | Offen |  |
 | PR-003 | Offen |  |
@@ -55,6 +58,8 @@ User Story: **#25 Manuelle Testfälle definieren**
 | PR-006 | Offen |  |
 | PR-007 | Offen |  |
 | PR-008 | Offen |  |
+| PR-009 | Offen |  |
+| PR-010 | Offen |  |
 | AP-001 | Offen |  |
 | AP-002 | Offen |  |
 | AP-003 | Offen |  |
@@ -66,6 +71,9 @@ User Story: **#25 Manuelle Testfälle definieren**
 | AP-009 | Offen |  |
 | AP-010 | Offen |  |
 | AP-011 | Offen |  |
+| AP-012 | Offen |  |
+| AP-013 | Offen |  |
+| AP-014 | Offen |  |
 | CM-001 | Offen |  |
 | CM-002 | Offen |  |
 | CM-003 | Offen |  |

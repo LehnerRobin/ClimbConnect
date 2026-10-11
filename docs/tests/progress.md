@@ -73,3 +73,22 @@ Bereich: **Begehung eintragen und Profil-Fortschritt**
 | Schritte | 1. Progress-Formular ausfüllen. 2. Backend stoppen oder Fehler provozieren. 3. Speichern klicken. |
 | Erwartetes Ergebnis | Es erscheint eine Fehlermeldung, z. B. „Begehung konnte nicht gespeichert werden.“ Button wird wieder benutzbar. |
 | Status | Offen |
+
+## PR-009 – Grad-Auswahl (#194)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Progress-Formular ist geöffnet. |
+| Schritte | 1. Auswahl „Subjektive Gradeinschätzung“ öffnen. |
+| Erwartetes Ergebnis | Die Liste reicht von „3a (III- / 5.2)“ bis „9c (XIII- / 5.16a)“, jeweils mit UIAA- und US-Grad. Grade wie „4+“ oder „5“ gibt es nicht. |
+| Status | Offen |
+
+
+## PR-010 – Status-Auswahl (#193)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Progress-Formular ist geöffnet. |
+| Schritte | 1. Auswahl „Status“ öffnen. 2. Auswahl „Begehungsart“ öffnen. |
+| Erwartetes Ergebnis | Status: Rotpunkt, Flash, Onsight, Projekt. Begehungsart: Vorstieg, Toprope. „Toprope“ steht nicht beim Status. |
+| Status | Offen |
