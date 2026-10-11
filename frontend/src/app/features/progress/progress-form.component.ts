@@ -3,7 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AreasService, ProgressUpdateRequest } from '../../../services/areas.service';
-import { Grade, GradeService, gradeLabel } from '../../../services/grade.service';
+import { forkJoin } from 'rxjs';
+import { GradeOption, GradeService, buildGradeOptions } from '../../../services/grade.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-progress-form',
@@ -49,9 +51,8 @@ export class ProgressFormComponent implements OnInit {
     }
   }
 
-  /** Grad-Tabelle aus dem Backend (GET /api/grades). */
-  grades: Grade[] = [];
-  readonly gradeLabel = gradeLabel;
+  /** Grad-Auswahl in der bevorzugten Skala des Users (gespeichert wird der französische Grad). */
+  gradeOptions: GradeOption[] = [];
 
   submitting = false;
   errorMessage = '';
@@ -60,12 +61,17 @@ export class ProgressFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private areasService: AreasService,
-    private gradeService: GradeService
+    private gradeService: GradeService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
-    this.gradeService.getGrades().subscribe({
-      next: grades => this.grades = grades,
+    // Grad-Tabelle und bevorzugte Skala gleichzeitig laden, dann die Auswahl bauen
+    forkJoin({
+      grades: this.gradeService.getGrades(),
+      scale:  this.userService.getPreferredScale()
+    }).subscribe({
+      next: ({ grades, scale }) => this.gradeOptions = buildGradeOptions(grades, scale),
       error: () => this.errorMessage = 'Grad-Liste konnte nicht geladen werden.'
     });
 
