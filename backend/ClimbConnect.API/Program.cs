@@ -190,7 +190,7 @@ using (var scope = app.Services.CreateScope())
         db.Database.Migrate();
     else
         db.Database.EnsureCreated();
-    await SeedData.InitAsync(db);
+    await SeedData.InitAsync(db, app.Environment, app.Configuration);
 }
 
 // --------------------

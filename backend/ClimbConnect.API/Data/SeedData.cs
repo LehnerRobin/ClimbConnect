@@ -5,31 +5,51 @@ using Route = ClimbConnect.API.Models.Route;
 namespace ClimbConnect.API.Data;
 
 /// <summary>
-/// Befüllt die Datenbank mit realistischen OÖ-Klettergebieten und Test-Usern.
+/// Befüllt die Datenbank mit realistischen OÖ-Klettergebieten und Usern.
 /// Wird nur ausgeführt wenn die DB noch leer ist.
 /// </summary>
 public static class SeedData
 {
-    public static async Task InitAsync(AppDbContext db)
+    /// <summary>
+    /// Legt Admin, Gebiete, Sektoren und Routen an. In Development und Testing gibt es die
+    /// bekannten Test-Zugänge (Admin1234! / User1234!). Überall sonst (z.B. Production) kommt
+    /// das Admin-Passwort aus Seed:AdminPassword und es wird kein testuser angelegt.
+    /// </summary>
+    public static async Task InitAsync(AppDbContext db, IHostEnvironment env, IConfiguration config)
     {
         if (await db.Users.AnyAsync(u => u.Email == "admin@climbconnect.at")) return;
+
+        // Die Test-Passwörter stehen öffentlich im Repo und dürfen nur lokal verwendet werden
+        var useTestAccounts = env.IsDevelopment() || env.IsEnvironment("Testing");
+        var adminPassword   = useTestAccounts ? "Admin1234!" : config["Seed:AdminPassword"];
+        if (!useTestAccounts && (string.IsNullOrWhiteSpace(adminPassword) || adminPassword.Length < 12))
+        {
+            throw new InvalidOperationException(
+                "Seed:AdminPassword ist nicht gesetzt. Die Datenbank ist leer und braucht einen Admin. " +
+                "Bitte über die Umgebungsvariable Seed__AdminPassword ein Passwort mit mindestens " +
+                "12 Zeichen setzen.");
+        }
 
         // ---- USER ----
         var admin = new User
         {
             Username     = "admin",
             Email        = "admin@climbconnect.at",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin1234!"),
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(adminPassword!),
             Role         = "admin"
         };
-        var testUser = new User
+        db.Users.Add(admin);
+
+        if (useTestAccounts)
         {
-            Username     = "testuser",
-            Email        = "user@climbconnect.at",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("User1234!"),
-            Role         = "user"
-        };
-        db.Users.AddRange(admin, testUser);
+            db.Users.Add(new User
+            {
+                Username     = "testuser",
+                Email        = "user@climbconnect.at",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("User1234!"),
+                Role         = "user"
+            });
+        }
 
         // ---- AREA 1: Sandwand ----
         var sandwand = new Area

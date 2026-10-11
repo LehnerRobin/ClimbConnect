@@ -59,7 +59,7 @@ ng serve
 
 Beim ersten Start wird die SQLite-Datenbank automatisch angelegt und mit Testdaten befüllt.
 
-**Test-Accounts**
+**Test-Accounts** (nur lokal mit `dotnet run` und in den Tests)
 
 | Rolle | E-Mail | Passwort |
 |---|---|---|
@@ -69,7 +69,7 @@ Beim ersten Start wird die SQLite-Datenbank automatisch angelegt und mit Testdat
 **Alternativ mit Docker:**
 
 ```bash
-cp .env.example .env    # JWT_KEY (mind. 32 Zeichen) eintragen
+cp .env.example .env    # JWT_KEY (mind. 32 Zeichen) und SEED_ADMIN_PASSWORD (mind. 12 Zeichen) eintragen
 docker compose up --build
 # → http://localhost
 ```
