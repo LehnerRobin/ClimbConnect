@@ -43,7 +43,7 @@ erfüllt. Die weitere Arbeit betrifft diese Lücke, Qualität, Moderation und Fe
 
 ## Sprint 2 – geplant
 
-GitHub-Meilenstein **„Sprint 2"** – 12 Issues, 35 SP. Aufteilung: Frontend Mohamed Attia
+GitHub-Meilenstein **„Sprint 2"** – 12 Issues, 24 SP. Aufteilung: Frontend Mohamed Attia
 (Ansichten, Admin, Suche) und Faru Hamid (Termine, Auth, Upload), Backend und alles
 andere Robin Lehner.
 
@@ -57,22 +57,37 @@ andere Robin Lehner.
 | #234 | Foto-Links nur auf eigene Uploads | 1 | Robin |
 | #222 | Klare Meldungen bei Login und Registrierung | 2 | Robin, Mohamed |
 
-**Termine** (Reihenfolge: #228 → #229 → #230)
+**Bedienung**
+
+| Issue | Thema | SP | Zuständig |
+|---|---|---|---|
+| #249 | Bei Flash und Onsight ist die Anzahl der Versuche fix 1 | 1 | Robin, Mohamed |
+| #250 | Subjektive Gradeinschätzung nur in der eigenen Skala (doppelte Werte mit franz. Grad) | 2 | Mohamed |
+| #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
+| #247 | Gebietsname auf der Karte (am Handy dauerhaft sichtbar) | 1 | Mohamed |
+| #248 | Favoriten auch auf der Gebietsseite und deutlicher erkennbar | 1 | Faru |
+
+**Termine** (Reihenfolge: #228 → #229)
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
 | #228 | Teilnehmerzahl und Anmeldestatus überall anzeigen | 3 | Faru |
 | #229 | Eigene Detailseite für Termine mit Link zum Gebiet | 3 | Faru |
-| #230 | Termin-Kalender mit Anzahl der Leute pro Tag | 5 | Robin, Faru |
 
-**Inhalte & Verwaltung**
+---
+
+## Sprint 3 – geplant
+
+GitHub-Meilenstein **„Sprint 3"** – 6 Issues, 23 SP.
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
-| #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
 | #224 | Safety-Reports für Gebiet, Sektor und Route mit Freigabe durch den Admin | 5 | Robin, Faru |
 | #244 | Feedback-Knopf statt öffentlicher Kommentare | 3 | Robin, Mohamed |
 | #223 | Admin verwaltet alle Termine | 3 | Robin, Mohamed |
+| #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
+| #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
+| #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
 
 > **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
 > - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf
@@ -102,7 +117,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | #199 | Refactoring: doppelten Code im Backend zusammenführen | 5 |
 | #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen | 5 |
 | #181 | Favoriten im Backend speichern statt im Browser | 5 |
-| #242 | Laufende Termine hervorheben, auschecken, am Tagesende automatisch löschen | 5 |
+| #242 | Laufende Termine hervorheben, auschecken, am Tagesende löschen – besuchte Sessions bleiben im Profil | 8 |
 | #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 |
 | #243 | E-Mail-Adresse bei der Registrierung überprüfen (Bestätigungs-Link) | 5 |
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
