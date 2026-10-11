@@ -43,7 +43,7 @@ erfüllt. Die weitere Arbeit betrifft diese Lücke, Qualität, Moderation und Fe
 
 ## Sprint 2 – geplant
 
-GitHub-Meilenstein **„Sprint 2"** – 12 Issues, 24 SP. Aufteilung: Frontend Mohamed Attia
+GitHub-Meilenstein **„Sprint 2"** – 13 Issues, 26 SP. Aufteilung: Frontend Mohamed Attia
 (Ansichten, Admin, Suche) und Faru Hamid (Termine, Auth, Upload), Backend und alles
 andere Robin Lehner.
 
@@ -67,11 +67,12 @@ andere Robin Lehner.
 | #247 | Gebietsname auf der Karte (am Handy dauerhaft sichtbar) | 1 | Mohamed |
 | #248 | Favoriten auch auf der Gebietsseite und deutlicher erkennbar | 1 | Faru |
 
-**Termine** (Reihenfolge: #228 → #229)
+**Termine** (Reihenfolge: #228 → #254, #229)
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
-| #228 | Teilnehmerzahl und Anmeldestatus überall anzeigen | 3 | Faru |
+| #228 | Teilnehmer-Anzeige „2/4 Dudes“ überall, Standard Min. 2 und Open End | 3 | Robin, Faru |
+| #254 | „Send Dudes!“-Hinweis, solange ein Termin unter dem Minimum ist; Ersteller tritt automatisch bei | 2 | Robin, Faru |
 | #229 | Eigene Detailseite für Termine mit Link zum Gebiet | 3 | Faru |
 
 ---
