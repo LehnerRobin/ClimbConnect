@@ -1,6 +1,7 @@
 using ClimbConnect.API.Data;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Models;
+using ClimbConnect.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClimbConnect.API.Extensions;
@@ -12,8 +13,8 @@ public static class AreaEndpoints
     {
         app.MapGet("/api/areas", async (string? search, int? page, int? pageSize, AppDbContext db) =>
         {
-            var today    = DateTime.UtcNow.Date;
-            var tomorrow = today.AddDays(1);
+            // "Heute" nach österreichischer Ortszeit, als UTC-Zeitraum (Termine sind in UTC gespeichert)
+            var (todayStartUtc, todayEndUtc) = AppTime.TodayInViennaUtc();
 
             var p  = Math.Max(1, page ?? 1);
             var ps = Math.Clamp(pageSize ?? 20, 1, 100);
@@ -36,7 +37,7 @@ public static class AreaEndpoints
                 .ToListAsync();
 
             var todayAppointments = await db.Appointments
-                .Where(a => a.Date >= today && a.Date < tomorrow)
+                .Where(a => a.Date >= todayStartUtc && a.Date < todayEndUtc)
                 .Include(a => a.AppointmentUsers)
                 .ToListAsync();
 

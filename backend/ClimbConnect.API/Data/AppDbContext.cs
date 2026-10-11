@@ -25,6 +25,12 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<AppointmentUser>()
             .HasKey(au => new { au.AppointmentId, au.UserId });
 
+        // Termine sind in UTC gespeichert. SQLite kennt keine Zeitzonen und liefert die Zeit ohne
+        // Angabe zurück; so wird sie wieder als UTC markiert und im JSON mit "Z" ausgegeben.
+        modelBuilder.Entity<Appointment>()
+            .Property(a => a.Date)
+            .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
         // Kommentare und Reports hängen wahlweise an einem Gebiet oder einer Route.
         // Wird das Gebiet bzw. die Route gelöscht, sollen sie mitgelöscht werden –
         // sonst scheitert das Löschen am Fremdschlüssel.

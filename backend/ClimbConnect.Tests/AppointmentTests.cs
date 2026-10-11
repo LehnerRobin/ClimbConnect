@@ -57,7 +57,66 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
     }
 
+    [Fact]
+    public async Task Create_InDerVergangenheit_Gibt400()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
+            JsonContent.Create(new { title = "Vergangen", date = "2020-01-01T18:00:00Z" }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, create.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_MinGroesserAlsMax_Gibt400()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+        var id     = await CreateAsync(areaId, token, "Update-Test", "2030-06-03T18:00:00Z");
+
+        var update = await SendAsync(HttpMethod.Put, $"/api/appointments/{id}", token,
+            JsonContent.Create(new { title = "Update-Test", date = "2030-06-03T18:00:00Z", minParticipants = 5, maxParticipants = 2 }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, update.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_DatumInDieVergangenheit_Gibt400()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+        var id     = await CreateAsync(areaId, token, "Verschieben", "2030-06-04T18:00:00Z");
+
+        var update = await SendAsync(HttpMethod.Put, $"/api/appointments/{id}", token,
+            JsonContent.Create(new { title = "Verschieben", date = "2020-06-04T18:00:00Z" }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, update.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_MitZeitzone_WirdInUtcGespeichertUndMitZAusgegeben()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        // 18:00 Wiener Sommerzeit (+02:00) entspricht 16:00 UTC
+        var id    = await CreateAsync(areaId, token, "Zeitzone", "2030-06-05T18:00:00+02:00");
+        var saved = await FindAppointmentAsync(areaId, id, token);
+
+        Assert.Equal("2030-06-05T16:00:00Z", saved.GetProperty("date").GetString());
+    }
+
     // Hilfsmethoden
+
+    private async Task<int> CreateAsync(int areaId, string token, string title, string date)
+    {
+        var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
+            JsonContent.Create(new { title, date }));
+        Assert.Equal(HttpStatusCode.Created, create.StatusCode);
+        return (await create.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+    }
 
     private async Task<JsonElement> FindAppointmentAsync(int areaId, int appointmentId, string? token)
     {
