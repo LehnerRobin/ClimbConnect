@@ -80,7 +80,7 @@ Bereich: **Begehung eintragen und Profil-Fortschritt**
 |---|---|
 | Voraussetzung | Progress-Formular ist geöffnet. |
 | Schritte | 1. Auswahl „Subjektive Gradeinschätzung“ öffnen. |
-| Erwartetes Ergebnis | Die Liste reicht von „3a (III- / 5.2)“ bis „9c (XIII- / 5.16a)“, jeweils mit UIAA- und US-Grad. Grade wie „4+“ oder „5“ gibt es nicht. |
+| Erwartetes Ergebnis | Die Liste zeigt nur Grade der im Profil eingestellten Skala (Französisch, UIAA oder Amerikanisch), von leicht nach schwer. Gibt es einen Wert mehrfach (z. B. UIAA „VII+“), steht der französische Grad dahinter: „VII+ (6c)“, „VII+ (6c+)“. Gespeichert wird der französische Grad (#250). |
 | Status | Offen |
 
 

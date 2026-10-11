@@ -35,3 +35,40 @@ export class GradeService {
 export function gradeLabel(grade: Grade): string {
   return `${grade.french} (${grade.uiaa} / ${grade.american})`;
 }
+
+/** Wert eines Grades in der gewünschten Skala ("french", "uiaa" oder "american"). */
+export function gradeInScale(grade: Grade, scale: string): string {
+  if (scale === 'uiaa') return grade.uiaa;
+  if (scale === 'american') return grade.american;
+  return grade.french;
+}
+
+/** Ein Eintrag für eine Grad-Auswahlliste. */
+export interface GradeOption {
+  /** Was gespeichert wird: immer der französische Grad. */
+  value: string;
+  /** Was der User sieht: der Grad in seiner Skala. */
+  label: string;
+}
+
+/**
+ * Baut die Auswahlliste in der bevorzugten Skala. Kommt ein Wert in dieser Skala
+ * mehrmals vor (z. B. „VII+“ für 6c und 6c+), wird der französische Grad dazugeschrieben.
+ */
+export function buildGradeOptions(grades: Grade[], scale: string): GradeOption[] {
+  // Zuerst zählen, wie oft jeder Wert in der Skala vorkommt
+  const counts = new Map<string, number>();
+  for (const grade of grades) {
+    const value = gradeInScale(grade, scale);
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+
+  return grades.map(grade => {
+    const value = gradeInScale(grade, scale);
+    const isDuplicate = (counts.get(value) ?? 0) > 1;
+    return {
+      value: grade.french,
+      label: isDuplicate ? `${value} (${grade.french})` : value
+    };
+  });
+}
