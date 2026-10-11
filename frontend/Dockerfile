@@ -34,8 +34,12 @@ FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
 # Use a built-in non-root user for security best practices
 USER nginx
 
-# Copy custom Nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+# Adresse des Backends: lokal heißt der Compose-Service "api",
+# auf Railway wird API_HOST=api.railway.internal gesetzt
+ENV API_HOST=api
+
+# Nginx-Konfiguration als Vorlage kopieren (API_HOST wird beim Start eingesetzt)
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
 # Copy the static build output from the build stage to Nginx's default HTML serving directory
 COPY --chown=nginx:nginx --from=builder /app/dist/*/browser /usr/share/nginx/html
@@ -44,6 +48,6 @@ COPY --chown=nginx:nginx --from=builder /app/dist/*/browser /usr/share/nginx/htm
 # Note: The default NGINX container now listens on port 8080 instead of 80 
 EXPOSE 8080
 
-# Start Nginx directly with custom config
-ENTRYPOINT ["nginx", "-c", "/etc/nginx/nginx.conf"]
-CMD ["-g", "daemon off;"]
+# Beim Start nur ${API_HOST} ersetzen (nginx-Variablen wie $host bleiben erhalten)
+# und die fertige Konfiguration nach /tmp schreiben, da der Container ohne Root läuft
+ENTRYPOINT ["/bin/sh", "-c", "envsubst '${API_HOST}' < /etc/nginx/nginx.conf.template > /tmp/nginx.conf && exec nginx -c /tmp/nginx.conf -g 'daemon off;'"]
