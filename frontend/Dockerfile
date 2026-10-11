@@ -48,6 +48,8 @@ COPY --chown=nginx:nginx --from=builder /app/dist/*/browser /usr/share/nginx/htm
 # Note: The default NGINX container now listens on port 8080 instead of 80 
 EXPOSE 8080
 
-# Beim Start nur ${API_HOST} ersetzen (nginx-Variablen wie $host bleiben erhalten)
-# und die fertige Konfiguration nach /tmp schreiben, da der Container ohne Root läuft
-ENTRYPOINT ["/bin/sh", "-c", "envsubst '${API_HOST}' < /etc/nginx/nginx.conf.template > /tmp/nginx.conf && exec nginx -c /tmp/nginx.conf -g 'daemon off;'"]
+# Beim Start:
+# 1. DNS-Server des Containers aus /etc/resolv.conf lesen (IPv6-Adressen braucht nginx in [])
+# 2. nur ${API_HOST} und ${RESOLVER} ersetzen (nginx-Variablen wie $host bleiben erhalten)
+# 3. fertige Konfiguration nach /tmp schreiben, da der Container ohne Root läuft
+ENTRYPOINT ["/bin/sh", "-c", "export RESOLVER=$(awk '/^nameserver/ { ns = $2; if (ns ~ /:/) ns = \"[\" ns \"]\"; print ns; exit }' /etc/resolv.conf) && envsubst '${API_HOST} ${RESOLVER}' < /etc/nginx/nginx.conf.template > /tmp/nginx.conf && exec nginx -c /tmp/nginx.conf -g 'daemon off;'"]
