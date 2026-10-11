@@ -18,7 +18,7 @@
 
       <div class="form-field">
         <label for="status">Status</label>
-        <select id="status" [(ngModel)]="form.status">
+        <select id="status" [ngModel]="form.status" (ngModelChange)="onStatusChange($event)">
           @for (s of statuses; track s) {
             <option [value]="s">{{ s }}</option>
           }
@@ -36,7 +36,10 @@
 
       <div class="form-field">
         <label for="attempts">Anzahl Versuche</label>
-        <input id="attempts" type="number" min="1" [(ngModel)]="form.attempts">
+        <input id="attempts" type="number" min="1" [(ngModel)]="form.attempts" [disabled]="isFirstTry">
+        @if (isFirstTry) {
+          <small class="field-hint">Erster Versuch: Bei Flash und Onsight ist es immer 1.</small>
+        }
       </div>
 
       <div class="form-field">

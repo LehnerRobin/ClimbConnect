@@ -33,6 +33,21 @@ export class ProgressFormComponent implements OnInit {
   // Muss zu ProgressConst.Statuses im Backend passen; Toprope ist eine Begehungsart, kein Status
   statuses        = ['Rotpunkt', 'Flash', 'Onsight', 'Projekt'];
   climbingStyles  = ['Vorstieg', 'Toprope'];
+  // Muss zu ProgressConst.FirstTryStatuses im Backend passen
+  private readonly firstTryStatuses = ['Flash', 'Onsight'];
+
+  /** True bei Flash/Onsight: Dann ist die Begehung im ersten Versuch gelungen, also genau 1 Versuch. */
+  get isFirstTry(): boolean {
+    return this.firstTryStatuses.includes(this.form.status);
+  }
+
+  /** Wird bei jeder Änderung des Status aufgerufen und setzt bei Flash/Onsight die Versuche auf 1. */
+  onStatusChange(status: string): void {
+    this.form.status = status;
+    if (this.isFirstTry) {
+      this.form.attempts = 1;
+    }
+  }
 
   /** Grad-Tabelle aus dem Backend (GET /api/grades). */
   grades: Grade[] = [];
@@ -84,6 +99,11 @@ export class ProgressFormComponent implements OnInit {
           subjectiveGrade:        progress.subjectiveGrade ?? '',
           subjectiveGradeComment: progress.subjectiveGradeComment ?? ''
         };
+
+        // Ältere Einträge könnten „Flash mit 3 Versuchen“ enthalten, das korrigieren wir beim Laden
+        if (this.isFirstTry) {
+          this.form.attempts = 1;
+        }
 
         this.loading = false;
       },
@@ -151,7 +171,7 @@ export class ProgressFormComponent implements OnInit {
     return {
       status:                 this.form.status,
       climbingStyle:          this.form.climbingStyle,
-      attempts:               Number(this.form.attempts) || 1,
+      attempts:               this.isFirstTry ? 1 : (Number(this.form.attempts) || 1),
       date:                   this.form.date,
       notes:                  this.form.notes.trim() || null,
       subjectiveGrade:        this.form.subjectiveGrade.trim() || null,

@@ -122,6 +122,48 @@ public class ProgressTests : IClassFixture<ClimbConnectFactory>
         _client.DefaultRequestHeaders.Authorization = null;
     }
 
+    [Fact]
+    public async Task CreateProgress_FlashMitMehrerenVersuchen_Gibt400()
+    {
+        var routeId = await SeedRouteAsync();
+
+        var token = await LoginAsync("user@climbconnect.at", "User1234!");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _client.PostAsJsonAsync("/api/progress", new
+        {
+            routeId, status = "Flash", climbingStyle = "Vorstieg", attempts = 3, date = "2026-06-01"
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        _client.DefaultRequestHeaders.Authorization = null;
+    }
+
+    [Fact]
+    public async Task UpdateProgress_OnsightMitMehrerenVersuchen_Gibt400()
+    {
+        var routeId = await SeedRouteAsync();
+
+        var token = await LoginAsync("user@climbconnect.at", "User1234!");
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Zuerst eine gültige Rotpunkt-Begehung mit 3 Versuchen anlegen
+        var createResponse = await _client.PostAsJsonAsync("/api/progress", new
+        {
+            routeId, status = "Rotpunkt", climbingStyle = "Vorstieg", attempts = 3, date = "2026-06-01"
+        });
+        var created = await createResponse.Content.ReadFromJsonAsync<ProgressResponse>();
+
+        // Auf Onsight ändern, aber 3 Versuche behalten → muss abgelehnt werden
+        var updateResponse = await _client.PutAsJsonAsync($"/api/progress/{created!.Id}", new
+        {
+            status = "Onsight", climbingStyle = "Vorstieg", attempts = 3, date = "2026-06-01"
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, updateResponse.StatusCode);
+        _client.DefaultRequestHeaders.Authorization = null;
+    }
+
     // Legt eine Test-Route direkt in der In-Memory-DB an und gibt die ID zurück
     private async Task<int> SeedRouteAsync()
     {
