@@ -39,8 +39,9 @@ Datenmodell für Seilklettergebiete konzipiert und als REST-API umgesetzt
 werden kann. Dabei wird analysiert, wie Klettergebiete, Sektoren, Routen
 und Schwierigkeitsgrade strukturiert gespeichert und über eine API bereitgestellt
 werden können. Ein weiterer Schwerpunkt liegt auf der Integration einer
-rollenbasierten Authentifizierung mittels Keycloak sowie der automatisierten
-Bereitstellung der Anwendung über eine CI/CD-Pipeline. Zusätzlich wird
+rollenbasierten Authentifizierung mit JWT sowie der automatisierten
+Prüfung und Bereitstellung der Anwendung (CI mit GitHub Actions, Deployment
+mit Docker auf Railway). Zusätzlich wird
 untersucht, wie Fortschrittsdaten aggregiert und als Statistiken (z.B.
 Gradentwicklung über Zeit) aufbereitet werden können.
 
@@ -49,7 +50,7 @@ Startseite, Kletterer-Liste, persönliches und öffentliches Profil mit
 Fortschrittsübersicht, Verwaltungs- und Detailansichten für Gebiete, Sektoren
 und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen,
 Formular zum Eintragen von Begehungen mit subjektiver Gradbewertung,
-Kommentarsystem, Login- und Registrierungsansichten inklusive
+Feedback-Funktion und Admin-Ansichten, Login- und Registrierungsansichten inklusive
 Formularvalidierung, Benutzereinstellungen zur Wahl der Grad-Skala sowie
 responsive Gestaltung für Desktop und Mobilgerät.
 
@@ -71,7 +72,7 @@ Klettergebiete, Sektoren und Routen schaffen und gleichzeitig Funktionen
 für persönliches Fortschrittstracking sowie Community-Interaktion bieten.
 
 Darüber hinaus soll untersucht werden, wie moderne Webtechnologien –
-insbesondere eine .NET 8 REST-API mit Angular-Frontend, Keycloak-Authentifizierung
+insbesondere eine .NET 8 REST-API mit Angular-Frontend, JWT-Authentifizierung
 und containerisiertem Deployment – im Rahmen einer Diplomarbeit eingesetzt
 und hinsichtlich Wartbarkeit, Erweiterbarkeit und Benutzerfreundlichkeit
 bewertet werden können.
@@ -82,14 +83,16 @@ bewertet werden können.
 
 **Robin Lehner – Backend & Systemarchitektur**
 Als Ergebnis entsteht eine vollständige REST-API auf Basis von .NET 8 Minimal
-API und Entity Framework Core mit PostgreSQL-Datenbank. Die API stellt alle
+API und Entity Framework Core mit SQLite-Datenbank. Die API stellt alle
 notwendigen Endpunkte für die Verwaltung von Klettergebieten (Areas, Sektoren,
 Routen), das Fortschrittstracking (inkl. Gradentwicklung und subjektiver
-Routenbewertung), den Terminplaner sowie das Kommentar- und Meldesystem bereit.
+Routenbewertung), den Terminplaner mit Pinnwand, die Safety-Reports mit
+Prüfung und Freigabe durch das Team sowie die Feedback-Funktion bereit.
 Schwierigkeitsgrade werden intern in der französischen Skala gespeichert und
 per API wahlweise in der französischen, amerikanischen oder UIAA-Skala
-ausgegeben. Die Anwendung ist durch Keycloak abgesichert und wird über eine
-GitHub Actions CI/CD-Pipeline automatisiert deployed.
+ausgegeben. Die Anwendung ist durch ein eigenes Login-System mit JWT und
+Rollen abgesichert, wird bei jeder Änderung über GitHub Actions automatisiert
+getestet und als Docker-Container auf Railway bereitgestellt.
 
 **Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
 Als Ergebnis entstehen die benutzerorientierten Ansichten der Anwendung: die
@@ -102,7 +105,7 @@ und Fehlerrückmeldung, darunter die Login- und Registrierungsansichten sowie
 das Formular zum Eintragen einer Begehung mit Status, Begehungsart, Versuchen,
 Notiz und subjektiver Gradbewertung. Ebenfalls in seinem Bereich liegen die
 Such- und Filterfunktionen, mit denen Gebiete und Routen gezielt gefunden
-werden können, das Kommentarsystem, die Benutzereinstellungen zur Wahl der
+werden können, die Feedback-Funktion und Admin-Ansichten, die Benutzereinstellungen zur Wahl der
 bevorzugten Grad-Skala und die responsive Gestaltung der Anwendung, sodass
 ClimbConnect sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
 
@@ -113,9 +116,9 @@ Routing-Konzept. Faru verantwortet dabei die Authentifizierung im Frontend mit
 Token-Handling, Route Guards und rollenbasierter Anzeige, sodass Bearbeiten-
 und Löschen-Funktionen nur Administratoren zur Verfügung stehen. Weiters
 umfasst sein Bereich die Integration der interaktiven Charts zur Darstellung
-der Gradentwicklung über Zeit, den Terminplaner mit Beitritt-Funktion, das
-Meldesystem inklusive Bild-Upload sowie eine wiederverwendbare
-Upload-Komponente, die auch im Kommentarsystem eingesetzt wird. Die Anwendung
+der Gradentwicklung über Zeit, den Terminplaner mit Beitritt-Funktion,
+Kalender und Pinnwand, das Meldesystem inklusive Bild-Upload sowie eine
+wiederverwendbare Upload-Komponente, die auch für das Feedback eingesetzt wird. Die Anwendung
 kommuniziert vollständig über die REST-API und ist so aufgebaut, dass neue
 Features ohne großen Aufwand ergänzt werden können.
 
