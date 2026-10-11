@@ -13,6 +13,8 @@ services:
       - Jwt__Issuer=climbconnect-api
       - Jwt__Audience=climbconnect-ui
       - Jwt__ExpiryHours=24
+      # Nur bei leerer Datenbank nötig (erster Start); ohne Wert bricht der Start dann ab
+      - Seed__AdminPassword=${SEED_ADMIN_PASSWORD:-}
     volumes:
       - climbconnect-data:/app/Data
       - climbconnect-uploads:/app/uploads

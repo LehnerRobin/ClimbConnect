@@ -63,7 +63,7 @@ Das Frontend startet auf **http://localhost:4200**.
 
 ## 4. Testdaten & Login
 
-Nach dem ersten Start sind diese Accounts vorhanden:
+Nach dem ersten lokalen Start (`dotnet run`, Umgebung Development) sind diese Accounts vorhanden:
 
 | Rolle | E-Mail | Passwort |
 |-------|--------|----------|
@@ -72,6 +72,10 @@ Nach dem ersten Start sind diese Accounts vorhanden:
 
 Der **Admin** kann Gebiete, Sektoren und Routen anlegen, bearbeiten und löschen.  
 Der **User** kann Begehungen eintragen, Termine erstellen, Kommentare schreiben usw.
+
+> **Achtung:** Diese Passwörter sind öffentlich und gelten nur in Development und in den Tests.
+> In Docker und auf Railway (Umgebung Production) bekommt der Admin das Passwort aus
+> `Seed__AdminPassword`, und den `testuser` gibt es dort nicht.
 
 ### Eingespielt Seed-Daten
 
@@ -84,7 +88,9 @@ Der **User** kann Begehungen eintragen, Termine erstellen, Kommentare schreiben 
 ## 5. Mit Docker starten (alternativ)
 
 Einmalig die Datei `.env.example` nach `.env` kopieren und darin einen eigenen
-`JWT_KEY` (mindestens 32 Zeichen) eintragen. Die `.env` wird nicht committet.
+`JWT_KEY` (mindestens 32 Zeichen) und ein `SEED_ADMIN_PASSWORD` (mindestens 12 Zeichen)
+eintragen. Die `.env` wird nicht committet. Mit dem `SEED_ADMIN_PASSWORD` meldest du dich als
+`admin@climbconnect.at` an; einen `testuser` gibt es in Docker nicht, User einfach registrieren.
 
 ```bash
 # Im Wurzelverzeichnis des Repos
