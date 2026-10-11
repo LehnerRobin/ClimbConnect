@@ -37,7 +37,7 @@ Das Projekt wird im **Scrum-Prozess** umgesetzt (User Stories mit Akzeptanzkrite
 | **CI** | GitHub Actions: Build + Tests für Backend und Frontend bei jedem Push / PR |
 | **Deployment** | Railway (live) und lokal Docker Compose (Frontend über nginx + Backend) |
 
-Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · Stand & nächste Schritte: [docs/ROADMAP.md](docs/ROADMAP.md)
 
 ---
 
