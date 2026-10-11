@@ -83,7 +83,8 @@ andere Robin Lehner.
 >   und die sich automatisch aktualisiert (#245). Keine Privat- oder Direktnachrichten,
 >   kein Live-Chat.
 >
-> Meilenstein 6 und der Pitch werden im Zuge von #244 an dieses Konzept angepasst.
+> `docs/meilensteine.md` (Meilenstein 6 und 7) und `docs/pitch.md` sind bereits an dieses
+> Konzept angepasst.
 
 Aus dem laufenden Sprint noch offen: #180 (manuelle Testfälle, Protokoll in
 `docs/tests/test-protocol-2026-10.md`), #179 (Gebiet-Besuche in der Statistik),
@@ -121,6 +122,6 @@ Endpoints.
 
 - Feinschliff anhand der Ergebnisse der manuellen Tests (#180)
 - Dokumentation für die Diplomarbeit: Architektur und Entscheidungen (eigenes JWT statt
-  Keycloak, SQLite statt PostgreSQL, Railway) – `docs/pitch.md` nennt noch Keycloak und
-  PostgreSQL
+  Keycloak, SQLite statt PostgreSQL, Railway, geprüfte Safety-Reports statt öffentlicher
+  Kommentare)
 - Präsentation mit der Live-Seite als Demo

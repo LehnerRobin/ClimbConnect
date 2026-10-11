@@ -59,25 +59,29 @@ schon vor dem Fahren ob ein Gebiet gerade voll ist.
 Über den Terminplaner kann man für einen bestimmten Tag in einem Gebiet einen
 Termin erstellen – mit Mindest- und Maximalanzahl an Teilnehmern. Andere
 Benutzer können beitreten. Der Durchschnittsgrad der Gruppe ist für alle
-sichtbar, damit man einschätzen kann ob das Level passt. Das ist kein Social
-Media – es gibt keinen Chat, kein Follow-System. Nur ein einfaches Tool um
-gemeinsam Klettern zu planen.
+sichtbar, damit man einschätzen kann ob das Level passt. Wer beigetreten ist,
+kann sich auf einer Pinnwand beim Termin absprechen. Das ist kein Social
+Media – es gibt keinen Chat, keine Privatnachrichten, kein Follow-System. Nur
+ein einfaches Tool um gemeinsam Klettern zu planen.
 
 **Aktuelle Informationen teilen**
-Benutzer können Kommentare mit Fotos zu Gebieten oder einzelnen Routen
-schreiben – zum Beispiel wenn ein Zustieg gesperrt ist oder sich die
-Bedingungen geändert haben. Für Sicherheitsprobleme wie lockere Griffe oder
-beschädigte Haken gibt es zusätzlich eine Meldefunktion mit Schweregrad.
+Wer ein Problem entdeckt – einen lockeren Griff, einen beschädigten Haken oder
+einen gesperrten Zustieg – meldet es mit Foto und Schweregrad direkt beim
+Gebiet, Sektor oder bei der Route. Das ClimbConnect-Team prüft jede Meldung,
+korrigiert sie bei Bedarf und gibt sie frei; erst dann erscheint sie als
+deutliche Warnung. So bleiben die Informationen verlässlich. Für alles andere
+gibt es einen Feedback-Knopf, über den Benutzer dem Team schreiben können.
 
 ---
 
 ## Technik
 
 - **Backend:** C# mit .NET 8 Minimal API und Entity Framework Core
-- **Datenbank:** PostgreSQL
-- **Authentifizierung:** Keycloak (Login, Registrierung, Rollenverwaltung)
+- **Datenbank:** SQLite (über Entity Framework Core, Code-First mit Migrationen)
+- **Authentifizierung:** eigenes Login-System mit JWT und Rollen (Benutzer, Admin)
 - **Frontend:** Angular
-- **Deployment:** Automatisiert über GitHub Actions CI/CD Pipeline
+- **CI:** GitHub Actions (Build und Tests bei jedem Push und Pull Request)
+- **Deployment:** Docker, live auf Railway – jede Änderung auf `main` wird automatisch veröffentlicht
 - **Skalierung:** Durch modularen Aufbau einfach auf weitere Bundesländer
   oder Sportarten erweiterbar
 
@@ -88,18 +92,19 @@ beschädigte Haken gibt es zusätzlich eine Meldefunktion mit Schweregrad.
 **Robin Lehner – Backend & Systemarchitektur**
 Konzeption und Implementierung des domänenspezifischen Datenmodells
 (Gebiete → Sektoren → Routen), der REST-API mit allen Endpunkten, der
-Keycloak-Authentifizierung sowie der CI/CD-Pipeline und des Deployments.
+Authentifizierung mit JWT und Rollen, der Prüf-Abläufe für Safety-Reports und
+Feedback sowie der CI-Pipeline und des Deployments.
 
 **Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
 Startseite, Kletterer-Liste, persönliches und öffentliches Profil mit Fortschrittsübersicht, 
 Verwaltungs- und Detailansichten für Gebiete, Sektoren und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen, 
-Formular zum Eintragen von Begehungen mit subjektiver Gradbewertung, Kommentarsystem, Login- und Registrierungsansichten inklusive Formularvalidierung, 
+Formular zum Eintragen von Begehungen mit subjektiver Gradbewertung, Feedback-Funktion und Admin-Ansichten, Login- und Registrierungsansichten inklusive Formularvalidierung, 
 Benutzereinstellungen zur Wahl der Grad-Skala sowie responsive Gestaltung für Desktop und Mobilgerät.
 
 **Faru Hamid – Frontend-Architektur & komplexe Features**
 Aufbau der Angular-Anwendung, Komponentenstruktur und Routing-Konzept, Service-Layer für die API-Kommunikation, 
 Authentifizierung im Frontend mit Token-Handling, Route Guards und rollenbasierter Anzeige, interaktive Charts für die Gradentwicklung, 
-Terminplaner-UI, wiederverwendbare Bild-Upload-Komponente sowie Meldesystem mit Bild-Upload.
+Terminplaner-UI mit Kalender und Pinnwand, wiederverwendbare Bild-Upload-Komponente sowie Meldesystem mit Bild-Upload.
 
 Alle drei Teammitglieder arbeiten nach einem agilen Vorgehensmodell –
 jeder unterstützt die anderen und ist in alle Bereiche des Projekts eingebunden.
