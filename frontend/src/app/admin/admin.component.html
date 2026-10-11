@@ -229,7 +229,12 @@
               </div>
               <div class="form-row">
                 <label>Grad * (franz. Skala)</label>
-                <input type="text" [(ngModel)]="routeForm.grade" placeholder="z. B. 6a">
+                <select [(ngModel)]="routeForm.grade">
+                  <option value="">— Grad wählen —</option>
+                  @for (g of grades; track g.french) {
+                    <option [value]="g.french">{{ gradeLabel(g) }}</option>
+                  }
+                </select>
               </div>
               <div class="form-row">
                 <label>Stil</label>

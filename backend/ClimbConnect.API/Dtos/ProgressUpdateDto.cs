@@ -8,6 +8,6 @@ public record ProgressUpdateDto(
     [Range(1, 9999)]            int      Attempts,
     [MaxLength(1000)]           string?  Notes,
     [Required]                  DateOnly Date,
-    [MaxLength(20)]             string?  SubjectiveGrade,
+    [MaxLength(20)] [FrenchGrade] string?  SubjectiveGrade,
     [MaxLength(500)]            string?  SubjectiveGradeComment
 );

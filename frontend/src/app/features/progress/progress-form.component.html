@@ -53,8 +53,8 @@
         <label for="grade">Subjektive Gradeinschätzung (optional)</label>
         <select id="grade" [(ngModel)]="form.subjectiveGrade">
           <option value="">— kein Grad —</option>
-          @for (g of frenchGrades; track g) {
-            <option [value]="g">{{ g }}</option>
+          @for (g of grades; track g.french) {
+            <option [value]="g.french">{{ gradeLabel(g) }}</option>
           }
         </select>
       </div>
