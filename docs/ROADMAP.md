@@ -116,7 +116,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | #199 | Refactoring: doppelten Code im Backend zusammenführen | 5 |
 | #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen | 5 |
 | #181 | Favoriten im Backend speichern statt im Browser | 5 |
-| #242 | Laufende Termine hervorheben, auschecken, am Tagesende automatisch löschen | 5 |
+| #242 | Laufende Termine hervorheben, auschecken, am Tagesende löschen – besuchte Sessions bleiben im Profil | 8 |
 | #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 |
 | #243 | E-Mail-Adresse bei der Registrierung überprüfen (Bestätigungs-Link) | 5 |
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
