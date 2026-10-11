@@ -4,6 +4,8 @@ Webanwendung zur Erfassung und Analyse von Kletterfortschritten in den Seilklett
 
 Diplomarbeit / Projekt an der HTL Leonding · Team: **Robin Lehner** (Backend & Datenbank), **Mohamed Attia** (Frontend), **Faru Hamid** (Frontend)
 
+**🌐 Live: https://frontend-production-47f4.up.railway.app/**
+
 ---
 
 ## 🚀 Überblick
@@ -33,9 +35,9 @@ Das Projekt wird im **Scrum-Prozess** umgesetzt (User Stories mit Akzeptanzkrite
 | **Authentifizierung** | eigene Benutzerverwaltung mit JWT, Rollen `user` und `admin` |
 | **Tests** | xUnit-Integrationstests (`backend/ClimbConnect.Tests`) |
 | **CI** | GitHub Actions: Build + Tests für Backend und Frontend bei jedem Push / PR |
-| **Deployment** | Docker Compose (Frontend über nginx + Backend) |
+| **Deployment** | Railway (live) und lokal Docker Compose (Frontend über nginx + Backend) |
 
-Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Deployment: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
 ---
 
