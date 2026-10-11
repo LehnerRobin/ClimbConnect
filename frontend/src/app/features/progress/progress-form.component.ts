@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AreasService, ProgressUpdateRequest } from '../../../services/areas.service';
+import { Grade, GradeService, gradeLabel } from '../../../services/grade.service';
 
 @Component({
   selector: 'app-progress-form',
@@ -33,14 +34,9 @@ export class ProgressFormComponent implements OnInit {
   statuses        = ['Rotpunkt', 'Flash', 'Onsight', 'Projekt'];
   climbingStyles  = ['Vorstieg', 'Toprope'];
 
-  frenchGrades = [
-    '3a','3b','3c','4a','4b','4c',
-    '5a','5b','5c',
-    '6a','6a+','6b','6b+','6c','6c+',
-    '7a','7a+','7b','7b+','7c','7c+',
-    '8a','8a+','8b','8b+','8c','8c+',
-    '9a','9a+','9b','9b+','9c'
-  ];
+  /** Grad-Tabelle aus dem Backend (GET /api/grades). */
+  grades: Grade[] = [];
+  readonly gradeLabel = gradeLabel;
 
   submitting = false;
   errorMessage = '';
@@ -48,10 +44,16 @@ export class ProgressFormComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private areasService: AreasService
+    private areasService: AreasService,
+    private gradeService: GradeService
   ) {}
 
   ngOnInit(): void {
+    this.gradeService.getGrades().subscribe({
+      next: grades => this.grades = grades,
+      error: () => this.errorMessage = 'Grad-Liste konnte nicht geladen werden.'
+    });
+
     this.progressId = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     this.isEditMode = this.progressId > 0;
 
