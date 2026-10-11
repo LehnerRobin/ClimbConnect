@@ -78,7 +78,7 @@ andere Robin Lehner.
 
 ## Sprint 3 – geplant
 
-GitHub-Meilenstein **„Sprint 3"** – 5 Issues, 18 SP.
+GitHub-Meilenstein **„Sprint 3"** – 6 Issues, 23 SP.
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
@@ -87,6 +87,7 @@ GitHub-Meilenstein **„Sprint 3"** – 5 Issues, 18 SP.
 | #223 | Admin verwaltet alle Termine | 3 | Robin, Mohamed |
 | #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
+| #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
 
 > **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
 > - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf
