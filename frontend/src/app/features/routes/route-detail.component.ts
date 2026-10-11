@@ -38,6 +38,10 @@ export class RouteDetailComponent implements OnInit {
   reportPhotoFile: File | null = null;
   reportSending = false;
   reportError = '';
+
+  // Meldungen, wenn Kommentare oder Reports nicht geladen werden konnten
+  commentsLoadError = '';
+  reportsLoadError = '';
   reportSuccess = false;
 
   gradeScale = 'french';
@@ -61,26 +65,20 @@ export class RouteDetailComponent implements OnInit {
       return;
     }
 
-    if (this.authService.isAuthenticated()) {
-      this.userService.getMe().subscribe({
-        next: (data) => {
-          this.gradeScale = data.preferredGradeScale ?? 'french';
-          this.loadRoute(id);
-        },
-        error: () => this.loadRoute(id)
-      });
-    } else {
+    // Gradskala kommt zentral aus dem UserService (ohne Login: französisch)
+    this.userService.getPreferredScale().subscribe(scale => {
+      this.gradeScale = scale;
       this.loadRoute(id);
-    }
+    });
 
     this.areasService.getRouteComments(id).subscribe({
       next: (c) => { this.comments = c; },
-      error: () => {}
+      error: () => { this.commentsLoadError = 'Kommentare konnten nicht geladen werden.'; }
     });
 
     this.areasService.getRouteReports(id).subscribe({
       next: (r) => { this.reports = r; },
-      error: () => {}
+      error: () => { this.reportsLoadError = 'Safety-Reports konnten nicht geladen werden.'; }
     });
   }
 
@@ -98,7 +96,8 @@ export class RouteDetailComponent implements OnInit {
 
     this.areasService.getCommunityGrade(id, this.gradeScale).subscribe({
       next: (data) => { this.communityGrade = data?.communityGrade ?? null; },
-      error: () => {}
+      // Der Community-Grad ist nur eine Zusatzinfo; Serverfehler meldet bereits der Toast
+      error: () => { this.communityGrade = null; }
     });
   }
 

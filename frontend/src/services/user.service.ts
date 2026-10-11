@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import { AuthService } from './auth.service';
 
 export interface UserStats {
   totalClimbed: number;
@@ -36,7 +39,31 @@ export class UserService {
 
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  /** Gemerkte Gradskala und der Token, für den sie geladen wurde (anderer User → neu laden). */
+  private preferredScale$: Observable<string> | null = null;
+  private preferredScaleToken: string | null = null;
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  /**
+   * Bevorzugte Gradskala des eingeloggten Users ("french", "uiaa" oder "american").
+   * Wird nur einmal vom Server geladen und danach gemerkt; ohne Login immer "french".
+   */
+  getPreferredScale(): Observable<string> {
+    const token = this.authService.getToken();
+    if (!token) return of('french');
+
+    if (!this.preferredScale$ || this.preferredScaleToken !== token) {
+      this.preferredScaleToken = token;
+      this.preferredScale$ = this.getMe().pipe(
+        map(me => me.preferredGradeScale ?? 'french'),
+        // Ohne Profil trotzdem weitermachen – Grade werden dann französisch angezeigt
+        catchError(() => of('french')),
+        shareReplay(1)
+      );
+    }
+    return this.preferredScale$;
+  }
 
   /// Eigenes Profil abrufen (GET /api/users/me)
   getMe() {
@@ -45,7 +72,13 @@ export class UserService {
 
   /// Profil aktualisieren (PUT /api/users/me/profile)
   updateProfile(profile: { bio: string | null; preferredGradeScale: string | null }) {
-    return this.http.put<any>(`${this.apiUrl}/api/users/me/profile`, profile);
+    return this.http.put<any>(`${this.apiUrl}/api/users/me/profile`, profile).pipe(
+      // Gemerkte Gradskala sofort aktualisieren, damit andere Seiten die neue Skala verwenden
+      tap(data => {
+        this.preferredScale$     = of(data?.preferredGradeScale ?? profile.preferredGradeScale ?? 'french');
+        this.preferredScaleToken = this.authService.getToken();
+      })
+    );
   }
 
   /// Statistiken + Grad-Entwicklung (GET /api/users/{id}/stats)

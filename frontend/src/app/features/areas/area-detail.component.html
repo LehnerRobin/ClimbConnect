@@ -75,7 +75,9 @@
           <span class="section-pill">{{ sectors.length }} Sektoren</span>
         </div>
 
-        @if (sectors.length === 0) {
+        @if (sectorsError) {
+          <p class="load-error" role="alert">{{ sectorsError }}</p>
+        } @else if (sectors.length === 0) {
 
           <div class="empty-card">
             <strong>Noch keine Sektoren</strong>
@@ -186,7 +188,9 @@
             </div>
           }
 
-          @if (appointments.length === 0) {
+          @if (appointmentsError) {
+            <p class="load-error" role="alert">{{ appointmentsError }}</p>
+          } @else if (appointments.length === 0) {
 
             <div class="empty-card compact">
               <strong>Keine Termine</strong>
@@ -219,6 +223,9 @@
                   }
 
                   @if (expandedAppointmentId === appointment.id) {
+                    @if (appointmentDetailError[appointment.id]) {
+                      <p class="load-error" role="alert">{{ appointmentDetailError[appointment.id] }}</p>
+                    }
                     @let detail = appointmentDetails[appointment.id];
                     @if (detail) {
                       <div class="appointment-detail">
@@ -317,7 +324,9 @@
             </div>
           }
 
-          @if (comments.length === 0) {
+          @if (commentsError) {
+            <p class="load-error" role="alert">{{ commentsError }}</p>
+          } @else if (comments.length === 0) {
 
             <div class="empty-card compact">
               <strong>Noch keine Kommentare</strong>

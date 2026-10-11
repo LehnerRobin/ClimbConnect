@@ -74,7 +74,9 @@
         </div>
       }
 
-      @if (reports.length === 0) {
+      @if (reportsLoadError) {
+        <p class="error-msg" role="alert">{{ reportsLoadError }}</p>
+      } @else if (reports.length === 0) {
         <p class="empty-hint">Keine offenen Sicherheitsmeldungen.</p>
       }
 
@@ -117,7 +119,9 @@
         </div>
       }
 
-      @if (comments.length === 0) {
+      @if (commentsLoadError) {
+        <p class="error-msg" role="alert">{{ commentsLoadError }}</p>
+      } @else if (comments.length === 0) {
         <p class="empty-hint">Noch keine Kommentare.</p>
       }
 
