@@ -17,7 +17,7 @@ die einzelnen Aufgaben als Issues im GitHub-Repo.
 | 3 | Gebiete, Sektoren und Routen sind gepflegt | ✅ Admin-Bereich, Grad-Auswahl aus einer zentralen Grad-Tabelle, Community-Grad |
 | 4 | Kletterfortschritt dokumentieren | ✅ Begehungen mit Status, Begehungsart, Versuchen, subjektivem Grad; öffentliche Profile |
 | 5 | Verbesserung über Zeit sehen | ✅ Grad-Diagramm, Anzahl Routen, offene Projekte, Lieblingsgebiet |
-| 6 | Informationen zu Routen und Gebieten teilen | ✅ Kommentare mit Foto, Safety-Reports mit Schweregrad |
+| 6 | Informationen zu Routen und Gebieten teilen | ✅ Kommentare mit Foto, Safety-Reports mit Schweregrad – wird in Sprint 2 umgebaut (geprüfte Safety-Reports, Feedback statt öffentlicher Kommentare) |
 | 7 | Kletterpartner finden | ✅ Termine erstellen, beitreten, austreten, bearbeiten; Ø-Grad der Gruppe |
 
 Die Meilensteine sind bis auf die Routensuche im Frontend (Meilenstein 2) funktional
@@ -43,7 +43,7 @@ erfüllt. Die weitere Arbeit betrifft diese Lücke, Qualität, Moderation und Fe
 
 ## Sprint 2 – geplant
 
-GitHub-Meilenstein **„Sprint 2"** – 11 Issues, 32 SP. Aufteilung: Frontend Mohamed Attia
+GitHub-Meilenstein **„Sprint 2"** – 12 Issues, 35 SP. Aufteilung: Frontend Mohamed Attia
 (Ansichten, Admin, Suche) und Faru Hamid (Termine, Auth, Upload), Backend und alles
 andere Robin Lehner.
 
@@ -70,14 +70,20 @@ andere Robin Lehner.
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
 | #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
-| #223 | Admin verwaltet alle Termine und Kommentare | 5 | Robin, Mohamed |
-| #224 | Kommentare melden und vom Admin ausblenden | 3 | Robin, Faru |
+| #224 | Safety-Reports für Gebiet, Sektor und Route mit Freigabe durch den Admin | 5 | Robin, Faru |
+| #244 | Feedback-Knopf statt öffentlicher Kommentare | 3 | Robin, Mohamed |
+| #223 | Admin verwaltet alle Termine | 3 | Robin, Mohamed |
 
-> **In Klärung:** Neues Konzept für Kommentare – Hinweise mit Foto zu Gebiet, Sektor und
-> Route werden erst nach Prüfung durch das Team als „Meldung" angezeigt (eventuell
-> zusammengelegt mit den Safety-Reports); für Absprachen gibt es Kommentare bzw. eine
-> Pinnwand beim Termin, keine Privatnachrichten. Nach der Entscheidung werden #223 und #224
-> angepasst und ein Issue für die Termin-Kommentare angelegt.
+> **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
+> - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf
+>   angepasst und erst dann als Warnung angezeigt (#224).
+> - **Öffentliche Kommentare entfallen.** Die Kommentarfunktion wird zu einem
+>   Feedback-Knopf, dessen Einträge nur das Team sieht (#244).
+> - **Absprachen** laufen über eine **Pinnwand beim Termin**, die nur Teilnehmer sehen
+>   und die sich automatisch aktualisiert (#245). Keine Privat- oder Direktnachrichten,
+>   kein Live-Chat.
+>
+> Meilenstein 6 und der Pitch werden im Zuge von #244 an dieses Konzept angepasst.
 
 Aus dem laufenden Sprint noch offen: #180 (manuelle Testfälle, Protokoll in
 `docs/tests/test-protocol-2026-10.md`), #179 (Gebiet-Besuche in der Statistik),
@@ -96,6 +102,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen | 5 |
 | #181 | Favoriten im Backend speichern statt im Browser | 5 |
 | #242 | Laufende Termine hervorheben, auschecken, am Tagesende automatisch löschen | 5 |
+| #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 |
 | #243 | E-Mail-Adresse bei der Registrierung überprüfen (Bestätigungs-Link) | 5 |
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
 | #237 | Mehrere Admins verwalten | 3 |
