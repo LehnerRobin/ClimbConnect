@@ -8,6 +8,10 @@
     </div>
   </div>
 
+  @if (profileError) {
+    <p class="error-msg" role="alert">{{ profileError }}</p>
+  }
+
   <div class="profile-layout">
 
     <section class="profile-card profile-info-card">
@@ -206,6 +210,10 @@
     }
   </section>
 
+
+  @if (statsError) {
+    <p class="error-msg" role="alert">{{ statsError }}</p>
+  }
 
   <!-- Grad-Entwicklungs-Chart -->
   @if (gradeProgression.length > 0) {

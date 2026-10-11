@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService, PublicProfile } from '../../../services/user.service';
-import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-public-profile',
@@ -19,8 +18,7 @@ export class PublicProfileComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private userService: UserService,
-    private authService: AuthService
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -31,14 +29,8 @@ export class PublicProfileComponent implements OnInit {
       return;
     }
 
-    if (this.authService.isAuthenticated()) {
-      this.userService.getMe().subscribe({
-        next: (data) => this.loadProfile(id, data.preferredGradeScale ?? 'french'),
-        error: () => this.loadProfile(id, 'french')
-      });
-    } else {
-      this.loadProfile(id, 'french');
-    }
+    // Gradskala kommt zentral aus dem UserService (ohne Login: französisch)
+    this.userService.getPreferredScale().subscribe(scale => this.loadProfile(id, scale));
   }
 
   private loadProfile(id: number, scale: string): void {

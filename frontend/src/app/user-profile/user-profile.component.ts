@@ -46,6 +46,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
 
   myProgress: ProgressEntry[] = [];
   progressError = '';
+  profileError = '';
+  statsError = '';
   deletingProgressId: number | null = null;
   myAppointments: MyAppointment[] = [];
   loadingAppointments = false;
@@ -78,7 +80,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         this.loadMyProgress();
         this.loadMyAppointments();
       },
-      error: () => {}
+      error: () => { this.profileError = 'Profil konnte nicht geladen werden. Bitte lade die Seite neu.'; }
     });
   }
 
@@ -101,7 +103,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         // bevor wir versuchen den Chart darauf zu zeichnen.
         setTimeout(() => this.buildChart());
       },
-      error: () => {}
+      error: () => { this.statsError = 'Statistik konnte nicht geladen werden.'; }
     });
   }
 

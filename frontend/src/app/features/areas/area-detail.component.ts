@@ -56,6 +56,12 @@ export class AreaDetailComponent implements OnInit {
   commentText = '';
   commentSending = false;
   commentError = '';
+
+  // Meldungen, wenn ein Teil der Seite nicht geladen werden konnte
+  sectorsError = '';
+  appointmentsError = '';
+  commentsError = '';
+  appointmentDetailError: Record<number, string> = {};
   deletingCommentId: number | null = null;
 
   ngOnInit(): void {
@@ -68,12 +74,7 @@ export class AreaDetailComponent implements OnInit {
       return;
     }
 
-    if (this.authService.isAuthenticated()) {
-      this.userService.getMe().subscribe({
-        next: (data) => { this.gradeScale = data.preferredGradeScale ?? 'french'; },
-        error: () => {}
-      });
-    }
+    this.userService.getPreferredScale().subscribe(scale => this.gradeScale = scale);
 
     this.loadAreaDetails(id);
   }
@@ -102,7 +103,7 @@ export class AreaDetailComponent implements OnInit {
           routes: []
         }));
       },
-      error: () => {}
+      error: () => { this.sectorsError = 'Sektoren konnten nicht geladen werden.'; }
     });
 
     this.areasService.getAppointmentsByArea(areaId).subscribe({
@@ -111,12 +112,12 @@ export class AreaDetailComponent implements OnInit {
         // Beitritts-Status kommt vom Server, damit er auch nach dem Neuladen stimmt
         this.subscribedIds = new Set(appointments.filter(a => a.isSubscribed).map(a => a.id));
       },
-      error: () => {}
+      error: () => { this.appointmentsError = 'Termine konnten nicht geladen werden.'; }
     });
 
     this.areasService.getCommentsByArea(areaId).subscribe({
       next: (comments) => { this.comments = comments; },
-      error: () => {}
+      error: () => { this.commentsError = 'Kommentare konnten nicht geladen werden.'; }
     });
   }
 
@@ -219,7 +220,7 @@ export class AreaDetailComponent implements OnInit {
   private loadAppointmentDetail(appointmentId: number): void {
     this.areasService.getAppointmentById(appointmentId, this.gradeScale).subscribe({
       next: (detail) => { this.appointmentDetails[appointmentId] = detail; },
-      error: () => {}
+      error: () => { this.appointmentDetailError[appointmentId] = 'Details konnten nicht geladen werden.'; }
     });
   }
 
