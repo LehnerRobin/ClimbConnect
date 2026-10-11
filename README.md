@@ -12,16 +12,30 @@ Diplomarbeit / Projekt an der HTL Leonding · Team: **Robin Lehner** (Backend & 
 
 Mit **ClimbConnect** können Kletterer:innen:
 
-- Klettergebiete, Sektoren und Routen in OÖ ansehen (inkl. Karte)
+- Klettergebiete, Sektoren und Routen in OÖ ansehen – mit Karte, Gebietssuche und Favoriten
+- in der Gebietsliste sehen, wie viele Leute heute dort sind und wie viele noch kommen
 - ihren Fortschritt pro Route dokumentieren (Status, Begehungsart, Versuche, subjektiver Grad)
-- Statistiken über ihre Entwicklung ansehen
-- Termine pro Gebiet erstellen und beitreten („gemeinsam klettern“)
-- Kommentare mit Fotos zu Gebieten und Routen schreiben
+- Statistiken über ihre Entwicklung ansehen (Grad-Diagramm, Anzahl Routen, offene Projekte, Lieblingsgebiet)
+- Termine pro Gebiet erstellen, beitreten und austreten („gemeinsam klettern“), inkl. Ø-Grad der Gruppe
+- öffentliche Profile mit den letzten Begehungen anderer ansehen
 - Safety-Reports erfassen (z. B. lockerer Griff, beschädigter Bohrhaken)
+
+Admins pflegen Gebiete, Sektoren und Routen in einem eigenen Admin-Bereich. Aus den subjektiven Gradbewertungen der User entsteht ein **Community-Grad**.
 
 Grade werden intern in französischer Skala gespeichert und je nach Benutzereinstellung in **Französisch, UIAA oder Amerikanisch** angezeigt.
 
 Das Projekt wird im **Scrum-Prozess** umgesetzt (User Stories mit Akzeptanzkriterien, Story Points, Sprints im GitHub Project).
+
+---
+
+## 📍 Stand
+
+Die Meilensteine aus [meilensteine.md](docs/meilensteine.md) sind bis auf die Routensuche im Frontend (#227) erfüllt; die App läuft live auf Railway. Aktuell geplant:
+
+- **Sprint 2:** Impressum & Datenschutz, Konto löschen, Login-Schutz, Routensuche, Verbesserungen bei Terminen
+- **Sprint 3:** Safety-Reports werden vom Team geprüft, bevor sie als Warnung erscheinen (#224); öffentliche Kommentare werden durch einen Feedback-Knopf ersetzt, den nur das Team sieht (#244); Termin-Kalender
+
+Details und Issue-Nummern: [docs/ROADMAP.md](docs/ROADMAP.md)
 
 ---
 
@@ -59,14 +73,7 @@ npm install
 ng serve
 ```
 
-Beim ersten Start wird die SQLite-Datenbank automatisch angelegt und mit Testdaten befüllt.
-
-**Test-Accounts** (nur lokal mit `dotnet run` und in den Tests)
-
-| Rolle | E-Mail | Passwort |
-|---|---|---|
-| Admin | `admin@climbconnect.at` | `Admin1234!` |
-| User | `user@climbconnect.at` | `User1234!` |
+Beim ersten Start wird die SQLite-Datenbank automatisch angelegt und mit Testdaten befüllt. Die Login-Daten für die lokale Entwicklung stehen in [docs/SETUP.md](docs/SETUP.md#4-testdaten--login).
 
 **Alternativ mit Docker:**
 
