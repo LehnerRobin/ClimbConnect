@@ -165,12 +165,9 @@ public static class AppointmentEndpoints
             var currentUser = await db.Users.FindAsync(userId);
             if (currentUser is null) return Results.Unauthorized();
 
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                return Results.BadRequest(new { error = "Titel ist erforderlich" });
-
-            if (dto.MinParticipants.HasValue && dto.MaxParticipants.HasValue &&
-                dto.MinParticipants.Value > dto.MaxParticipants.Value)
-                return Results.BadRequest(new { error = "Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein" });
+            var date  = AppTime.ToUtc(dto.Date);
+            var error = Validate(dto.Title, date, dto.MinParticipants, dto.MaxParticipants, checkFuture: true);
+            if (error is not null) return Results.BadRequest(new { error });
 
             var appointment = new Appointment
             {
@@ -180,7 +177,7 @@ public static class AppointmentEndpoints
                 // der nur über diese Navigation befüllt wird.
                 CreatedBy       = currentUser,
                 Title           = dto.Title.Trim(),
-                Date            = dto.Date,
+                Date            = date,
                 MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint) ? null : dto.MeetingPoint.Trim(),
                 Description     = string.IsNullOrWhiteSpace(dto.Description)  ? null : dto.Description.Trim(),
                 MinParticipants = dto.MinParticipants,
@@ -214,11 +211,15 @@ public static class AppointmentEndpoints
             if (appointment.CreatedByUserId != userId && !user.IsInRole("admin"))
                 return Results.Forbid();
 
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                return Results.BadRequest(new { error = "Titel ist erforderlich" });
+            // Gleiche Prüfung wie beim Anlegen. "Nicht in der Vergangenheit" nur, wenn das Datum
+            // geändert wird – sonst ließe sich ein vergangener Termin nicht mehr korrigieren.
+            var date  = AppTime.ToUtc(dto.Date);
+            var error = Validate(dto.Title, date, dto.MinParticipants, dto.MaxParticipants,
+                                 checkFuture: date != appointment.Date);
+            if (error is not null) return Results.BadRequest(new { error });
 
             appointment.Title           = dto.Title.Trim();
-            appointment.Date            = dto.Date;
+            appointment.Date            = date;
             appointment.MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim();
             appointment.Description     = string.IsNullOrWhiteSpace(dto.Description)   ? null : dto.Description.Trim();
             appointment.MinParticipants = dto.MinParticipants;
@@ -296,5 +297,20 @@ public static class AppointmentEndpoints
         .WithName("UnsubscribeFromAppointment")
         .WithTags("Appointments")
         .RequireAuthorization("User");
+    }
+
+    /// <summary>
+    /// Gemeinsame Prüfung für Anlegen und Bearbeiten. Gibt die Fehlermeldung zurück
+    /// oder null, wenn alles passt.
+    /// </summary>
+    private static string? Validate(string title, DateTime dateUtc, int? min, int? max, bool checkFuture)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return "Titel ist erforderlich";
+        if (min.HasValue && max.HasValue && min.Value > max.Value)
+            return "Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein";
+        if (checkFuture && dateUtc < DateTime.UtcNow)
+            return "Der Termin darf nicht in der Vergangenheit liegen";
+        return null;
     }
 }
