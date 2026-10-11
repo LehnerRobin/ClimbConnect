@@ -5,3 +5,21 @@
   overflow: hidden;
   cursor: pointer;
 }
+
+/* Leaflet erzeugt die Tooltips selbst, deshalb ::ng-deep (durch :host bleibt es auf die Karte begrenzt) */
+:host ::ng-deep .area-tooltip {
+  background: var(--ink-900);
+  color: var(--paper-50);
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+}
+
+/* Das kleine Dreieck unter dem Tooltip in derselben Farbe */
+:host ::ng-deep .leaflet-tooltip-top.area-tooltip::before {
+  border-top-color: var(--ink-900);
+}
