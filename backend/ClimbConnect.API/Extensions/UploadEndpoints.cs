@@ -1,3 +1,5 @@
+using ClimbConnect.API.Services;
+
 namespace ClimbConnect.API.Extensions;
 
 /// <summary>Endpoint für den Bild-Upload (JPG, PNG, WebP, GIF, max 5 MB).</summary>
@@ -5,7 +7,7 @@ public static class UploadEndpoints
 {
     public static void MapUploadEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/upload", async (IFormFile file, HttpContext ctx) =>
+        app.MapPost("/api/upload", async (IFormFile file, HttpContext ctx, UploadStorage storage) =>
         {
             if (file.Length > 5 * 1024 * 1024)
                 return Results.BadRequest(new { error = "Maximale Dateigröße ist 5 MB." });
@@ -25,10 +27,7 @@ public static class UploadEndpoints
                 return Results.BadRequest(new { error = "Nur JPG, PNG, WebP und GIF sind erlaubt." });
 
             var fileName = $"{Guid.NewGuid()}{ext}";
-            var savePath = Path.Combine(
-                AppDomain.CurrentDomain.GetData("DataDirectory") as string
-                    ?? AppDomain.CurrentDomain.BaseDirectory,
-                "uploads", fileName);
+            var savePath = Path.Combine(storage.UploadsPath, fileName);
 
             await using var stream = File.Create(savePath);
             await file.CopyToAsync(stream);
