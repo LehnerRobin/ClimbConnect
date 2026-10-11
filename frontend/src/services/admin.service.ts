@@ -76,10 +76,4 @@ export class AdminService {
   resolveReport(id: number): Observable<any> {
     return this.http.put(`${this.api}/reports/${id}/status`, { status: 'Resolved' });
   }
-
-  // ── Datenbank zurücksetzen (Gefahrenzone) ──────────────────────────────────
-
-  initDatabase(): Observable<any> {
-    return this.http.put(`${this.api}/Admin`, null);
-  }
 }

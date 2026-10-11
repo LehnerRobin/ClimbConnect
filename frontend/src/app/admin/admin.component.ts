@@ -291,16 +291,6 @@ export class AdminComponent implements OnInit {
     }
   }
 
-  // ── Datenbank zurücksetzen ─────────────────────────────────────────────────
-
-  initDatabase(): void {
-    if (!confirm('Wirklich alles löschen und Datenbank neu initialisieren?')) return;
-    this.adminService.initDatabase().subscribe({
-      next: () => { this.successMsg = 'Datenbank zurückgesetzt.'; this.loadAreas(); },
-      error: () => { this.errorMsg = 'Fehler beim Zurücksetzen.'; }
-    });
-  }
-
   private clearMessages(): void { this.errorMsg = ''; this.successMsg = ''; }
 
   private resetForms(): void {
