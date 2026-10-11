@@ -63,15 +63,15 @@ export class HomePageComponent implements OnInit {
           return of([] as Area[]);
         })
       ),
-      routes: this.areasService.getRoutes().pipe(
-        catchError(() => of([]))
+      routeCount: this.areasService.getRouteCount().pipe(
+        catchError(() => of(0))
       ),
       users: this.userService.getUsers().pipe(
         catchError(() => of([]))
       )
-    }).subscribe(({ areas, routes, users }) => {
+    }).subscribe(({ areas, routeCount, users }) => {
       this.areaCount = areas.length;
-      this.routeCount = routes.length;
+      this.routeCount = routeCount;
       this.userCount = users.length;
       this.featuredAreas = this.getFeaturedAreas(areas);
       this.loadUpcomingAppointments();
