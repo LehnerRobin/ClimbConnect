@@ -85,6 +85,7 @@ if (!builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("
 }
 
 builder.Services.AddSingleton<JwtService>();
+builder.Services.AddSingleton<UploadStorage>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -165,12 +166,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpLogging();
 
-// Statische Dateien für hochgeladene Bilder
-var uploadsPath = Path.Combine(
-    AppDomain.CurrentDomain.GetData("DataDirectory") as string
-        ?? AppDomain.CurrentDomain.BaseDirectory,
-    "uploads");
-Directory.CreateDirectory(uploadsPath);
+// Statische Dateien für hochgeladene Bilder (Ordner kommt aus UploadStorage)
+var uploadsPath = app.Services.GetRequiredService<UploadStorage>().UploadsPath;
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
