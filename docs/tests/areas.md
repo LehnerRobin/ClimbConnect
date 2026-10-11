@@ -33,8 +33,8 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 
 | Feld | Beschreibung |
 |---|---|
-| Voraussetzung | Backend liefert keine Areas zurück. |
-| Schritte | 1. `/areas` öffnen. |
+| Voraussetzung | Backend läuft. |
+| Schritte | 1. `/areas` öffnen. 2. Im Suchfeld einen nicht vorhandenen Begriff eingeben (z. B. `xyzxyz`) und suchen. |
 | Erwartetes Ergebnis | Es erscheint „Keine Gebiete gefunden“. |
 | Status | Offen |
 
@@ -71,7 +71,7 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 |---|---|
 | Voraussetzung | Ein Sektor hat mindestens eine Route. |
 | Schritte | 1. Area-Detailseite öffnen. 2. Sektor aufklappen. |
-| Erwartetes Ergebnis | Eine Tabelle mit Name, Grad, Länge und Stil wird angezeigt. Fehlende Werte werden mit `-` dargestellt. |
+| Erwartetes Ergebnis | Die Routen werden als Karten angezeigt, jeweils mit Name, Stil, Grad und Länge. Fehlt der Stil, steht „Stil nicht angegeben“, fehlt der Grad, steht `-`. |
 | Status | Offen |
 
 ## AR-009 – Ungültige Area-ID

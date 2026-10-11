@@ -92,3 +92,12 @@ Bereich: **Begehung eintragen und Profil-Fortschritt**
 | Schritte | 1. Auswahl „Status“ öffnen. 2. Auswahl „Begehungsart“ öffnen. |
 | Erwartetes Ergebnis | Status: Rotpunkt, Flash, Onsight, Projekt. Begehungsart: Vorstieg, Toprope. „Toprope“ steht nicht beim Status. |
 | Status | Offen |
+
+## PR-011 – Flash/Onsight: Anzahl Versuche fix 1 (#249)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Progress-Formular ist geöffnet. |
+| Schritte | 1. Status „Flash“ wählen. 2. Status „Onsight“ wählen. 3. Status „Rotpunkt“ wählen und Versuche ändern. 4. Wieder „Flash“ wählen. |
+| Erwartetes Ergebnis | Bei Flash und Onsight steht bei „Anzahl Versuche“ fix `1`, das Feld ist ausgegraut und darunter steht der Hinweis „Erster Versuch…“. Bei Rotpunkt ist das Feld wieder bearbeitbar. Beim Wechsel zurück auf Flash springt der Wert auf `1`. |
+| Status | Offen |
