@@ -154,6 +154,75 @@ select:focus {
   font-weight: 800;
 }
 
+/* Bei Gleichstand stehen mehrere Gebiete da – reicht der Platz nicht,
+   rutschen die Namen rechtsbündig in die nächste Zeile (nur zwischen Wörtern umbrechen) */
+.stat-item.favorite-item {
+  flex-wrap: wrap;
+}
+
+.stat-item strong.favorite-area {
+  margin-left: auto;
+  text-align: right;
+  overflow-wrap: break-word;
+}
+
+/* ---- Besuche pro Gebiet ---- */
+.area-visits-title {
+  margin: 24px 0 12px;
+  font-size: 1.05rem;
+}
+
+.area-visits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.area-visit-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.area-visit-head a {
+  color: var(--ink-950);
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.area-visit-head a:hover {
+  color: var(--amber-600);
+  text-decoration: underline;
+}
+
+.area-visit-head span {
+  flex: none;
+  color: var(--ink-600);
+  font-weight: 600;
+}
+
+.area-visit-bar {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--paper-100);
+  overflow: hidden;
+}
+
+.area-visit-bar > div {
+  height: 100%;
+  min-width: 6px;
+  border-radius: var(--radius-pill);
+  background: var(--amber-500);
+}
+
 @media (max-width: 900px) {
   .profile-layout {
     grid-template-columns: 1fr;
