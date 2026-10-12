@@ -52,6 +52,10 @@ public class AuthTests : IClassFixture<ClimbConnectFactory>
         });
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+
+        // Das Frontend braucht das Feld, um die Meldung unter dem E-Mail-Feld anzuzeigen
+        var body = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        Assert.Equal("email", body!.Field);
     }
 
     [Fact]
@@ -72,6 +76,9 @@ public class AuthTests : IClassFixture<ClimbConnectFactory>
         });
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+
+        var body = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        Assert.Equal("username", body!.Field);
     }
 
     [Fact]
@@ -129,4 +136,5 @@ public class AuthTests : IClassFixture<ClimbConnectFactory>
     }
 
     private record AuthResponse(string Token, int Id, string Username, string Email, string Role);
+    private record ErrorResponse(string Error, string? Field);
 }

@@ -124,3 +124,16 @@ input:focus {
     font-size: 1.8rem;
   }
 }
+
+/* Fehlermeldung direkt unter einem Feld */
+.field-error {
+  color: var(--brick-600);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Feld mit Fehler rot umranden */
+input.invalid {
+  border-color: var(--brick-500);
+  background: var(--brick-100);
+}
