@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angula
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { UserService } from '../../services/user.service';
+import { AreaVisit, UserService } from '../../services/user.service';
 import { Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 
@@ -39,6 +39,10 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     openProjects: 0,
     favoriteArea: '-'
   };
+
+  areaVisits: AreaVisit[] = [];
+  /** Größte Besuchszahl – der Balken dieses Gebiets ist 100 % breit. */
+  maxAreaVisits = 1;
 
   gradeProgression: { month: string; grade: string; rank: number }[] = [];
   chartReady = false;
@@ -96,6 +100,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         this.stats.openProjects = s.openProjects ?? 0;
         this.stats.favoriteArea = s.favoriteArea ?? '-';
         this.gradeProgression   = s.gradeProgression ?? [];
+        this.areaVisits         = s.areaVisits ?? [];
+        this.maxAreaVisits      = Math.max(1, ...this.areaVisits.map(v => v.visits));
 
         // Das <canvas> existiert erst, nachdem @if(gradeProgression.length > 0)
         // neu gerendert wurde. Wir warten daher einen Tick, bis Angular die

@@ -75,13 +75,6 @@ public static class UserEndpoints
             var ascents  = progresses.Where(p => p.Status != "Projekt").ToList();
             var projects = progresses.Where(p => p.Status == "Projekt").ToList();
 
-            // Lieblingsgebiet: Gebiet mit den meisten Begehungen
-            var favoriteArea = ascents
-                .GroupBy(p => p.Route.Sector.Area.Name)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
-                .FirstOrDefault();
-
             // Grad-Entwicklung: höchster Rotpunkt-/Flash-/Onsight-Grad pro Monat
             var targetScale = scale ?? "french";
             var gradeProgression = ascents
@@ -101,12 +94,33 @@ public static class UserEndpoints
                 })
                 .ToList();
 
+            // Besuche pro Gebiet: Anzahl verschiedener Tage mit mindestens einem Eintrag im Gebiet.
+            // Projekte zählen mit – wer es probiert hat, war auch dort.
+            var areaVisits = progresses
+                .GroupBy(p => new { p.Route.Sector.Area.Id, p.Route.Sector.Area.Name })
+                .Select(g => new
+                {
+                    AreaId   = g.Key.Id,
+                    AreaName = g.Key.Name,
+                    Visits   = g.Select(p => p.Date).Distinct().Count()
+                })
+                .OrderByDescending(v => v.Visits)
+                .ThenBy(v => v.AreaName)
+                .ToList();
+
+            // Lieblingsgebiet: Gebiet mit den meisten Besuchen, bei Gleichstand alle (z. B. "Traunstein, Hirschwand")
+            var maxVisits = areaVisits.FirstOrDefault()?.Visits ?? 0;
+            var favoriteArea = areaVisits.Count == 0
+                ? null
+                : string.Join(", ", areaVisits.Where(v => v.Visits == maxVisits).Select(v => v.AreaName));
+
             return Results.Ok(new
             {
                 TotalClimbed     = ascents.Count,
                 OpenProjects     = projects.Count,
                 FavoriteArea     = favoriteArea,
-                GradeProgression = gradeProgression
+                GradeProgression = gradeProgression,
+                AreaVisits       = areaVisits
             });
         })
         .WithName("GetUserStats")

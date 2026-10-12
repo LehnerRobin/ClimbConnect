@@ -5,12 +5,22 @@ import { catchError, map, shareReplay, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth.service';
 
+/** Besuche eines Users in einem Gebiet (visits = Anzahl verschiedener Klettertage). */
+export interface AreaVisit {
+  areaId: number;
+  areaName: string;
+  visits: number;
+}
+
 export interface UserStats {
   totalClimbed: number;
   openProjects: number;
+  /** Gebiet mit den meisten Besuchen, bei Gleichstand mehrere mit Komma getrennt. */
   favoriteArea: string | null;
   /** rank = Position des Grads in der Schwierigkeits-Reihenfolge (höher = schwerer). */
   gradeProgression: { month: string; grade: string; rank: number }[];
+  /** Sortiert nach Besuchen, das meistbesuchte Gebiet zuerst. */
+  areaVisits: AreaVisit[];
 }
 
 export interface UserListItem {

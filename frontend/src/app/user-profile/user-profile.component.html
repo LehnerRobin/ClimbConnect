@@ -121,9 +121,27 @@
         <div class="stat-item">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
           <span>Lieblingsgebiet</span>
-          <strong>{{ stats.favoriteArea }}</strong>
+          <strong class="favorite-area">{{ stats.favoriteArea }}</strong>
         </div>
       </div>
+
+      <!-- Besuche pro Gebiet (ein Besuch = ein Tag mit mindestens einem Eintrag) -->
+      @if (areaVisits.length > 0) {
+        <h3 class="area-visits-title">Meine Gebiete</h3>
+        <ul class="area-visits">
+          @for (visit of areaVisits; track visit.areaId) {
+            <li class="area-visit">
+              <div class="area-visit-head">
+                <a [routerLink]="['/areas', visit.areaId]">{{ visit.areaName }}</a>
+                <span class="tnum">{{ visit.visits }} {{ visit.visits === 1 ? 'Tag' : 'Tage' }}</span>
+              </div>
+              <div class="area-visit-bar" aria-hidden="true">
+                <div [style.width.%]="(visit.visits / maxAreaVisits) * 100"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
     </aside>
 
   </div>
