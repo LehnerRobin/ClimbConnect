@@ -1,6 +1,6 @@
 # Roadmap – ClimbConnect
 
-Stand: 11.10.2026 (Sprintplanung Sprint 2) · Live: https://frontend-production-47f4.up.railway.app/
+Stand: 12.10.2026 (Sprint 1 abgeschlossen, Sprint 2 läuft) · Live: https://frontend-production-47f4.up.railway.app/
 
 Diese Datei beschreibt, was bereits umgesetzt ist und was als Nächstes kommt.
 Die Meilensteine aus Benutzersicht stehen in [meilensteine.md](meilensteine.md),
@@ -16,7 +16,7 @@ die einzelnen Aufgaben als Issues im GitHub-Repo.
 | 2 | Klettergebiete und Routen nachschlagen | 🟡 Gebietsliste mit Besucherandrang, Karte, Sektoren, Routen, Gebietssuche, Grade in drei Skalen – **Routensuche fehlt im Frontend** (#227, Backend: `GET /api/routes?search=`) |
 | 3 | Gebiete, Sektoren und Routen sind gepflegt | ✅ Admin-Bereich, Grad-Auswahl aus einer zentralen Grad-Tabelle, Community-Grad |
 | 4 | Kletterfortschritt dokumentieren | ✅ Begehungen mit Status, Begehungsart, Versuchen, subjektivem Grad; öffentliche Profile |
-| 5 | Verbesserung über Zeit sehen | ✅ Grad-Diagramm, Anzahl Routen, offene Projekte, Lieblingsgebiet |
+| 5 | Verbesserung über Zeit sehen | ✅ Grad-Diagramm, Anzahl Routen, offene Projekte, Gebiet-Besuche, Lieblingsgebiet (meiste Besuche) |
 | 6 | Informationen zu Routen und Gebieten teilen | ✅ Kommentare mit Foto, Safety-Reports mit Schweregrad – wird in Sprint 2 umgebaut (geprüfte Safety-Reports, Feedback statt öffentlicher Kommentare) |
 | 7 | Kletterpartner finden | ✅ Termine erstellen, beitreten, austreten, bearbeiten; Ø-Grad der Gruppe |
 
@@ -27,6 +27,8 @@ erfüllt. Die weitere Arbeit betrifft diese Lücke, Qualität, Moderation und Fe
 
 ## Erledigt im Sprint bis 12.10.2026
 
+GitHub-Meilenstein **„Sprint bis 12.10.2026"** – alle Issues erledigt, Meilenstein geschlossen.
+
 - **Hosting:** Deployment auf Railway mit Volume für Datenbank und Bilder, Anleitung in
   [DEPLOYMENT.md](DEPLOYMENT.md) (#183)
 - **Sicherheit:** Passwort-Hash und E-Mail nicht mehr über die API, DTO-Validierung,
@@ -36,14 +38,19 @@ erfüllt. Die weitere Arbeit betrifft diese Lücke, Qualität, Moderation und Fe
   Umlaute, 20-Einträge-Grenze, Termin-Zeitzonen, Grad-Listen, toter Admin-Knopf
   (#190–#198)
 - **Verbesserungen:** Endpoints für eigene und nächste Termine (#201), sichtbare
-  Fehlermeldungen und zentrale Gradskala (#202)
+  Fehlermeldungen und zentrale Gradskala (#202), Lazy Loading – Start-Bundle von
+  929 kB auf 373 kB (#184)
+- **Statistik:** Gebiet-Besuche im Profil (verschiedene Klettertage pro Gebiet),
+  Lieblingsgebiet = Gebiet mit den meisten Besuchen, bei Gleichstand alle (#179)
+- **Tests:** manueller Testlauf mit aktualisierten Testfällen, Protokoll in
+  `docs/tests/test-protocol-2026-10.md` (#180)
 - **Infrastruktur:** Docker-Setup, CI mit Backend- und Frontend-Tests bei jedem Push/PR
 
 ---
 
-## Sprint 2 – geplant
+## Sprint 2 – läuft (bis 26.10.2026)
 
-GitHub-Meilenstein **„Sprint 2"** – 13 Issues, 26 SP. Aufteilung: Frontend Mohamed Attia
+GitHub-Meilenstein **„Sprint 2"** – 13 Issues, 26 SP, davon 4 bereits erledigt (✅). Aufteilung: Frontend Mohamed Attia
 (Ansichten, Admin, Suche) und Faru Hamid (Termine, Auth, Upload), Backend und alles
 andere Robin Lehner.
 
@@ -55,16 +62,16 @@ andere Robin Lehner.
 | #232 | Eigenes Konto löschen | 3 | Robin, Faru |
 | #233 | Schutz gegen Passwort-Raten beim Login | 2 | Robin |
 | #234 | Foto-Links nur auf eigene Uploads | 1 | Robin |
-| #222 | Klare Meldungen bei Login und Registrierung | 2 | Robin, Mohamed |
+| ✅ #222 | Klare Meldungen bei Login und Registrierung | 2 | Robin, Mohamed |
 
 **Bedienung**
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
-| #249 | Bei Flash und Onsight ist die Anzahl der Versuche fix 1 | 1 | Robin, Mohamed |
-| #250 | Subjektive Gradeinschätzung nur in der eigenen Skala (doppelte Werte mit franz. Grad) | 2 | Mohamed |
+| ✅ #249 | Bei Flash und Onsight ist die Anzahl der Versuche fix 1 | 1 | Robin, Mohamed |
+| ✅ #250 | Subjektive Gradeinschätzung nur in der eigenen Skala (doppelte Werte mit franz. Grad) | 2 | Mohamed |
 | #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
-| #247 | Gebietsname auf der Karte (am Handy dauerhaft sichtbar) | 1 | Mohamed |
+| ✅ #247 | Gebietsname auf der Karte (am Handy dauerhaft sichtbar) | 1 | Mohamed |
 | #248 | Favoriten auch auf der Gebietsseite und deutlicher erkennbar | 1 | Faru |
 
 **Termine** (Reihenfolge: #228 → #254, #229)
@@ -79,7 +86,7 @@ andere Robin Lehner.
 
 ## Sprint 3 – geplant
 
-GitHub-Meilenstein **„Sprint 3"** – 6 Issues, 23 SP.
+GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP.
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
@@ -89,6 +96,7 @@ GitHub-Meilenstein **„Sprint 3"** – 6 Issues, 23 SP.
 | #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
 | #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
+| #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
 
 > **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
 > - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf
@@ -99,12 +107,17 @@ GitHub-Meilenstein **„Sprint 3"** – 6 Issues, 23 SP.
 >   und die sich automatisch aktualisiert (#245). Keine Privat- oder Direktnachrichten,
 >   kein Live-Chat.
 >
+> **Datenschutz bei der Pinnwand (entschieden am 12.10.2026):**
+> - Beiträge werden **wirklich gelöscht** – mit dem Termin oder durch den Verfasser –
+>   und nirgends zusätzlich aufbewahrt (Datenminimierung, Speicherbegrenzung).
+> - Ausnahme: Wird ein Beitrag **gemeldet** (#264, Backlog), bleibt der Pinnwand-Verlauf
+>   dieses Termins als „Fall" für den Admin erhalten, damit er die Meldung im Kontext
+>   beurteilen kann. Weitere Meldungen ergänzen nur fehlende Beiträge (keine doppelten
+>   Kopien). Der Fall wird 30 Tage nach der letzten Meldung gelöscht.
+> - Beides kommt in die Datenschutzerklärung (#231).
+>
 > `docs/meilensteine.md` (Meilenstein 6 und 7) und `docs/pitch.md` sind bereits an dieses
 > Konzept angepasst.
-
-Aus dem laufenden Sprint noch offen: #180 (manuelle Testfälle, Protokoll in
-`docs/tests/test-protocol-2026-10.md`), #179 (Gebiet-Besuche in der Statistik),
-#184 (Lazy Loading).
 
 ---
 
@@ -119,7 +132,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen | 5 |
 | #181 | Favoriten im Backend speichern statt im Browser | 5 |
 | #242 | Laufende Termine hervorheben, auschecken, am Tagesende löschen – besuchte Sessions bleiben im Profil | 8 |
-| #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 |
+| #264 | Pinnwand-Beiträge melden, Verlauf 30 Tage für den Admin aufbewahren (nach #245) | 5 |
 | #243 | E-Mail-Adresse bei der Registrierung überprüfen (Bestätigungs-Link) | 5 |
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
 | #237 | Mehrere Admins verwalten | 3 |
@@ -136,7 +149,7 @@ Endpoints.
 
 ## Danach
 
-- Feinschliff anhand der Ergebnisse der manuellen Tests (#180)
+- Feinschliff anhand des Testprotokolls (`docs/tests/test-protocol-2026-10.md`)
 - Dokumentation für die Diplomarbeit: Architektur und Entscheidungen (eigenes JWT statt
   Keycloak, SQLite statt PostgreSQL, Railway, geprüfte Safety-Reports statt öffentlicher
   Kommentare)
