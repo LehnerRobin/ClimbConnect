@@ -154,10 +154,16 @@ select:focus {
   font-weight: 800;
 }
 
-/* Bei Gleichstand stehen mehrere Gebiete da – rechtsbündig umbrechen statt überlaufen */
+/* Bei Gleichstand stehen mehrere Gebiete da – reicht der Platz nicht,
+   rutschen die Namen rechtsbündig in die nächste Zeile (nur zwischen Wörtern umbrechen) */
+.stat-item.favorite-item {
+  flex-wrap: wrap;
+}
+
 .stat-item strong.favorite-area {
+  margin-left: auto;
   text-align: right;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 /* ---- Besuche pro Gebiet ---- */
