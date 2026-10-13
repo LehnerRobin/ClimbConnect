@@ -47,9 +47,10 @@ in alle drei Skalen umgerechnet und je nach Profileinstellung des jeweiligen
 Benutzers in der App angezeigt.
 
 Normale Benutzer haben keinen Schreibzugriff auf Gebiete, Sektoren oder Routen.
-Sie können jedoch über die Kommentarfunktion Feedback zu einzelnen Routen
-hinterlassen – zum Beispiel wenn sich der Grad leichter oder schwerer anfühlt
-als angegeben, und warum (z.B. abgegriffene Griffe, neue Sicherung).
+Sie können jedoch beim Eintragen einer Begehung einen subjektiven Grad mit
+kurzem Kommentar angeben – zum Beispiel wenn sich der Grad leichter oder
+schwerer anfühlt als angegeben, und warum (z.B. abgegriffene Griffe, neue
+Sicherung). Daraus entsteht der Community-Grad der Route.
 
 **Was der Administrator kann:**
 - Neues Klettergebiet anlegen (Name, Beschreibung, Standort, Bild)
@@ -59,10 +60,9 @@ als angegeben, und warum (z.B. abgegriffene Griffe, neue Sicherung).
 
 **Was der normale Benutzer kann:**
 - Alle Gebiete, Sektoren und Routen ansehen
-- Kommentar zur subjektiven Schwierigkeit einer Route schreiben
-  (z.B. „Fühlt sich leichter an als 6b, Griffe sind gut geformt")
-- Subjektiven Grad mit kurzem Kommentar angeben
-  (fließt in den Community-Grad der Route ein)
+- Beim Eintragen einer Begehung einen subjektiven Grad mit kurzem Kommentar angeben
+  (z.B. „Fühlt sich leichter an als 6b, Griffe sind gut geformt") –
+  fließt in den Community-Grad der Route ein
 
 ---
 
@@ -105,17 +105,22 @@ noch offen sind und in welchem Gebiet er am meisten geklettert hat.
 ## Meilenstein 6 — „Ich kann aktuelle Informationen zu Routen und Gebieten teilen"
 
 Ein Benutzer war am Traunstein klettern und hat einen beschädigten Bohrhaken
-entdeckt. Er öffnet ClimbConnect, navigiert zur Route und schreibt einen
-Kommentar mit Foto und dem Hinweis auf den Schaden. Andere Kletterer sehen
-diesen Hinweis sofort. Für kritische Sicherheitsprobleme kann er zusätzlich
-einen Safety-Report mit Schweregrad erstellen – damit das Problem klar
-gekennzeichnet ist und nicht übersehen wird.
+entdeckt. Er öffnet ClimbConnect, navigiert zur Route und meldet das Problem
+mit Foto und Schweregrad. Das ClimbConnect-Team prüft die Meldung, passt sie
+bei Bedarf an und gibt sie frei – ab dann sehen alle Kletterer bei der Route
+eine deutliche Warnung. So stehen nur geprüfte, korrekte Hinweise auf der
+Seite. Alles andere, was er dem Team mitteilen möchte, schickt er über den
+Feedback-Knopf; das sehen nur die Administratoren.
 
 **Was der Benutzer kann:**
-- Kommentar mit Text und Foto zu einem Gebiet oder einer Route schreiben
-- Kommentare anderer Benutzer lesen
-- Safety-Report zu einer Route erstellen (Schweregrad: Niedrig/Mittel/Hoch, Foto)
-- Safety-Reports einer Route einsehen
+- Safety-Report zu einem Gebiet, Sektor oder einer Route erstellen (Text, Schweregrad Niedrig/Mittel/Hoch, Foto)
+- Freigegebene Safety-Reports als Warnung bei Gebiet, Sektor und Route sehen
+- Feedback mit Text und Foto an das Team schicken
+
+**Was der Administrator kann:**
+- Gemeldete Safety-Reports prüfen, anpassen und freigeben oder ablehnen
+- Freigegebene Reports als behoben schließen
+- Feedback der Benutzer lesen
 
 ---
 
@@ -125,8 +130,10 @@ Ein Benutzer plant für Samstag einen Ausflug zum Gmundnerberg und möchte
 nicht alleine fahren. Er erstellt einen Termin: Gebiet, Datum, Uhrzeit,
 kurze Beschreibung, Mindestens 2 und maximal 5 Teilnehmer. Andere Benutzer
 sehen den Termin, können den Durchschnittsgrad der aktuellen Gruppe sehen
-und beitreten wenn sie auf ähnlichem Niveau klettern. Für neue Kletterer
-die noch nie draußen waren ist das die einfachste Möglichkeit einen
+und beitreten wenn sie auf ähnlichem Niveau klettern. Wer beigetreten ist,
+kann sich auf der Pinnwand des Termins mit den anderen Teilnehmern absprechen
+(Treffpunkt, Ausrüstung, Fahrgemeinschaft) – ohne Privatnachrichten. Für neue
+Kletterer die noch nie draußen waren ist das die einfachste Möglichkeit einen
 erfahrenen Seilpartner zu finden.
 
 **Was der Benutzer kann:**
@@ -135,4 +142,5 @@ erfahrenen Seilpartner zu finden.
 - Durchschnittsgrad der Gruppe sehen (in seiner bevorzugten Skala)
 - Einem Termin wieder austreten
 - Eigene Termine bearbeiten und löschen
+- Sich als Teilnehmer auf der Pinnwand des Termins absprechen
 

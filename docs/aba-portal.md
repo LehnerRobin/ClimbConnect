@@ -39,28 +39,27 @@ Datenmodell für Seilklettergebiete konzipiert und als REST-API umgesetzt
 werden kann. Dabei wird analysiert, wie Klettergebiete, Sektoren, Routen
 und Schwierigkeitsgrade strukturiert gespeichert und über eine API bereitgestellt
 werden können. Ein weiterer Schwerpunkt liegt auf der Integration einer
-rollenbasierten Authentifizierung mittels Keycloak sowie der automatisierten
-Bereitstellung der Anwendung über eine CI/CD-Pipeline. Zusätzlich wird
+rollenbasierten Authentifizierung mit JWT sowie der automatisierten
+Prüfung und Bereitstellung der Anwendung (CI mit GitHub Actions, Deployment
+mit Docker auf Railway). Zusätzlich wird
 untersucht, wie Fortschrittsdaten aggregiert und als Statistiken (z.B.
 Gradentwicklung über Zeit) aufbereitet werden können.
 
-**Mohamed Attia – Frontend-Architektur & Datendarstellung**
-Im Rahmen der Diplomarbeit wird untersucht, wie eine moderne Single-Page-Application
-mit Angular strukturiert und aufgebaut werden kann. Dabei wird analysiert, wie
-die Anwendung in wiederverwendbare Komponenten aufgeteilt, die Kommunikation
-mit der REST-API über einen zentralen Service-Layer abgewickelt und komplexe
-Daten wie Gradentwicklungen als interaktive Charts dargestellt werden können.
-Ein weiterer Schwerpunkt liegt auf der Verwaltung von Klettergebieten, Sektoren
-und Routen im Frontend sowie auf der Umsetzung einer konsistenten Benutzeroberfläche.
+**Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
+Startseite, Kletterer-Liste, persönliches und öffentliches Profil mit
+Fortschrittsübersicht, Verwaltungs- und Detailansichten für Gebiete, Sektoren
+und Routen inklusive Formularvalidierung sowie Such- und Filterfunktionen,
+Formular zum Eintragen von Begehungen mit subjektiver Gradbewertung,
+Feedback-Funktion und Admin-Ansichten, Login- und Registrierungsansichten inklusive
+Formularvalidierung, Benutzereinstellungen zur Wahl der Grad-Skala sowie
+responsive Gestaltung für Desktop und Mobilgerät.
 
-**Faru Hamid – Frontend & Benutzerorientierte Features**
-Im Rahmen der Diplomarbeit wird untersucht, wie benutzerorientierte Features
-einer Webanwendung – insbesondere Fortschrittstracking, Terminplanung und
-Community-Funktionen – in Angular umgesetzt werden können. Dabei wird analysiert,
-wie Benutzerinteraktionen wie das Eintragen von Begehungen, das Beitreten zu
-Terminen und das Hochladen von Bildern in einer responsiven Oberfläche
-ansprechend und intuitiv gestaltet werden können. Ein weiterer Schwerpunkt
-liegt auf der nutzerfreundlichen Darstellung von Profil- und Statistikseiten.
+**Faru Hamid – Frontend-Architektur & komplexe Features**
+Aufbau der Angular-Anwendung, Komponentenstruktur und Routing-Konzept,
+Service-Layer für die API-Kommunikation, Authentifizierung im Frontend mit
+Token-Handling, Route Guards und rollenbasierter Anzeige, interaktive Charts
+für die Gradentwicklung, Terminplaner-UI, wiederverwendbare
+Bild-Upload-Komponente sowie Meldesystem mit Bild-Upload.
 
 ---
 
@@ -73,7 +72,7 @@ Klettergebiete, Sektoren und Routen schaffen und gleichzeitig Funktionen
 für persönliches Fortschrittstracking sowie Community-Interaktion bieten.
 
 Darüber hinaus soll untersucht werden, wie moderne Webtechnologien –
-insbesondere eine .NET 8 REST-API mit Angular-Frontend, Keycloak-Authentifizierung
+insbesondere eine .NET 8 REST-API mit Angular-Frontend, JWT-Authentifizierung
 und containerisiertem Deployment – im Rahmen einer Diplomarbeit eingesetzt
 und hinsichtlich Wartbarkeit, Erweiterbarkeit und Benutzerfreundlichkeit
 bewertet werden können.
@@ -84,31 +83,44 @@ bewertet werden können.
 
 **Robin Lehner – Backend & Systemarchitektur**
 Als Ergebnis entsteht eine vollständige REST-API auf Basis von .NET 8 Minimal
-API und Entity Framework Core mit PostgreSQL-Datenbank. Die API stellt alle
+API und Entity Framework Core mit SQLite-Datenbank. Die API stellt alle
 notwendigen Endpunkte für die Verwaltung von Klettergebieten (Areas, Sektoren,
 Routen), das Fortschrittstracking (inkl. Gradentwicklung und subjektiver
-Routenbewertung), den Terminplaner sowie das Kommentar- und Meldesystem bereit.
+Routenbewertung), den Terminplaner mit Pinnwand, die Safety-Reports mit
+Prüfung und Freigabe durch das Team sowie die Feedback-Funktion bereit.
 Schwierigkeitsgrade werden intern in der französischen Skala gespeichert und
 per API wahlweise in der französischen, amerikanischen oder UIAA-Skala
-ausgegeben. Die Anwendung ist durch Keycloak abgesichert und wird über eine
-GitHub Actions CI/CD-Pipeline automatisiert deployed.
+ausgegeben. Die Anwendung ist durch ein eigenes Login-System mit JWT und
+Rollen abgesichert, wird bei jeder Änderung über GitHub Actions automatisiert
+getestet und als Docker-Container auf Railway bereitgestellt.
 
-**Mohamed Attia – Frontend-Architektur & Datendarstellung**
+**Mohamed Attia – Frontend-Ansichten & Benutzeroberfläche**
+Als Ergebnis entstehen die benutzerorientierten Ansichten der Anwendung: die
+Startseite als Einstiegspunkt, die Kletterer-Liste, das persönliche Profil mit
+Fortschrittsübersicht sowie die öffentlichen Profile mit den letzten
+Begehungen anderer Benutzer. Dazu kommen die Verwaltungs- und Detailansichten
+für Gebiete, Sektoren und Routen inklusive Darstellung des Community-Grades.
+Mohamed verantwortet dabei insbesondere die Formulare inklusive Validierung
+und Fehlerrückmeldung, darunter die Login- und Registrierungsansichten sowie
+das Formular zum Eintragen einer Begehung mit Status, Begehungsart, Versuchen,
+Notiz und subjektiver Gradbewertung. Ebenfalls in seinem Bereich liegen die
+Such- und Filterfunktionen, mit denen Gebiete und Routen gezielt gefunden
+werden können, die Feedback-Funktion und Admin-Ansichten, die Benutzereinstellungen zur Wahl der
+bevorzugten Grad-Skala und die responsive Gestaltung der Anwendung, sodass
+ClimbConnect sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
+
+**Faru Hamid – Frontend-Architektur & komplexe Features**
 Als Ergebnis entsteht eine strukturierte Angular-Anwendung mit klarer
 Komponentenarchitektur, zentralem HTTP-Service-Layer und durchgängigem
-Routing-Konzept. Mohamed verantwortet dabei insbesondere die Umsetzung
-der Gebiets- und Routenverwaltung im Frontend sowie die Integration von
-interaktiven Charts zur Darstellung der Gradentwicklung über Zeit.
-Die Anwendung kommuniziert vollständig über die REST-API und ist so
-aufgebaut, dass neue Features ohne großen Aufwand ergänzt werden können.
-
-**Faru Hamid – Frontend & Benutzerorientierte Features**
-Als Ergebnis entstehen die benutzerorientierten Kernbereiche der Anwendung:
-das persönliche Profil mit Fortschrittsübersicht, die Detailansichten für
-Routen und Begehungen, der Terminplaner mit Beitritt-Funktion sowie das
-Kommentar- und Meldesystem inklusive Bild-Upload. Faru verantwortet
-außerdem die responsive Gestaltung der Anwendung, sodass ClimbConnect
-sowohl am Desktop als auch am Mobilgerät einwandfrei nutzbar ist.
+Routing-Konzept. Faru verantwortet dabei die Authentifizierung im Frontend mit
+Token-Handling, Route Guards und rollenbasierter Anzeige, sodass Bearbeiten-
+und Löschen-Funktionen nur Administratoren zur Verfügung stehen. Weiters
+umfasst sein Bereich die Integration der interaktiven Charts zur Darstellung
+der Gradentwicklung über Zeit, den Terminplaner mit Beitritt-Funktion,
+Kalender und Pinnwand, das Meldesystem inklusive Bild-Upload sowie eine
+wiederverwendbare Upload-Komponente, die auch für das Feedback eingesetzt wird. Die Anwendung
+kommuniziert vollständig über die REST-API und ist so aufgebaut, dass neue
+Features ohne großen Aufwand ergänzt werden können.
 
 **Gemeinsamer agiler Ansatz**
 Die Entwicklung erfolgt nach einem agilen Vorgehensmodell. Alle drei
@@ -116,4 +128,3 @@ Teammitglieder arbeiten iterativ an gemeinsamen User Stories, unterstützen
 sich gegenseitig und sind in alle Bereiche des Projekts eingebunden.
 Die beschriebenen Schwerpunkte spiegeln die jeweilige Hauptverantwortung
 wider, nicht eine strikte Trennung der Aufgaben.
-

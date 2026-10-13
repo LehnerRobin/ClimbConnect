@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Fortschrittseinträge (Begehungen) des eingeloggten Users.</summary>
 public static class ProgressEndpoints
 {
-    public static void MapProgressEndpoints(this WebApplication app)
+    public static void MapProgressEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/progress/me", async (ClaimsPrincipal user, int? page, int? pageSize, AppDbContext db) =>
         {
@@ -64,6 +64,8 @@ public static class ProgressEndpoints
                 return Results.BadRequest(new { error = $"Begehungsart muss einer von: {string.Join(", ", ProgressConst.Styles)} sein" });
             if (dto.Attempts < 1)
                 return Results.BadRequest(new { error = "Anzahl Versuche muss mindestens 1 sein" });
+            if (ProgressConst.FirstTryStatuses.Contains(dto.Status) && dto.Attempts != 1)
+                return Results.BadRequest(new { error = "Bei Flash und Onsight ist die Anzahl der Versuche immer 1" });
             if (!await db.Routes.AnyAsync(r => r.Id == dto.RouteId))
                 return Results.BadRequest(new { error = "Route nicht gefunden" });
 
@@ -102,6 +104,8 @@ public static class ProgressEndpoints
                 return Results.BadRequest(new { error = $"Begehungsart muss einer von: {string.Join(", ", ProgressConst.Styles)} sein" });
             if (dto.Attempts < 1)
                 return Results.BadRequest(new { error = "Anzahl Versuche muss mindestens 1 sein" });
+            if (ProgressConst.FirstTryStatuses.Contains(dto.Status) && dto.Attempts != 1)
+                return Results.BadRequest(new { error = "Bei Flash und Onsight ist die Anzahl der Versuche immer 1" });
 
             progress.Status                 = dto.Status;
             progress.ClimbingStyle          = dto.ClimbingStyle;

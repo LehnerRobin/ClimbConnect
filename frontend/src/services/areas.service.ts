@@ -3,13 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-
-export interface PagedResponse<T> {
-  total: number;
-  page: number;
-  pageSize: number;
-  items: T[];
-}
+import { fetchAllPages, PagedResponse } from './paging';
 
 export interface Area {
   id: number;
@@ -84,6 +78,13 @@ export interface Appointment {
   minParticipants?: number | null;
   maxParticipants?: number | null;
   participantCount?: number;
+  /** Ob der eingeloggte User an diesem Termin teilnimmt (kommt von der Terminliste). */
+  isSubscribed?: boolean;
+  /** Kommt von /upcoming und /me mit, damit das Gebiet nicht extra geladen werden muss. */
+  areaName?: string | null;
+  areaLocation?: string | null;
+  /** Nur bei /me: true, wenn der eingeloggte User den Termin erstellt hat. */
+  isCreator?: boolean;
 }
 
 export interface AppointmentCreateRequest {
@@ -151,11 +152,10 @@ export class AreasService {
 
   // ── Gebiete ────────────────────────────────────────────────────────────────
 
+  /** Alle Gebiete (lädt alle Seiten nach). */
   getAreas(search?: string): Observable<Area[]> {
     const params = search ? `?search=${encodeURIComponent(search)}` : '';
-    return this.http.get<PagedResponse<Area>>(`${this.apiUrl}/areas${params}`).pipe(
-      map(r => r.items)
-    );
+    return fetchAllPages<Area>(this.http, `${this.apiUrl}/areas${params}`);
   }
 
   getAreaById(id: number): Observable<Area> {
@@ -189,22 +189,33 @@ export class AreasService {
     return this.http.delete<void>(`${this.apiUrl}/appointments/${id}`);
   }
 
+  /** Nächste Termine über alle Gebiete in einer einzigen Anfrage. */
+  getUpcomingAppointments(limit = 10): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments/upcoming?limit=${limit}`);
+  }
+
+  /** Eigene Termine (erstellt oder beigetreten). Mit all=true auch vergangene. */
+  getMyAppointments(all = false): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/appointments/me?all=${all}`);
+  }
+
   // ── Routen ─────────────────────────────────────────────────────────────────
 
   getRoutesBySector(sectorId: number, scale: string): Observable<ClimbingRoute[]> {
     return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/sectors/${sectorId}/routes?scale=${scale}`);
   }
 
+  /** Alle Routen, deren Name die Suche enthält (lädt alle Seiten nach). */
   searchRoutes(search: string, scale = 'french'): Observable<ClimbingRoute[]> {
-    return this.http.get<PagedResponse<ClimbingRoute>>(
-      `${this.apiUrl}/routes?search=${encodeURIComponent(search)}&scale=${scale}`
-    ).pipe(map(r => r.items));
+    return fetchAllPages<ClimbingRoute>(
+      this.http, `${this.apiUrl}/routes?search=${encodeURIComponent(search)}&scale=${scale}`
+    );
   }
 
-  getRoutes(search = '', scale = 'french'): Observable<ClimbingRoute[]> {
-    const searchParam = search ? `search=${encodeURIComponent(search)}&` : '';
-    return this.http.get<PagedResponse<ClimbingRoute>>(`${this.apiUrl}/routes?${searchParam}scale=${scale}`).pipe(
-      map(r => r.items)
+  /** Gesamtanzahl der Routen – fragt nur eine Seite mit einem Eintrag ab und liest `total`. */
+  getRouteCount(): Observable<number> {
+    return this.http.get<PagedResponse<ClimbingRoute>>(`${this.apiUrl}/routes?pageSize=1`).pipe(
+      map(r => r.total)
     );
   }
 
@@ -266,10 +277,9 @@ export class AreasService {
 
   // ── Progress ───────────────────────────────────────────────────────────────
 
+  /** Alle eigenen Begehungen (lädt alle Seiten nach). */
   getMyProgress(): Observable<ProgressEntry[]> {
-    return this.http.get<PagedResponse<ProgressEntry>>(`${this.apiUrl}/progress/me`).pipe(
-      map(r => r.items)
-    );
+    return fetchAllPages<ProgressEntry>(this.http, `${this.apiUrl}/progress/me`);
   }
 
   getProgressById(id: number): Observable<ProgressEntry> {

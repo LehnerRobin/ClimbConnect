@@ -17,6 +17,7 @@
 
     <form
       class="auth-form"
+      novalidate
       (submit)="register(username.value, email.value, password.value, confirmPassword.value); $event.preventDefault()">
 
       <div class="form-field">
@@ -26,7 +27,11 @@
           #username
           type="text"
           placeholder="Dein Benutzername"
-          autocomplete="username">
+          autocomplete="username"
+          [class.invalid]="fieldErrors.username">
+        @if (fieldErrors.username) {
+          <small class="field-error">{{ fieldErrors.username }}</small>
+        }
       </div>
 
       <div class="form-field">
@@ -36,7 +41,11 @@
           #email
           type="email"
           placeholder="deine.email@example.com"
-          autocomplete="email">
+          autocomplete="email"
+          [class.invalid]="fieldErrors.email">
+        @if (fieldErrors.email) {
+          <small class="field-error">{{ fieldErrors.email }}</small>
+        }
       </div>
 
       <div class="form-field">
@@ -46,7 +55,11 @@
           #password
           type="password"
           placeholder="Mindestens 8 Zeichen"
-          autocomplete="new-password">
+          autocomplete="new-password"
+          [class.invalid]="fieldErrors.password">
+        @if (fieldErrors.password) {
+          <small class="field-error">{{ fieldErrors.password }}</small>
+        }
       </div>
 
       <div class="form-field">
@@ -56,7 +69,11 @@
           #confirmPassword
           type="password"
           placeholder="Passwort erneut eingeben"
-          autocomplete="new-password">
+          autocomplete="new-password"
+          [class.invalid]="fieldErrors.confirmPassword">
+        @if (fieldErrors.confirmPassword) {
+          <small class="field-error">{{ fieldErrors.confirmPassword }}</small>
+        }
       </div>
 
       @if (errorMessage) {

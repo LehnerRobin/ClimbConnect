@@ -17,6 +17,7 @@
 
     <form
       class="auth-form"
+      novalidate
       (submit)="login(email.value, password.value); $event.preventDefault()">
 
       <div class="form-field">
@@ -40,8 +41,11 @@
       </div>
 
       @if (errorMessage) {
-        <div class="error-box">
+        <div class="error-box" role="alert">
           {{ errorMessage }}
+          @if (showRegisterHint) {
+            <a routerLink="/register" class="error-link">Noch kein Konto? Jetzt registrieren</a>
+          }
         </div>
       }
 

@@ -73,3 +73,31 @@ Bereich: **Begehung eintragen und Profil-Fortschritt**
 | Schritte | 1. Progress-Formular ausfüllen. 2. Backend stoppen oder Fehler provozieren. 3. Speichern klicken. |
 | Erwartetes Ergebnis | Es erscheint eine Fehlermeldung, z. B. „Begehung konnte nicht gespeichert werden.“ Button wird wieder benutzbar. |
 | Status | Offen |
+
+## PR-009 – Grad-Auswahl (#194)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Progress-Formular ist geöffnet. |
+| Schritte | 1. Auswahl „Subjektive Gradeinschätzung“ öffnen. |
+| Erwartetes Ergebnis | Die Liste zeigt nur Grade der im Profil eingestellten Skala (Französisch, UIAA oder Amerikanisch), von leicht nach schwer. Gibt es einen Wert mehrfach (z. B. UIAA „VII+“), steht der französische Grad dahinter: „VII+ (6c)“, „VII+ (6c+)“. Gespeichert wird der französische Grad (#250). |
+| Status | Offen |
+
+
+## PR-010 – Status-Auswahl (#193)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Progress-Formular ist geöffnet. |
+| Schritte | 1. Auswahl „Status“ öffnen. 2. Auswahl „Begehungsart“ öffnen. |
+| Erwartetes Ergebnis | Status: Rotpunkt, Flash, Onsight, Projekt. Begehungsart: Vorstieg, Toprope. „Toprope“ steht nicht beim Status. |
+| Status | Offen |
+
+## PR-011 – Flash/Onsight: Anzahl Versuche fix 1 (#249)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Progress-Formular ist geöffnet. |
+| Schritte | 1. Status „Flash“ wählen. 2. Status „Onsight“ wählen. 3. Status „Rotpunkt“ wählen und Versuche ändern. 4. Wieder „Flash“ wählen. |
+| Erwartetes Ergebnis | Bei Flash und Onsight steht bei „Anzahl Versuche“ fix `1`, das Feld ist ausgegraut und darunter steht der Hinweis „Erster Versuch…“. Bei Rotpunkt ist das Feld wieder bearbeitbar. Beim Wechsel zurück auf Flash springt der Wert auf `1`. |
+| Status | Offen |

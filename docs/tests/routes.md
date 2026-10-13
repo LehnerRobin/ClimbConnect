@@ -84,3 +84,12 @@ Hinweis: Falls es in der UI keinen direkten Link zur Route gibt, kann die Routen
 | Schritte | 1. URL `/routes/999999` öffnen. |
 | Erwartetes Ergebnis | Es erscheint „Route konnte nicht geladen werden.“ |
 | Status | Offen |
+
+## RT-010 – Admin: Grad beim Anlegen einer Route auswählen (#194)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Als Admin eingeloggt. |
+| Schritte | 1. Admin-Bereich → Routen. 2. Gebiet und Sektor wählen, „+ Neue Route“ klicken. 3. Grad-Auswahl öffnen, „5b+ (V / 5.8)“ wählen, Namen eingeben, speichern. 4. Route auf der Detailseite ansehen. 5. Route wieder löschen. |
+| Erwartetes Ergebnis | Der Grad wird aus einer Liste gewählt (kein freies Textfeld). Die Route wird mit Grad 5b+ gespeichert und angezeigt. |
+| Status | Offen |

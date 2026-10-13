@@ -56,6 +56,12 @@ export class AreaDetailComponent implements OnInit {
   commentText = '';
   commentSending = false;
   commentError = '';
+
+  // Meldungen, wenn ein Teil der Seite nicht geladen werden konnte
+  sectorsError = '';
+  appointmentsError = '';
+  commentsError = '';
+  appointmentDetailError: Record<number, string> = {};
   deletingCommentId: number | null = null;
 
   ngOnInit(): void {
@@ -68,12 +74,7 @@ export class AreaDetailComponent implements OnInit {
       return;
     }
 
-    if (this.authService.isAuthenticated()) {
-      this.userService.getMe().subscribe({
-        next: (data) => { this.gradeScale = data.preferredGradeScale ?? 'french'; },
-        error: () => {}
-      });
-    }
+    this.userService.getPreferredScale().subscribe(scale => this.gradeScale = scale);
 
     this.loadAreaDetails(id);
   }
@@ -102,17 +103,21 @@ export class AreaDetailComponent implements OnInit {
           routes: []
         }));
       },
-      error: () => {}
+      error: () => { this.sectorsError = 'Sektoren konnten nicht geladen werden.'; }
     });
 
     this.areasService.getAppointmentsByArea(areaId).subscribe({
-      next: (appointments) => { this.appointments = appointments; },
-      error: () => {}
+      next: (appointments) => {
+        this.appointments = appointments;
+        // Beitritts-Status kommt vom Server, damit er auch nach dem Neuladen stimmt
+        this.subscribedIds = new Set(appointments.filter(a => a.isSubscribed).map(a => a.id));
+      },
+      error: () => { this.appointmentsError = 'Termine konnten nicht geladen werden.'; }
     });
 
     this.areasService.getCommentsByArea(areaId).subscribe({
       next: (comments) => { this.comments = comments; },
-      error: () => {}
+      error: () => { this.commentsError = 'Kommentare konnten nicht geladen werden.'; }
     });
   }
 
@@ -174,22 +179,30 @@ export class AreaDetailComponent implements OnInit {
   }
 
   subscribe(appointment: Appointment): void {
+    this.appointmentActionError = '';
     this.areasService.subscribeToAppointment(appointment.id).subscribe({
       next: () => {
         this.subscribedIds.add(appointment.id);
         appointment.participantCount = (appointment.participantCount ?? 0) + 1;
+        this.reloadAppointmentDetail(appointment.id);
       },
-      error: () => {}
+      error: (error) => {
+        this.appointmentActionError = error?.error?.error ?? 'Beitreten ist fehlgeschlagen.';
+      }
     });
   }
 
   unsubscribe(appointment: Appointment): void {
+    this.appointmentActionError = '';
     this.areasService.unsubscribeFromAppointment(appointment.id).subscribe({
       next: () => {
         this.subscribedIds.delete(appointment.id);
         appointment.participantCount = Math.max((appointment.participantCount ?? 1) - 1, 0);
+        this.reloadAppointmentDetail(appointment.id);
       },
-      error: () => {}
+      error: () => {
+        this.appointmentActionError = 'Austreten ist fehlgeschlagen.';
+      }
     });
   }
 
@@ -200,10 +213,22 @@ export class AreaDetailComponent implements OnInit {
     }
     this.expandedAppointmentId = appointmentId;
     if (!this.appointmentDetails[appointmentId]) {
-      this.areasService.getAppointmentById(appointmentId, this.gradeScale).subscribe({
-        next: (detail) => { this.appointmentDetails[appointmentId] = detail; },
-        error: () => {}
-      });
+      this.loadAppointmentDetail(appointmentId);
+    }
+  }
+
+  private loadAppointmentDetail(appointmentId: number): void {
+    this.areasService.getAppointmentById(appointmentId, this.gradeScale).subscribe({
+      next: (detail) => { this.appointmentDetails[appointmentId] = detail; },
+      error: () => { this.appointmentDetailError[appointmentId] = 'Details konnten nicht geladen werden.'; }
+    });
+  }
+
+  /** Teilnehmerliste und Durchschnittsgrad ändern sich beim Bei- und Austreten → gemerkte Details verwerfen. */
+  private reloadAppointmentDetail(appointmentId: number): void {
+    delete this.appointmentDetails[appointmentId];
+    if (this.expandedAppointmentId === appointmentId) {
+      this.loadAppointmentDetail(appointmentId);
     }
   }
 

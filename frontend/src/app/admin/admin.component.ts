@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
+import { Grade, GradeService, gradeLabel } from '../../services/grade.service';
 
 @Component({
   selector: 'app-admin',
@@ -13,6 +14,11 @@ import { AdminService } from '../../services/admin.service';
 export class AdminComponent implements OnInit {
 
   private adminService = inject(AdminService);
+  private gradeService = inject(GradeService);
+
+  /** Grad-Tabelle aus dem Backend (GET /api/grades) für die Grad-Auswahl bei Routen. */
+  grades: Grade[] = [];
+  readonly gradeLabel = gradeLabel;
 
   activeTab: 'areas' | 'sectors' | 'routes' | 'reports' = 'areas';
 
@@ -45,6 +51,10 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAreas();
+    this.gradeService.getGrades().subscribe({
+      next: grades => this.grades = grades,
+      error: () => this.errorMsg = 'Grad-Liste konnte nicht geladen werden.'
+    });
   }
 
   setTab(tab: 'areas' | 'sectors' | 'routes' | 'reports'): void {
@@ -217,7 +227,7 @@ export class AdminComponent implements OnInit {
 
   saveRoute(): void {
     if (!this.routeForm.name.trim()) { this.errorMsg = 'Name ist erforderlich.'; return; }
-    if (!this.routeForm.grade.trim()) { this.errorMsg = 'Grad ist erforderlich (franz. Skala, z. B. 6a).'; return; }
+    if (!this.routeForm.grade.trim()) { this.errorMsg = 'Bitte einen Grad auswählen.'; return; }
     this.clearMessages();
 
     const payload = {
@@ -289,16 +299,6 @@ export class AdminComponent implements OnInit {
       case 'medium': return 'severity-medium';
       default:       return 'severity-low';
     }
-  }
-
-  // ── Datenbank zurücksetzen ─────────────────────────────────────────────────
-
-  initDatabase(): void {
-    if (!confirm('Wirklich alles löschen und Datenbank neu initialisieren?')) return;
-    this.adminService.initDatabase().subscribe({
-      next: () => { this.successMsg = 'Datenbank zurückgesetzt.'; this.loadAreas(); },
-      error: () => { this.errorMsg = 'Fehler beim Zurücksetzen.'; }
-    });
   }
 
   private clearMessages(): void { this.errorMsg = ''; this.successMsg = ''; }

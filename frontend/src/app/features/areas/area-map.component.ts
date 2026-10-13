@@ -12,7 +12,7 @@ const defaultIcon = L.icon({
   shadowUrl: '/leaflet/marker-shadow.png',
   iconSize: [25, 41],
   iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
+  tooltipAnchor: [0, -38],
   shadowSize: [41, 41]
 });
 
@@ -70,10 +70,17 @@ export class AreaMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     const areasWithCoords = this.areas.filter(a => a.latitude != null && a.longitude != null);
     if (areasWithCoords.length === 0) return;
 
+    // Auf Touch-Geräten gibt es kein Überfahren mit der Maus → Namen dauerhaft anzeigen
+    const isTouchDevice = window.matchMedia('(hover: none)').matches;
+
     for (const area of areasWithCoords) {
       const marker = L.marker([area.latitude!, area.longitude!], { icon: defaultIcon })
         .addTo(this.map)
-        .bindPopup(`<strong>${area.name}</strong><br>${area.location ?? ''}`);
+        .bindTooltip(this.createTooltipContent(area.name), {
+          direction: 'top',
+          permanent: isTouchDevice,
+          className: 'area-tooltip'
+        });
 
       marker.on('click', () => this.router.navigate(['/areas', area.id]));
       this.markers.push(marker);
@@ -81,5 +88,12 @@ export class AreaMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     const bounds = L.latLngBounds(areasWithCoords.map(a => [a.latitude!, a.longitude!] as [number, number]));
     this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 12 });
+  }
+
+  /** Baut den Tooltip-Inhalt als reines Text-Element, damit der Gebietsname nie als HTML ausgeführt wird. */
+  private createTooltipContent(name: string): HTMLElement {
+    const label = document.createElement('span');
+    label.textContent = name;
+    return label;
   }
 }

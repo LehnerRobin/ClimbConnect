@@ -28,9 +28,12 @@ export class AppointmentFormComponent implements OnInit {
   submitting = false;
   errorMessage = '';
 
+  /** Ursprünglicher Zeitpunkt beim Bearbeiten – ein unveränderter vergangener Termin darf gespeichert werden. */
+  private loadedStart: number | null = null;
+
   form = {
     title: '',
-    date: new Date().toISOString().split('T')[0],
+    date: toLocalDateInput(new Date()),
     time: '18:00',
     meetingPoint: '',
     description: '',
@@ -61,9 +64,11 @@ export class AppointmentFormComponent implements OnInit {
         this.form.maxParticipants = appointment.maxParticipants ?? 4;
 
         if (appointment.date) {
-          const dateValue = String(appointment.date);
-          this.form.date = dateValue.slice(0, 10);
-          this.form.time = dateValue.includes('T') ? dateValue.split('T')[1].slice(0, 5) : '18:00';
+          // Das Backend liefert UTC ("...Z"); das Formular zeigt Ortszeit
+          const date = new Date(appointment.date);
+          this.form.date = toLocalDateInput(date);
+          this.form.time = toLocalTimeInput(date);
+          this.loadedStart = date.getTime();
         }
 
         this.loading = false;
@@ -93,6 +98,17 @@ export class AppointmentFormComponent implements OnInit {
       return;
     }
 
+    // Datum und Uhrzeit aus dem Formular sind Ortszeit des Browsers
+    const start = new Date(`${this.form.date}T${this.form.time}:00`);
+    if (isNaN(start.getTime())) {
+      this.errorMessage = 'Bitte gib ein gültiges Datum und eine gültige Uhrzeit ein.';
+      return;
+    }
+    if (start.getTime() < Date.now() && (!this.isEditMode || start.getTime() !== this.loadedStart)) {
+      this.errorMessage = 'Der Termin darf nicht in der Vergangenheit liegen.';
+      return;
+    }
+
     if (this.form.minParticipants && this.form.maxParticipants) {
       if (this.form.minParticipants > this.form.maxParticipants) {
         this.errorMessage = 'Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein.';
@@ -102,7 +118,8 @@ export class AppointmentFormComponent implements OnInit {
 
     const appointment: AppointmentCreateRequest | AppointmentUpdateRequest = {
       title: this.form.title.trim(),
-      date: `${this.form.date}T${this.form.time}:00`,
+      // Als UTC senden ("...Z"), damit Backend und alle Browser denselben Zeitpunkt meinen
+      date: start.toISOString(),
       meetingPoint: this.form.meetingPoint.trim() || null,
       description: this.form.description.trim() || null,
       minParticipants: this.form.minParticipants || null,
@@ -136,4 +153,16 @@ export class AppointmentFormComponent implements OnInit {
       }
     });
   }
+}
+
+/** Datum im Format yyyy-MM-dd in Ortszeit (für <input type="date">). */
+function toLocalDateInput(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+/** Uhrzeit im Format HH:mm in Ortszeit (für <input type="time">). */
+function toLocalTimeInput(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }

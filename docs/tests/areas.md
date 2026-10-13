@@ -8,7 +8,7 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 |---|---|
 | Voraussetzung | Backend und Frontend laufen. Es gibt mindestens eine Area. |
 | Schritte | 1. Browser öffnen. 2. `http://localhost:4200/areas` aufrufen. |
-| Erwartetes Ergebnis | Die Seite „Climbing Areas“ wird angezeigt. Area-Karten werden geladen. Name, Standort, Beschreibung und Besucheranzahl werden angezeigt. |
+| Erwartetes Ergebnis | Die Seite „Klettergebiete entdecken“ wird angezeigt. Area-Karten werden geladen. Name, Standort, Beschreibung und Besucheranzahl werden angezeigt. |
 | Status | Offen |
 
 ## AR-002 – Loading-Anzeige prüfen
@@ -26,16 +26,16 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 |---|---|
 | Voraussetzung | Backend ist gestoppt oder nicht erreichbar. |
 | Schritte | 1. Backend stoppen. 2. `/areas` öffnen. 3. Button „Nochmal versuchen“ klicken. |
-| Erwartetes Ergebnis | Es erscheint „Gebiete konnten nicht geladen werden.“ Der Button versucht die Daten erneut zu laden. |
+| Erwartetes Ergebnis | Es erscheint „Gebiete konnten nicht geladen werden.“ Zusätzlich erscheint unten eine Meldung (Toast) „Der Server ist gerade nicht erreichbar…“. Der Button versucht die Daten erneut zu laden. |
 | Status | Offen |
 
 ## AR-004 – Leere Area-Liste
 
 | Feld | Beschreibung |
 |---|---|
-| Voraussetzung | Backend liefert keine Areas zurück. |
-| Schritte | 1. `/areas` öffnen. |
-| Erwartetes Ergebnis | Es erscheint „Es wurden keine Gebiete gefunden.“ |
+| Voraussetzung | Backend läuft. |
+| Schritte | 1. `/areas` öffnen. 2. Im Suchfeld einen nicht vorhandenen Begriff eingeben (z. B. `xyzxyz`) und suchen. |
+| Erwartetes Ergebnis | Es erscheint „Keine Gebiete gefunden“. |
 | Status | Offen |
 
 ## AR-005 – Area-Detail öffnen
@@ -52,7 +52,7 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 | Feld | Beschreibung |
 |---|---|
 | Voraussetzung | Eine Area-Detailseite ist geöffnet. |
-| Schritte | 1. Auf „← Zurück zu Areas“ klicken. |
+| Schritte | 1. Auf „Zurück zu Gebieten“ klicken. |
 | Erwartetes Ergebnis | Der Benutzer kommt zurück zur Area-Liste. |
 | Status | Offen |
 
@@ -71,7 +71,7 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 |---|---|
 | Voraussetzung | Ein Sektor hat mindestens eine Route. |
 | Schritte | 1. Area-Detailseite öffnen. 2. Sektor aufklappen. |
-| Erwartetes Ergebnis | Eine Tabelle mit Name, Grad, Länge und Stil wird angezeigt. Fehlende Werte werden mit `-` dargestellt. |
+| Erwartetes Ergebnis | Die Routen werden als Karten angezeigt, jeweils mit Name, Stil, Grad und Länge. Fehlt der Stil, steht „Stil nicht angegeben“, fehlt der Grad, steht `-`. |
 | Status | Offen |
 
 ## AR-009 – Ungültige Area-ID
@@ -90,4 +90,23 @@ Bereich: **Areas, Area-Detail, Sektoren und Routenliste**
 | Voraussetzung | Backend läuft. Die Area-ID existiert nicht, z. B. `999999`. |
 | Schritte | 1. URL `/areas/999999` aufrufen. |
 | Erwartetes Ergebnis | Es erscheint „Gebiet konnte nicht geladen werden.“ |
+| Status | Offen |
+
+## AR-011 – Startseite zählt alle Routen (#195)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Seed-Daten vorhanden (40 Routen). |
+| Schritte | 1. Startseite `/` öffnen. 2. Zähler „Routen“ ansehen. |
+| Erwartetes Ergebnis | Der Zähler zeigt die Gesamtzahl aller Routen (40), nicht 20. |
+| Status | Offen |
+
+
+## AR-012 – Meldung, wenn der Server nicht erreichbar ist (#202)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Docker-Umgebung. Backend gestoppt (`docker compose stop api`). |
+| Schritte | 1. `/areas` öffnen. 2. Unten am Bildschirm auf die Meldung achten. 3. Auf „×“ klicken. |
+| Erwartetes Ergebnis | Unten erscheint „Der Server ist gerade nicht erreichbar. Bitte versuche es gleich noch einmal.“ Mit „×“ verschwindet die Meldung, sonst nach einigen Sekunden von selbst. |
 | Status | Offen |

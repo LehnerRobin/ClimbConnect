@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import { fetchAllPages } from './paging';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class AdminService {
   // ── Gebiete ────────────────────────────────────────────────────────────────
 
   getAreas(): Observable<any[]> {
-    return this.http.get<{ items: any[] }>(`${this.api}/areas?pageSize=100`).pipe(map(r => r.items));
+    return fetchAllPages<any>(this.http, `${this.api}/areas`);
   }
 
   createArea(data: { name: string; location?: string | null; description?: string | null; imageUrl?: string | null }): Observable<any> {
@@ -75,11 +75,5 @@ export class AdminService {
 
   resolveReport(id: number): Observable<any> {
     return this.http.put(`${this.api}/reports/${id}/status`, { status: 'Resolved' });
-  }
-
-  // ── Datenbank zurücksetzen (Gefahrenzone) ──────────────────────────────────
-
-  initDatabase(): Observable<any> {
-    return this.http.put(`${this.api}/Admin`, null);
   }
 }

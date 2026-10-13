@@ -2,9 +2,8 @@ import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angula
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
-import { UserService } from '../../services/user.service';
-import { Area, Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
+import { AreaVisit, UserService } from '../../services/user.service';
+import { Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -41,12 +40,18 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     favoriteArea: '-'
   };
 
-  gradeProgression: { month: string; grade: string }[] = [];
+  areaVisits: AreaVisit[] = [];
+  /** Größte Besuchszahl – der Balken dieses Gebiets ist 100 % breit. */
+  maxAreaVisits = 1;
+
+  gradeProgression: { month: string; grade: string; rank: number }[] = [];
   chartReady = false;
   private chart: Chart | null = null;
 
   myProgress: ProgressEntry[] = [];
   progressError = '';
+  profileError = '';
+  statsError = '';
   deletingProgressId: number | null = null;
   myAppointments: MyAppointment[] = [];
   loadingAppointments = false;
@@ -79,7 +84,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         this.loadMyProgress();
         this.loadMyAppointments();
       },
-      error: () => {}
+      error: () => { this.profileError = 'Profil konnte nicht geladen werden. Bitte lade die Seite neu.'; }
     });
   }
 
@@ -95,6 +100,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         this.stats.openProjects = s.openProjects ?? 0;
         this.stats.favoriteArea = s.favoriteArea ?? '-';
         this.gradeProgression   = s.gradeProgression ?? [];
+        this.areaVisits         = s.areaVisits ?? [];
+        this.maxAreaVisits      = Math.max(1, ...this.areaVisits.map(v => v.visits));
 
         // Das <canvas> existiert erst, nachdem @if(gradeProgression.length > 0)
         // neu gerendert wurde. Wir warten daher einen Tick, bis Angular die
@@ -102,7 +109,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         // bevor wir versuchen den Chart darauf zu zeichnen.
         setTimeout(() => this.buildChart());
       },
-      error: () => {}
+      error: () => { this.statsError = 'Statistik konnte nicht geladen werden.'; }
     });
   }
 
@@ -117,39 +124,19 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /** Lädt eigene Termine (erstellt + beigetreten) mit einer einzigen Anfrage. */
   private loadMyAppointments(): void {
     this.loadingAppointments = true;
     this.appointmentError = '';
 
-    this.areasService.getAreas().pipe(
-      switchMap((areas: Area[]) => {
-        if (areas.length === 0) {
-          return of([] as MyAppointment[]);
-        }
-
-        const requests = areas.map((area: Area) =>
-          this.areasService.getAppointmentsByArea(area.id, true).pipe(
-            map((appointments: Appointment[]) => appointments.map((appointment: Appointment): MyAppointment => ({
-              ...appointment,
-              areaId: appointment.areaId ?? area.id,
-              areaName: area.name,
-              areaLocation: area.location ?? null
-            }))),
-            catchError(() => of([] as MyAppointment[]))
-          )
-        );
-
-        return forkJoin(requests).pipe(
-          map((groups: MyAppointment[][]) => groups.flat())
-        );
-      }),
-      map((appointments: MyAppointment[]) => appointments
-        .filter((appointment: MyAppointment) => appointment.createdByUserId === this.user.id)
-        .sort((a: MyAppointment, b: MyAppointment) => this.getAppointmentTime(a) - this.getAppointmentTime(b))
-      )
-    ).subscribe({
+    this.areasService.getMyAppointments(true).subscribe({
       next: (appointments) => {
-        this.myAppointments = appointments;
+        this.myAppointments = appointments.map((appointment): MyAppointment => ({
+          ...appointment,
+          areaId: appointment.areaId ?? 0,
+          areaName: appointment.areaName ?? '',
+          areaLocation: appointment.areaLocation ?? null
+        }));
         this.loadingAppointments = false;
       },
       error: () => {
@@ -227,15 +214,6 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private getAppointmentTime(appointment: Appointment): number {
-    if (!appointment.date) {
-      return 0;
-    }
-
-    const time = new Date(appointment.date).getTime();
-    return Number.isFinite(time) ? time : 0;
-  }
-
   private buildChart(): void {
     if (!this.chartReady || this.gradeProgression.length === 0) return;
     if (!this.gradeChartRef?.nativeElement) return;
@@ -244,13 +222,18 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
       this.chart.destroy();
     }
 
+    // Die Höhe eines Punkts ist der Rang des Grads (höher = schwerer). Beschriftet wird
+    // die Y-Achse genau an den Rängen, die vorkommen – mit dem Grad in der Skala des Users.
+    const gradeByRank = new Map(this.gradeProgression.map(p => [p.rank, p.grade]));
+    const ranks = [...gradeByRank.keys()];
+
     this.chart = new Chart(this.gradeChartRef.nativeElement, {
       type: 'line',
       data: {
         labels: this.gradeProgression.map(p => p.month),
         datasets: [{
           label: 'Höchster Grad',
-          data: this.gradeProgression.map((_, i) => i + 1),
+          data: this.gradeProgression.map(p => p.rank),
           borderColor: '#C3791F',
           backgroundColor: 'rgba(195, 121, 31, 0.12)',
           pointBackgroundColor: '#17150F',
@@ -282,11 +265,16 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
             ticks: { color: '#756C53', font: { family: "'IBM Plex Sans', sans-serif", size: 12 } }
           },
           y: {
+            min: Math.min(...ranks) - 1,
+            max: Math.max(...ranks) + 1,
+            afterBuildTicks: (axis) => {
+              axis.ticks = ranks.map(value => ({ value }));
+            },
             grid: { color: 'rgba(23, 21, 15, 0.06)' },
             ticks: {
               color: '#756C53',
               font: { family: "'IBM Plex Mono', monospace", size: 12 },
-              callback: (_, i) => this.gradeProgression[i]?.grade ?? ''
+              callback: (value) => gradeByRank.get(Number(value)) ?? ''
             }
           }
         }

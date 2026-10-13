@@ -8,16 +8,16 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 |---|---|
 | Voraussetzung | Area existiert. Es gibt mindestens einen Termin oder keine Termine. |
 | Schritte | 1. `/areas/{id}` öffnen. 2. Abschnitt „Kommende Termine“ prüfen. |
-| Erwartetes Ergebnis | Vorhandene Termine werden mit Titel, Datum und Teilnehmeranzahl angezeigt. Wenn keine Termine vorhanden sind, steht „Keine Termine vorhanden.“ |
+| Erwartetes Ergebnis | Vorhandene Termine werden mit Titel, Datum und Teilnehmeranzahl angezeigt. Wenn keine Termine vorhanden sind, steht „Keine Termine“. |
 | Status | Offen |
 
-## AP-002 – Button „Klettersession erstellen“ nur mit Login
+## AP-002 – Button „+ Session“ nur mit Login
 
 | Feld | Beschreibung |
 |---|---|
 | Voraussetzung | Area existiert. |
 | Schritte | 1. Ausloggen. 2. `/areas/{id}` öffnen. 3. Einloggen. 4. Seite erneut öffnen. |
-| Erwartetes Ergebnis | Ohne Login ist der Button nicht sichtbar. Mit Login ist „Klettersession erstellen“ sichtbar. |
+| Erwartetes Ergebnis | Ohne Login ist der Button nicht sichtbar. Mit Login ist „+ Session“ sichtbar. |
 | Status | Offen |
 
 ## AP-003 – Direkter Zugriff ohne Login blockiert
@@ -34,7 +34,7 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Feld | Beschreibung |
 |---|---|
 | Voraussetzung | User ist eingeloggt. Area existiert. |
-| Schritte | 1. Area-Detailseite öffnen. 2. „Klettersession erstellen“ klicken. |
+| Schritte | 1. Area-Detailseite öffnen. 2. „+ Session“ klicken. |
 | Erwartetes Ergebnis | Formular öffnet sich. Datum ist heute, Uhrzeit ist `18:00`, minimale Teilnehmer ist `1`, maximale Teilnehmer ist `4`. |
 | Status | Offen |
 
@@ -99,4 +99,33 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Voraussetzung | User ist eingeloggt. Backend liefert Fehler oder ist nicht erreichbar. |
 | Schritte | 1. Appointment-Formular gültig ausfüllen. 2. Backend stoppen oder Fehler provozieren. 3. Speichern klicken. |
 | Erwartetes Ergebnis | Es erscheint „Klettersession konnte nicht erstellt werden.“ oder bei Auth-Problem „Du musst eingeloggt sein, um eine Klettersession zu erstellen.“ |
+| Status | Offen |
+
+## AP-012 – Termin in der Vergangenheit (#198)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Eingeloggt. Appointment-Formular ist geöffnet. |
+| Schritte | 1. Titel eintragen. 2. Datum von gestern wählen. 3. „Klettersession erstellen“ klicken. |
+| Erwartetes Ergebnis | Es erscheint „Der Termin darf nicht in der Vergangenheit liegen.“ Es wird kein Termin erstellt. |
+| Status | Offen |
+
+
+## AP-013 – Uhrzeit bleibt beim Bearbeiten gleich (#198)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Eingeloggt. Es gibt einen eigenen Termin, z. B. morgen 18:00. |
+| Schritte | 1. Beim eigenen Termin auf „Bearbeiten“ klicken. 2. Datum und Uhrzeit im Formular prüfen. 3. Nur die Beschreibung ändern und speichern. 4. Termin in der Liste ansehen. |
+| Erwartetes Ergebnis | Im Formular steht dieselbe Uhrzeit wie in der Liste (18:00). Nach dem Speichern ist die Uhrzeit unverändert – keine Verschiebung um 1–2 Stunden. |
+| Status | Offen |
+
+
+## AP-014 – Besucher heute in der Gebietsliste (#198)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Eingeloggt. Ein Termin für heute in einigen Stunden in Gebiet X, dem man beigetreten ist. |
+| Schritte | 1. `/areas` öffnen. 2. Karte von Gebiet X ansehen. |
+| Erwartetes Ergebnis | Bei Gebiet X zählen „Besucher heute“ und „Termine heute“ den Termin mit. |
 | Status | Offen |

@@ -45,7 +45,7 @@ Wenn ein Push fehlschlägt, erkläre mir Schritt für Schritt wie ich das behebe
 
 ## Projektziele & Features
 
-### Rollen (Keycloak)
+### Rollen (eigenes JWT-Login, Rollen `user` und `admin`)
 - **Admin** (nur wir): kann Gebiete, Sektoren und Routen anlegen,
   bearbeiten und löschen
 - **User** (alle anderen): kann nur lesen, eigenen Fortschritt eintragen,
@@ -100,14 +100,18 @@ Lies diese Dateien bevor du mit der Implementierung beginnst:
 - `docs/pitch.md` – Projektbeschreibung und Ziel der App
 - `docs/meilensteine.md` – Was der User bei jedem Meilenstein können soll
 - `docs/er-diagram.md` – Datenmodell mit allen Entities und Beziehungen
+- `docs/ROADMAP.md` – aktueller Stand und nächste Schritte
+- `docs/DEPLOYMENT.md` – wie die App auf Railway läuft
 
 ## Stack
 
 - Backend: .NET 8 Minimal API, C#, EF Core, SQLite
-- Auth: JWT (eigenes System), Keycloak vorbereitet aber noch nicht aktiv
-- Frontend: Angular (anderer Kollege zuständig)
-- CI/CD: GitHub Actions
-- Grades: intern französische Skala, Konversion zu UIAA und Amerikanisch
+- Auth: JWT (eigenes System mit Rollen `user`/`admin`); Keycloak wird nicht verwendet
+- Frontend: Angular (Mohamed Attia – Ansichten & UI, Faru Hamid – Architektur & komplexe Features)
+- CI: GitHub Actions (Backend- und Frontend-Tests bei jedem Push/PR)
+- Deployment: Railway (live), lokal Docker Compose – siehe `docs/DEPLOYMENT.md`
+- Grades: intern französische Skala, eine zentrale Grad-Tabelle im Backend
+  (`GradeConversionService`, `GET /api/grades`), Konversion zu UIAA und Amerikanisch
 
 ## Coding-Stil
 
@@ -117,15 +121,8 @@ Lies diese Dateien bevor du mit der Implementierung beginnst:
 - Keine unnötigen Abhängigkeiten
 - Nach jeder Methode / Klasse kurz erklären was sie tut
 
-## Offene Issues (Backend)
+## Offene Issues
 
-- #67 Endpunkte Areas (nur Admin: POST/PUT/DELETE, alle: GET)
-- #68 Endpunkte Sektoren
-- #69 Endpunkte Routes
-- #70 Endpunkte Progress
-- #71 Endpunkte Appointments
-- #72 ER-Diagramm ✅
-- #73 Models & Tabellen definieren
-- #74 Beispiel-Testdaten (Seed)
-- #75 Keycloak Integration & Rollen
-- #76 Grad-Konversion (franz./UIAA/amerikanisch)
+Nicht hier pflegen (veraltet sonst schnell). Aktueller Stand:
+- `docs/ROADMAP.md`
+- GitHub → Issues, Meilenstein des aktuellen Sprints (z. B. „Sprint 2")

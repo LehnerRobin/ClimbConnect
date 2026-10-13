@@ -124,3 +124,11 @@ input:focus {
     font-size: 1.8rem;
   }
 }
+
+/* Registrieren-Link innerhalb der Fehlermeldung */
+.error-link {
+  display: block;
+  margin-top: 6px;
+  color: var(--brick-700);
+  text-decoration: underline;
+}

@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Registrierungs- und Login-Endpoints.</summary>
 public static class AuthEndpoints
 {
-    public static void MapAuthEndpoints(this WebApplication app)
+    public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapPost("/api/auth/register", async (RegisterDto dto, AppDbContext db, JwtService jwt) =>
         {
@@ -20,10 +20,10 @@ public static class AuthEndpoints
                 return Results.BadRequest(new { error = "Passwort muss mindestens 8 Zeichen lang sein" });
 
             if (await db.Users.AnyAsync(u => u.Email == dto.Email.ToLower()))
-                return Results.Conflict(new { error = "E-Mail bereits vergeben" });
+                return Results.Conflict(new { error = "E-Mail bereits vergeben", field = "email" });
 
             if (await db.Users.AnyAsync(u => u.Username == dto.Username))
-                return Results.Conflict(new { error = "Username bereits vergeben" });
+                return Results.Conflict(new { error = "Username bereits vergeben", field = "username" });
 
             var user = new User
             {

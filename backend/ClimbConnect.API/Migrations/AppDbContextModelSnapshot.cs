@@ -383,11 +383,13 @@ namespace ClimbConnect.API.Migrations
                 {
                     b.HasOne("ClimbConnect.API.Models.Area", "Area")
                         .WithMany("Comments")
-                        .HasForeignKey("AreaId");
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClimbConnect.API.Models.Route", "Route")
                         .WithMany("Comments")
-                        .HasForeignKey("RouteId");
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClimbConnect.API.Models.User", "User")
                         .WithMany("Comments")
@@ -425,11 +427,13 @@ namespace ClimbConnect.API.Migrations
                 {
                     b.HasOne("ClimbConnect.API.Models.Area", "Area")
                         .WithMany("Reports")
-                        .HasForeignKey("AreaId");
+                        .HasForeignKey("AreaId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClimbConnect.API.Models.Route", "Route")
                         .WithMany("Reports")
-                        .HasForeignKey("RouteId");
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClimbConnect.API.Models.User", "User")
                         .WithMany("Reports")

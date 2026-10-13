@@ -229,7 +229,12 @@
               </div>
               <div class="form-row">
                 <label>Grad * (franz. Skala)</label>
-                <input type="text" [(ngModel)]="routeForm.grade" placeholder="z. B. 6a">
+                <select [(ngModel)]="routeForm.grade">
+                  <option value="">— Grad wählen —</option>
+                  @for (g of grades; track g.french) {
+                    <option [value]="g.french">{{ gradeLabel(g) }}</option>
+                  }
+                </select>
               </div>
               <div class="form-row">
                 <label>Stil</label>
@@ -349,15 +354,5 @@
       }
     </section>
   }
-
-  <!-- Gefahrenzone -->
-  <details class="danger-zone">
-    <summary>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-      Gefahrenzone
-    </summary>
-    <p>Setzt die gesamte Datenbank zurück und lädt Seed-Daten neu. <strong>Alle Einträge werden gelöscht.</strong></p>
-    <button class="btn btn-danger" (click)="initDatabase()">Datenbank zurücksetzen</button>
-  </details>
 
 </div>

@@ -10,24 +10,92 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Termine (Appointments) und Teilnahme-Verwaltung.</summary>
 public static class AppointmentEndpoints
 {
-    public static void MapAppointmentEndpoints(this WebApplication app)
+    public static void MapAppointmentEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, AppDbContext db) =>
+        app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, ClaimsPrincipal user, AppDbContext db) =>
         {
             if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
 
             // Standardmäßig nur zukünftige Termine; mit ?all=true auch vergangene
             var cutoff = (all == true) ? DateTime.MinValue : DateTime.UtcNow;
 
+            // Der Endpoint ist öffentlich; ist jemand eingeloggt, wird mitgeliefert ob er teilnimmt
+            int? currentUserId = int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var uid) ? uid : null;
+
             var appointments = await db.Appointments
                 .Where(a => a.AreaId == id && a.Date >= cutoff)
-                .Include(a => a.AppointmentUsers)
                 .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
+                })
                 .ToListAsync();
             return Results.Ok(appointments);
         })
         .WithName("GetAppointmentsByArea")
         .WithTags("Appointments");
+
+                // Nächste Termine über ALLE Gebiete in einer einzigen Anfrage (für die Startseite)
+        app.MapGet("/api/appointments/upcoming", async (int? limit, ClaimsPrincipal user, AppDbContext db) =>
+        {
+            // Standard: 10 Termine, mindestens 1, höchstens 50
+            var take = Math.Clamp(limit ?? 10, 1, 50);
+
+            // Öffentlich; ist jemand eingeloggt, wird mitgeliefert ob er teilnimmt
+            int? currentUserId = int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var uid) ? uid : null;
+
+            var appointments = await db.Appointments
+                .Where(a => a.Date >= DateTime.UtcNow)
+                .OrderBy(a => a.Date)
+                .Take(take)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    AreaName         = a.Area.Name,
+                    AreaLocation     = a.Area.Location,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
+                })
+                .ToListAsync();
+            return Results.Ok(appointments);
+        })
+        .WithName("GetUpcomingAppointments")
+        .WithTags("Appointments");
+
+        // Eigene Termine: selbst erstellte UND beigetretene (für das Profil)
+        app.MapGet("/api/appointments/me", async (bool? all, ClaimsPrincipal user, AppDbContext db) =>
+        {
+            if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Results.Unauthorized();
+
+            // Standardmäßig nur zukünftige Termine; mit ?all=true auch vergangene
+            var cutoff = (all == true) ? DateTime.MinValue : DateTime.UtcNow;
+
+            var appointments = await db.Appointments
+                .Where(a => a.Date >= cutoff
+                         && (a.CreatedByUserId == userId || a.AppointmentUsers.Any(au => au.UserId == userId)))
+                .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    AreaName         = a.Area.Name,
+                    AreaLocation     = a.Area.Location,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsCreator        = a.CreatedByUserId == userId,
+                    IsSubscribed     = a.AppointmentUsers.Any(au => au.UserId == userId)
+                })
+                .ToListAsync();
+            return Results.Ok(appointments);
+        })
+        .WithName("GetMyAppointments")
+        .WithTags("Appointments")
+        .RequireAuthorization("User");
+        
 
         app.MapGet("/api/appointments/{id:int}", async (int id, string? scale, AppDbContext db) =>
         {
@@ -97,20 +165,19 @@ public static class AppointmentEndpoints
             var currentUser = await db.Users.FindAsync(userId);
             if (currentUser is null) return Results.Unauthorized();
 
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                return Results.BadRequest(new { error = "Titel ist erforderlich" });
-
-            if (dto.MinParticipants.HasValue && dto.MaxParticipants.HasValue &&
-                dto.MinParticipants.Value > dto.MaxParticipants.Value)
-                return Results.BadRequest(new { error = "Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein" });
+            var date  = AppTime.ToUtc(dto.Date);
+            var error = Validate(dto.Title, date, dto.MinParticipants, dto.MaxParticipants, checkFuture: true);
+            if (error is not null) return Results.BadRequest(new { error });
 
             var appointment = new Appointment
             {
                 AreaId          = id,
                 CreatedByUserId = userId,
+                // Nötig: die Datenbank führt zusätzlich den Fremdschlüssel "CreatedById",
+                // der nur über diese Navigation befüllt wird.
                 CreatedBy       = currentUser,
                 Title           = dto.Title.Trim(),
-                Date            = dto.Date,
+                Date            = date,
                 MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint) ? null : dto.MeetingPoint.Trim(),
                 Description     = string.IsNullOrWhiteSpace(dto.Description)  ? null : dto.Description.Trim(),
                 MinParticipants = dto.MinParticipants,
@@ -119,7 +186,14 @@ public static class AppointmentEndpoints
 
             db.Appointments.Add(appointment);
             await db.SaveChangesAsync();
-            return Results.Created($"/api/appointments/{appointment.Id}", appointment);
+
+            // Nur die Termin-Felder zurückgeben, nicht den Ersteller als ganze User-Entity
+            return Results.Created($"/api/appointments/{appointment.Id}", new
+            {
+                appointment.Id, appointment.AreaId, appointment.CreatedByUserId,
+                appointment.Title, appointment.Date, appointment.MeetingPoint, appointment.Description,
+                appointment.MinParticipants, appointment.MaxParticipants, appointment.CreatedAtUtc
+            });
         })
         .WithName("CreateAppointment")
         .WithTags("Appointments")
@@ -137,11 +211,15 @@ public static class AppointmentEndpoints
             if (appointment.CreatedByUserId != userId && !user.IsInRole("admin"))
                 return Results.Forbid();
 
-            if (string.IsNullOrWhiteSpace(dto.Title))
-                return Results.BadRequest(new { error = "Titel ist erforderlich" });
+            // Gleiche Prüfung wie beim Anlegen. "Nicht in der Vergangenheit" nur, wenn das Datum
+            // geändert wird – sonst ließe sich ein vergangener Termin nicht mehr korrigieren.
+            var date  = AppTime.ToUtc(dto.Date);
+            var error = Validate(dto.Title, date, dto.MinParticipants, dto.MaxParticipants,
+                                 checkFuture: date != appointment.Date);
+            if (error is not null) return Results.BadRequest(new { error });
 
             appointment.Title           = dto.Title.Trim();
-            appointment.Date            = dto.Date;
+            appointment.Date            = date;
             appointment.MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim();
             appointment.Description     = string.IsNullOrWhiteSpace(dto.Description)   ? null : dto.Description.Trim();
             appointment.MinParticipants = dto.MinParticipants;
@@ -219,5 +297,20 @@ public static class AppointmentEndpoints
         .WithName("UnsubscribeFromAppointment")
         .WithTags("Appointments")
         .RequireAuthorization("User");
+    }
+
+    /// <summary>
+    /// Gemeinsame Prüfung für Anlegen und Bearbeiten. Gibt die Fehlermeldung zurück
+    /// oder null, wenn alles passt.
+    /// </summary>
+    private static string? Validate(string title, DateTime dateUtc, int? min, int? max, bool checkFuture)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+            return "Titel ist erforderlich";
+        if (min.HasValue && max.HasValue && min.Value > max.Value)
+            return "Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein";
+        if (checkFuture && dateUtc < DateTime.UtcNow)
+            return "Der Termin darf nicht in der Vergangenheit liegen";
+        return null;
     }
 }

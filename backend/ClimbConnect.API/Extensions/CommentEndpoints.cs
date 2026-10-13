@@ -9,15 +9,24 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Kommentare zu Gebieten und Routen.</summary>
 public static class CommentEndpoints
 {
-    public static void MapCommentEndpoints(this WebApplication app)
+    /// <summary>
+    /// Wandelt Kommentare in das Ausgabeformat um. Vom Autor werden nur Id und Username
+    /// übernommen, damit weder E-Mail noch Passwort-Hash die API verlassen.
+    /// </summary>
+    private static IQueryable<CommentDto> ToDto(this IQueryable<Comment> comments) =>
+        comments.Select(c => new CommentDto(
+            c.Id, c.UserId, c.AreaId, c.RouteId, c.Text, c.PhotoUrl, c.CreatedAtUtc,
+            new CommentAuthorDto(c.User.Id, c.User.Username)));
+
+    public static void MapCommentEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/areas/{id:int}/comments", async (int id, AppDbContext db) =>
         {
             if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
             var comments = await db.Comments
                 .Where(c => c.AreaId == id)
-                .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedAtUtc)
+                .ToDto()
                 .ToListAsync();
             return Results.Ok(comments);
         })
@@ -41,7 +50,9 @@ public static class CommentEndpoints
             };
             db.Comments.Add(comment);
             await db.SaveChangesAsync();
-            return Results.Created($"/api/areas/{id}/comments", comment);
+
+            var created = await db.Comments.Where(c => c.Id == comment.Id).ToDto().FirstAsync();
+            return Results.Created($"/api/areas/{id}/comments", created);
         })
         .WithName("CreateCommentForArea")
         .WithTags("Comments")
@@ -52,8 +63,8 @@ public static class CommentEndpoints
             if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
             var comments = await db.Comments
                 .Where(c => c.RouteId == id)
-                .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedAtUtc)
+                .ToDto()
                 .ToListAsync();
             return Results.Ok(comments);
         })
@@ -77,7 +88,9 @@ public static class CommentEndpoints
             };
             db.Comments.Add(comment);
             await db.SaveChangesAsync();
-            return Results.Created($"/api/routes/{id}/comments", comment);
+
+            var created = await db.Comments.Where(c => c.Id == comment.Id).ToDto().FirstAsync();
+            return Results.Created($"/api/routes/{id}/comments", created);
         })
         .WithName("CreateCommentForRoute")
         .WithTags("Comments")

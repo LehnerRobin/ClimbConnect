@@ -8,6 +8,10 @@
     </div>
   </div>
 
+  @if (profileError) {
+    <p class="error-msg" role="alert">{{ profileError }}</p>
+  }
+
   <div class="profile-layout">
 
     <section class="profile-card profile-info-card">
@@ -114,12 +118,30 @@
           <strong class="tnum">{{ stats.openProjects }}</strong>
         </div>
 
-        <div class="stat-item">
+        <div class="stat-item favorite-item">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
           <span>Lieblingsgebiet</span>
-          <strong>{{ stats.favoriteArea }}</strong>
+          <strong class="favorite-area">{{ stats.favoriteArea }}</strong>
         </div>
       </div>
+
+      <!-- Besuche pro Gebiet (ein Besuch = ein Tag mit mindestens einem Eintrag) -->
+      @if (areaVisits.length > 0) {
+        <h3 class="area-visits-title">Meine Gebiete</h3>
+        <ul class="area-visits">
+          @for (visit of areaVisits; track visit.areaId) {
+            <li class="area-visit">
+              <div class="area-visit-head">
+                <a [routerLink]="['/areas', visit.areaId]">{{ visit.areaName }}</a>
+                <span class="tnum">{{ visit.visits }} {{ visit.visits === 1 ? 'Tag' : 'Tage' }}</span>
+              </div>
+              <div class="area-visit-bar" aria-hidden="true">
+                <div [style.width.%]="(visit.visits / maxAreaVisits) * 100"></div>
+              </div>
+            </li>
+          }
+        </ul>
+      }
     </aside>
 
   </div>
@@ -130,7 +152,7 @@
       <div>
         <p class="eyebrow">Sessions</p>
         <h2>Meine Termine</h2>
-        <p>Hier siehst du alle Klettersessions, die du selbst erstellt hast.</p>
+        <p>Hier siehst du alle Klettersessions, die du erstellt hast oder denen du beigetreten bist.</p>
       </div>
     </div>
 
@@ -141,7 +163,7 @@
     @if (loadingAppointments) {
       <p class="empty-hint">Termine werden geladen...</p>
     } @else if (myAppointments.length === 0) {
-      <p class="empty-hint">Du hast noch keine eigenen Termine erstellt.</p>
+      <p class="empty-hint">Du hast noch keine Termine.</p>
     } @else {
       <div class="appointment-list">
         @for (appointment of myAppointments; track appointment.id) {
@@ -179,31 +201,37 @@
               <p class="appointment-description">{{ appointment.description }}</p>
             }
 
-            <div class="appointment-actions">
-              <a
-                class="edit-appointment-button"
-                [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
-                Bearbeiten
-              </a>
+            @if (appointment.isCreator) {
+              <div class="appointment-actions">
+                <a
+                  class="edit-appointment-button"
+                  [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
+                  Bearbeiten
+                </a>
 
-              <button
-                type="button"
-                class="delete-appointment-button"
-                [disabled]="deletingAppointmentId === appointment.id"
-                (click)="deleteOwnAppointment(appointment)">
-                @if (deletingAppointmentId === appointment.id) {
-                  Löscht...
-                } @else {
-                  Löschen
-                }
-              </button>
-            </div>
+                <button
+                  type="button"
+                  class="delete-appointment-button"
+                  [disabled]="deletingAppointmentId === appointment.id"
+                  (click)="deleteOwnAppointment(appointment)">
+                  @if (deletingAppointmentId === appointment.id) {
+                    Löscht...
+                  } @else {
+                    Löschen
+                  }
+                </button>
+              </div>
+            }
           </article>
         }
       </div>
     }
   </section>
 
+
+  @if (statsError) {
+    <p class="error-msg" role="alert">{{ statsError }}</p>
+  }
 
   <!-- Grad-Entwicklungs-Chart -->
   @if (gradeProgression.length > 0) {

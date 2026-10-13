@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, forkJoin, map, of } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 import { Area, Appointment, AreasService } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
@@ -63,47 +63,31 @@ export class HomePageComponent implements OnInit {
           return of([] as Area[]);
         })
       ),
-      routes: this.areasService.getRoutes().pipe(
-        catchError(() => of([]))
+      routeCount: this.areasService.getRouteCount().pipe(
+        catchError(() => of(0))
       ),
       users: this.userService.getUsers().pipe(
         catchError(() => of([]))
       )
-    }).subscribe(({ areas, routes, users }) => {
+    }).subscribe(({ areas, routeCount, users }) => {
       this.areaCount = areas.length;
-      this.routeCount = routes.length;
+      this.routeCount = routeCount;
       this.userCount = users.length;
       this.featuredAreas = this.getFeaturedAreas(areas);
-      this.loadUpcomingAppointments(areas);
+      this.loadUpcomingAppointments();
     });
   }
 
-  private loadUpcomingAppointments(areas: Area[]): void {
-    if (areas.length === 0) {
-      this.upcomingAppointments = [];
-      this.loading = false;
-      return;
-    }
-
-    const requests = areas.map(area =>
-      this.areasService.getAppointmentsByArea(area.id).pipe(
-        map(appointments => appointments.map(appointment => ({
+  /** Lädt die nächsten 3 Termine mit einer einzigen Anfrage. */
+  private loadUpcomingAppointments(): void {
+    this.areasService.getUpcomingAppointments(3).subscribe({
+      next: appointments => {
+        this.upcomingAppointments = appointments.map(appointment => ({
           ...appointment,
-          areaId: area.id,
-          areaName: area.name,
-          areaLocation: area.location
-        }))),
-        catchError(() => of([] as HomeAppointment[]))
-      )
-    );
-
-    forkJoin(requests).subscribe({
-      next: appointmentGroups => {
-        this.upcomingAppointments = appointmentGroups
-          .flat()
-          .filter(appointment => !!appointment.date)
-          .sort((a, b) => new Date(a.date ?? '').getTime() - new Date(b.date ?? '').getTime())
-          .slice(0, 3);
+          areaId: appointment.areaId ?? 0,
+          areaName: appointment.areaName ?? '',
+          areaLocation: appointment.areaLocation ?? null
+        }));
         this.loading = false;
       },
       error: () => {

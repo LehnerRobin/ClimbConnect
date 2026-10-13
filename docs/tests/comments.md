@@ -8,7 +8,7 @@ Bereich: **Kommentare auf Area- und Routenseiten**
 |---|---|
 | Voraussetzung | Area existiert. Es gibt Kommentare oder keine Kommentare. |
 | Schritte | 1. `/areas/{id}` öffnen. 2. Abschnitt „Kommentare“ prüfen. |
-| Erwartetes Ergebnis | Vorhandene Kommentare werden mit Autor, Text und Datum angezeigt. Wenn keine Kommentare vorhanden sind, steht „Keine Kommentare vorhanden.“ |
+| Erwartetes Ergebnis | Vorhandene Kommentare werden mit Autor, Text und Datum angezeigt. Wenn keine Kommentare vorhanden sind, steht „Noch keine Kommentare“. |
 | Status | Offen |
 
 ## CM-002 – Area-Kommentar Button nur mit Login
@@ -17,7 +17,7 @@ Bereich: **Kommentare auf Area- und Routenseiten**
 |---|---|
 | Voraussetzung | Area existiert. |
 | Schritte | 1. Ausloggen. 2. `/areas/{id}` öffnen. 3. Einloggen und Seite erneut öffnen. |
-| Erwartetes Ergebnis | Ohne Login ist der Button „Kommentar schreiben“ nicht sichtbar. Mit Login ist der Button sichtbar. |
+| Erwartetes Ergebnis | Ohne Login ist der Button „Schreiben“ nicht sichtbar. Mit Login ist der Button sichtbar. |
 | Status | Offen |
 
 ## CM-003 – Route-Kommentare anzeigen

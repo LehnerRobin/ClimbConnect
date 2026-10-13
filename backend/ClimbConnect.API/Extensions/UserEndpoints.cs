@@ -9,7 +9,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Benutzerprofile, Statistiken und die Benutzerliste.</summary>
 public static class UserEndpoints
 {
-    public static void MapUserEndpoints(this WebApplication app)
+    public static void MapUserEndpoints(this IEndpointRouteBuilder app)
     {
         // Eigenes Profil abrufen
         app.MapGet("/api/users/me", async (ClaimsPrincipal user, AppDbContext db) =>
@@ -75,17 +75,10 @@ public static class UserEndpoints
             var ascents  = progresses.Where(p => p.Status != "Projekt").ToList();
             var projects = progresses.Where(p => p.Status == "Projekt").ToList();
 
-            // Lieblingsgebiet: Gebiet mit den meisten Begehungen
-            var favoriteArea = ascents
-                .GroupBy(p => p.Route.Sector.Area.Name)
-                .OrderByDescending(g => g.Count())
-                .Select(g => g.Key)
-                .FirstOrDefault();
-
             // Grad-Entwicklung: höchster Rotpunkt-/Flash-/Onsight-Grad pro Monat
             var targetScale = scale ?? "french";
             var gradeProgression = ascents
-                .Where(p => p.Route.Grade != null)
+                .Where(p => GradeConversionService.Rank(p.Route.Grade) >= 0)
                 .GroupBy(p => new { p.Date.Year, p.Date.Month })
                 .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g =>
@@ -94,17 +87,40 @@ public static class UserEndpoints
                     return new
                     {
                         Month = $"{g.Key.Year:0000}-{g.Key.Month:00}",
-                        Grade = GradeConversionService.Convert(best.Route.Grade, targetScale)
+                        Grade = GradeConversionService.Convert(best.Route.Grade, targetScale),
+                        // Rang = Position in der Schwierigkeits-Reihenfolge, damit das Diagramm die Höhe richtig zeichnet
+                        Rank  = GradeConversionService.Rank(best.Route.Grade)
                     };
                 })
                 .ToList();
+
+            // Besuche pro Gebiet: Anzahl verschiedener Tage mit mindestens einem Eintrag im Gebiet.
+            // Projekte zählen mit – wer es probiert hat, war auch dort.
+            var areaVisits = progresses
+                .GroupBy(p => new { p.Route.Sector.Area.Id, p.Route.Sector.Area.Name })
+                .Select(g => new
+                {
+                    AreaId   = g.Key.Id,
+                    AreaName = g.Key.Name,
+                    Visits   = g.Select(p => p.Date).Distinct().Count()
+                })
+                .OrderByDescending(v => v.Visits)
+                .ThenBy(v => v.AreaName)
+                .ToList();
+
+            // Lieblingsgebiet: Gebiet mit den meisten Besuchen, bei Gleichstand alle (z. B. "Traunstein, Hirschwand")
+            var maxVisits = areaVisits.FirstOrDefault()?.Visits ?? 0;
+            var favoriteArea = areaVisits.Count == 0
+                ? null
+                : string.Join(", ", areaVisits.Where(v => v.Visits == maxVisits).Select(v => v.AreaName));
 
             return Results.Ok(new
             {
                 TotalClimbed     = ascents.Count,
                 OpenProjects     = projects.Count,
                 FavoriteArea     = favoriteArea,
-                GradeProgression = gradeProgression
+                GradeProgression = gradeProgression,
+                AreaVisits       = areaVisits
             });
         })
         .WithName("GetUserStats")

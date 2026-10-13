@@ -6,61 +6,73 @@ namespace ClimbConnect.API.Services;
 /// </summary>
 public static class GradeConversionService
 {
-    /// <summary>
-    /// Zuordnungstabelle: Französisch → (UIAA, Amerikanisch).
-    /// Quelle: Standard-Konversionstabelle für Sportklettern.
-    /// </summary>
-    private static readonly Dictionary<string, (string Uiaa, string American)> GradeMap = new()
-    {
-        { "4",   ("IV",    "5.6")   },
-        { "4+",  ("IV+",   "5.7")   },
-        { "5",   ("V",     "5.8")   },
-        { "5a",  ("V-",    "5.7")   },
-        { "5b",  ("V",     "5.8")   },
-        { "5+",  ("V+",    "5.9")   },
-        { "5c",  ("V+",    "5.9")   },
-        { "6a",  ("VI",    "5.10a") },
-        { "6a+", ("VI+",   "5.10b") },
-        { "6b",  ("VII-",  "5.10c") },
-        { "6b+", ("VII",   "5.10d") },
-        { "6c",  ("VII+",  "5.11a") },
-        { "6c+", ("VII+",  "5.11b") },
-        { "7a",  ("VIII-", "5.11c") },
-        { "7a+", ("VIII",  "5.11d") },
-        { "7b",  ("VIII+", "5.12a") },
-        { "7b+", ("IX-",   "5.12b") },
-        { "7c",  ("IX",    "5.12c") },
-        { "7c+", ("IX+",   "5.12d") },
-        { "8a",  ("X-",    "5.13a") },
-        { "8a+", ("X",     "5.13b") },
-        { "8b",  ("X+",    "5.13c") },
-        { "8b+", ("XI-",   "5.13d") },
-        { "8c",  ("XI",    "5.14a") },
-        { "8c+", ("XI+",   "5.14b") },
-        { "9a",  ("XII-",  "5.15a") },
-        { "9a+", ("XII",   "5.15b") },
-        { "9b",  ("XII+",  "5.15c") },
-        { "9b+", ("XII+",  "5.15d") },
-        { "9c",  ("XIII-", "5.16a") },
-    };
+    /// <summary>Ein Grad in allen drei Skalen.</summary>
+    public record Grade(string French, string Uiaa, string American);
 
     /// <summary>
-    /// Sortierreihenfolge für französische Grade (niedriger = einfacher).
-    /// Wird für die Grad-Entwicklung im Stats-Endpoint verwendet.
+    /// Die einzige Grad-Tabelle der Anwendung, sortiert von leicht nach schwer.
+    /// Die Position in der Liste ist der Rang (für Vergleiche, Durchschnitt und Statistik).
+    /// Das Frontend bezieht die Liste über GET /api/grades.
+    /// Quelle: übliche Umrechnungstabellen für Sportklettern; die Skalen sind nicht 1:1
+    /// umrechenbar, daher kommen manche UIAA- und US-Grade mehrfach vor.
     /// </summary>
-    private static readonly List<string> GradeOrder =
+    private static readonly List<Grade> Grades =
     [
-        "4", "4+", "5", "5a", "5b", "5+", "5c",
-        "6a", "6a+", "6b", "6b+", "6c", "6c+",
-        "7a", "7a+", "7b", "7b+", "7c", "7c+",
-        "8a", "8a+", "8b", "8b+", "8c", "8c+",
-        "9a", "9a+", "9b", "9b+", "9c"
+        new("3a",  "III-",  "5.2"),
+        new("3b",  "III",   "5.3"),
+        new("3c",  "III+",  "5.4"),
+        new("4a",  "IV-",   "5.5"),
+        new("4b",  "IV",    "5.6"),
+        new("4c",  "IV+",   "5.6"),
+        new("5a",  "V-",    "5.7"),
+        new("5a+", "V-",    "5.7"),
+        new("5b",  "V",     "5.8"),
+        new("5b+", "V",     "5.8"),
+        new("5c",  "V+",    "5.9"),
+        new("5c+", "VI-",   "5.9"),
+        new("6a",  "VI",    "5.10a"),
+        new("6a+", "VI+",   "5.10b"),
+        new("6b",  "VII-",  "5.10c"),
+        new("6b+", "VII",   "5.10d"),
+        new("6c",  "VII+",  "5.11a"),
+        new("6c+", "VII+",  "5.11b"),
+        new("7a",  "VIII-", "5.11c"),
+        new("7a+", "VIII",  "5.11d"),
+        new("7b",  "VIII+", "5.12a"),
+        new("7b+", "IX-",   "5.12b"),
+        new("7c",  "IX",    "5.12c"),
+        new("7c+", "IX+",   "5.12d"),
+        new("8a",  "X-",    "5.13a"),
+        new("8a+", "X",     "5.13b"),
+        new("8b",  "X+",    "5.13c"),
+        new("8b+", "XI-",   "5.13d"),
+        new("8c",  "XI",    "5.14a"),
+        new("8c+", "XI+",   "5.14b"),
+        new("9a",  "XII-",  "5.15a"),
+        new("9a+", "XII",   "5.15b"),
+        new("9b",  "XII+",  "5.15c"),
+        new("9b+", "XII+",  "5.15d"),
+        new("9c",  "XIII-", "5.16a"),
     ];
 
+    /// <summary>Schneller Zugriff: französischer Grad → Rang (Index in <see cref="Grades"/>).</summary>
+    private static readonly Dictionary<string, int> RankByFrench =
+        Grades.Select((g, i) => (g.French, i)).ToDictionary(x => x.French, x => x.i);
+
+    /// <summary>Alle Grade in allen Skalen, sortiert von leicht nach schwer.</summary>
+    public static IReadOnlyList<Grade> GetGrades() => Grades;
+
     /// <summary>
-    /// Gibt die komplette sortierte Liste aller französischen Grade zurück (für Rang → Grade Konvertierung).
+    /// Gibt die komplette sortierte Liste aller französischen Grade zurück (für Rang → Grad Konvertierung).
     /// </summary>
-    public static List<string> GetAllGrades() => GradeOrder;
+    public static List<string> GetAllGrades() => Grades.Select(g => g.French).ToList();
+
+    /// <summary>Bringt einen Grad in die gespeicherte Form (klein, ohne Leerzeichen).</summary>
+    public static string Normalize(string grade) => grade.Trim().ToLowerInvariant();
+
+    /// <summary>Prüft, ob der Grad in der französischen Grad-Tabelle vorkommt.</summary>
+    public static bool IsValid(string? frenchGrade) =>
+        !string.IsNullOrWhiteSpace(frenchGrade) && RankByFrench.ContainsKey(Normalize(frenchGrade));
 
     /// <summary>
     /// Gibt den numerischen Rang eines Grads zurück — höher = schwerer.
@@ -69,8 +81,7 @@ public static class GradeConversionService
     public static int Rank(string? frenchGrade)
     {
         if (string.IsNullOrWhiteSpace(frenchGrade)) return -1;
-        var idx = GradeOrder.IndexOf(frenchGrade.ToLower().Trim());
-        return idx;
+        return RankByFrench.TryGetValue(Normalize(frenchGrade), out var rank) ? rank : -1;
     }
 
     /// <summary>
@@ -83,14 +94,15 @@ public static class GradeConversionService
     {
         if (string.IsNullOrWhiteSpace(frenchGrade)) return null;
 
-        var key = frenchGrade.ToLower().Trim();
+        var rank = Rank(frenchGrade);
+        if (rank < 0) return scale.ToLower() is "uiaa" or "american" ? null : frenchGrade;
 
+        var grade = Grades[rank];
         return scale.ToLower() switch
         {
-            "french"   => frenchGrade,
-            "uiaa"     => GradeMap.TryGetValue(key, out var u) ? u.Uiaa     : null,
-            "american" => GradeMap.TryGetValue(key, out var a) ? a.American : null,
-            _          => frenchGrade
+            "uiaa"     => grade.Uiaa,
+            "american" => grade.American,
+            _          => grade.French
         };
     }
 }

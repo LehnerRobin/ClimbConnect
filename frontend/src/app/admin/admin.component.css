@@ -439,37 +439,6 @@
   background: var(--pine-600);
 }
 
-/* ============ Gefahrenzone ============ */
-.danger-zone {
-  margin-top: 3rem;
-  border: 1px solid rgba(161, 64, 45, 0.25);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
-  background: var(--brick-100);
-}
-
-.danger-zone summary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 700;
-  color: var(--brick-700);
-  font-size: 14.5px;
-}
-
-.danger-zone summary svg {
-  width: 17px;
-  height: 17px;
-}
-
-.danger-zone p {
-  margin: 0.75rem 0 0.9rem;
-  font-size: 14px;
-  color: var(--ink-700);
-  line-height: 1.5;
-}
-
 @media (max-width: 640px) {
   .form-grid {
     grid-template-columns: 1fr;

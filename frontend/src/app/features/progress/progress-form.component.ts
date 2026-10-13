@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AreasService, ProgressUpdateRequest } from '../../../services/areas.service';
+import { forkJoin } from 'rxjs';
+import { GradeOption, GradeService, buildGradeOptions } from '../../../services/grade.service';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-progress-form',
@@ -29,17 +32,27 @@ export class ProgressFormComponent implements OnInit {
     subjectiveGradeComment: ''
   };
 
-  statuses        = ['Rotpunkt', 'Flash', 'Onsight', 'Projekt', 'Toprope'];
+  // Muss zu ProgressConst.Statuses im Backend passen; Toprope ist eine Begehungsart, kein Status
+  statuses        = ['Rotpunkt', 'Flash', 'Onsight', 'Projekt'];
   climbingStyles  = ['Vorstieg', 'Toprope'];
+  // Muss zu ProgressConst.FirstTryStatuses im Backend passen
+  private readonly firstTryStatuses = ['Flash', 'Onsight'];
 
-  frenchGrades = [
-    '3a','3b','3c','4a','4b','4c',
-    '5a','5b','5c',
-    '6a','6a+','6b','6b+','6c','6c+',
-    '7a','7a+','7b','7b+','7c','7c+',
-    '8a','8a+','8b','8b+','8c','8c+',
-    '9a','9a+','9b','9b+','9c'
-  ];
+  /** True bei Flash/Onsight: Dann ist die Begehung im ersten Versuch gelungen, also genau 1 Versuch. */
+  get isFirstTry(): boolean {
+    return this.firstTryStatuses.includes(this.form.status);
+  }
+
+  /** Wird bei jeder Änderung des Status aufgerufen und setzt bei Flash/Onsight die Versuche auf 1. */
+  onStatusChange(status: string): void {
+    this.form.status = status;
+    if (this.isFirstTry) {
+      this.form.attempts = 1;
+    }
+  }
+
+  /** Grad-Auswahl in der bevorzugten Skala des Users (gespeichert wird der französische Grad). */
+  gradeOptions: GradeOption[] = [];
 
   submitting = false;
   errorMessage = '';
@@ -47,10 +60,21 @@ export class ProgressFormComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private areasService: AreasService
+    private areasService: AreasService,
+    private gradeService: GradeService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
+    // Grad-Tabelle und bevorzugte Skala gleichzeitig laden, dann die Auswahl bauen
+    forkJoin({
+      grades: this.gradeService.getGrades(),
+      scale:  this.userService.getPreferredScale()
+    }).subscribe({
+      next: ({ grades, scale }) => this.gradeOptions = buildGradeOptions(grades, scale),
+      error: () => this.errorMessage = 'Grad-Liste konnte nicht geladen werden.'
+    });
+
     this.progressId = Number(this.activatedRoute.snapshot.paramMap.get('id'));
     this.isEditMode = this.progressId > 0;
 
@@ -81,6 +105,11 @@ export class ProgressFormComponent implements OnInit {
           subjectiveGrade:        progress.subjectiveGrade ?? '',
           subjectiveGradeComment: progress.subjectiveGradeComment ?? ''
         };
+
+        // Ältere Einträge könnten „Flash mit 3 Versuchen“ enthalten, das korrigieren wir beim Laden
+        if (this.isFirstTry) {
+          this.form.attempts = 1;
+        }
 
         this.loading = false;
       },
@@ -148,7 +177,7 @@ export class ProgressFormComponent implements OnInit {
     return {
       status:                 this.form.status,
       climbingStyle:          this.form.climbingStyle,
-      attempts:               Number(this.form.attempts) || 1,
+      attempts:               this.isFirstTry ? 1 : (Number(this.form.attempts) || 1),
       date:                   this.form.date,
       notes:                  this.form.notes.trim() || null,
       subjectiveGrade:        this.form.subjectiveGrade.trim() || null,

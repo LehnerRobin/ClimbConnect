@@ -8,7 +8,7 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Sektoren innerhalb eines Klettergebiets.</summary>
 public static class SectorEndpoints
 {
-    public static void MapSectorEndpoints(this WebApplication app)
+    public static void MapSectorEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/areas/{id:int}/sectors", async (int id, AppDbContext db) =>
         {
