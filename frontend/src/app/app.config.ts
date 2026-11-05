@@ -10,6 +10,7 @@ import {
 import { routes } from './app.routes';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
 import { errorInterceptor } from './interceptors/error.interceptor';
+import { pinnwandMockInterceptor } from './interceptors/pinnwand-mock.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -22,7 +23,8 @@ export const appConfig: ApplicationConfig = {
 
     provideHttpClient(
       withFetch(),
-      withInterceptors([jwtInterceptor, errorInterceptor])
+      // pinnwandMockInterceptor ist nur aktiv, wenn environment.mockPinnwand = true
+      withInterceptors([jwtInterceptor, errorInterceptor, pinnwandMockInterceptor])
     )
   ]
 };
