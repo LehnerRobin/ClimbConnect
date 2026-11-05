@@ -12,6 +12,7 @@ import {
 } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
+import { PinnwandComponent } from '../pinnwand/pinnwand.component';
 
 interface SectorWithRoutes extends Sector {
   expanded: boolean;
@@ -22,7 +23,7 @@ interface SectorWithRoutes extends Sector {
 @Component({
   selector: 'app-area-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, PinnwandComponent],
   templateUrl: './area-detail.component.html',
   styleUrl: './area-detail.component.css'
 })
