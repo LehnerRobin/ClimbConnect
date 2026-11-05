@@ -70,6 +70,13 @@ export const routes: Routes = [
   },
 
   {
+    path: 'admin/faelle/:id',
+    loadComponent: () => import('./admin/moderation/case-detail.component').then(m => m.CaseDetailComponent),
+    canActivate: [canActivateAuthRole],
+    data: { requiredRole: 'admin' }
+  },
+
+  {
     path: 'profile',
     loadComponent: () => import('./user-profile/user-profile.component').then(m => m.UserProfileComponent),
     canActivate: [canActivateAuthRole]
