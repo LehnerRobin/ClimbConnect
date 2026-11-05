@@ -1,0 +1,63 @@
+<div class="section-header">
+  <div>
+    <h2>Pinnwand-Meldungen</h2>
+    <p class="section-sub">Ein Fall pro Termin. Fälle werden 30 Tage nach der letzten Meldung automatisch gelöscht.</p>
+  </div>
+  <button type="button" class="btn btn-secondary btn-sm" (click)="load()" [disabled]="loading">Aktualisieren</button>
+</div>
+
+@if (loading && cases.length === 0) {
+  <p class="empty-hint">Lädt…</p>
+} @else if (error) {
+  <p class="msg-error">{{ error }}</p>
+} @else if (cases.length === 0) {
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <strong>Keine offenen Fälle</strong>
+    <p>Aktuell wurde kein Pinnwand-Beitrag gemeldet.</p>
+  </div>
+} @else {
+  <ul class="case-list">
+    @for (c of cases; track c.id) {
+      <li>
+        <a class="case-card" [routerLink]="['/admin/faelle', c.id]">
+          <div class="case-main">
+            <span class="case-id">Fall #{{ c.id }}</span>
+            <h3>
+              {{ c.appointmentTitle }}
+              @if (c.appointmentDeleted) {
+                <span class="tag tag-muted">Termin gelöscht</span>
+              }
+            </h3>
+            <p class="case-sub">
+              {{ c.areaName ?? 'Unbekanntes Gebiet' }}
+              @if (c.appointmentDate) {
+                · {{ c.appointmentDate | date:'dd.MM.yyyy, HH:mm' }} Uhr
+              }
+            </p>
+          </div>
+
+          <dl class="case-stats">
+            <div>
+              <dt>Meldungen</dt>
+              <dd class="stat-alert">{{ c.reportCount }}</dd>
+            </div>
+            <div>
+              <dt>Gemeldete Beiträge</dt>
+              <dd>{{ c.reportedPostCount }} / {{ c.postCount }}</dd>
+            </div>
+            <div>
+              <dt>Letzte Meldung</dt>
+              <dd>{{ c.lastReportAtUtc | date:'dd.MM., HH:mm' }}</dd>
+            </div>
+          </dl>
+
+          <span class="case-expiry" [class.soon]="daysUntil(c.deleteAfterUtc) <= 5">
+            Auto-Löschung in {{ daysUntil(c.deleteAfterUtc) }} {{ daysUntil(c.deleteAfterUtc) === 1 ? 'Tag' : 'Tagen' }}
+          </span>
+          <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </li>
+    }
+  </ul>
+}
