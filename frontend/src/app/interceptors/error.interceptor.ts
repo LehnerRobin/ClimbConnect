@@ -1,8 +1,14 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
+import { HttpContextToken, HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError, timeout, TimeoutError } from 'rxjs';
 import { NotificationService } from '../../services/notification.service';
+
+/**
+ * Gesetzt auf true: bei 403 NICHT auf /forbidden umleiten, sondern den Fehler nur an die
+ * Komponente weitergeben (z. B. "Du nimmst an diesem Termin nicht teil" beim Melden).
+ */
+export const SKIP_FORBIDDEN_REDIRECT = new HttpContextToken<boolean>(() => false);
 
 /** Nach so vielen Millisekunden ohne Antwort gilt eine Anfrage als gescheitert. */
 const REQUEST_TIMEOUT_MS = 20_000;
@@ -28,7 +34,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         localStorage.removeItem('token');
         router.navigate(['/login']);
       } else if (error.status === 403) {
-        router.navigate(['/forbidden']);
+        if (!req.context.get(SKIP_FORBIDDEN_REDIRECT)) {
+          router.navigate(['/forbidden']);
+        }
       } else if (error.status === 0) {
         notifications.showError('Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung.');
       } else if (error.status === 502 || error.status === 503 || error.status === 504) {
