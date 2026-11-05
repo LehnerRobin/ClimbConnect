@@ -1,0 +1,93 @@
+<section class="pinnwand" aria-label="Pinnwand">
+  <div class="pinnwand-header">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H8l-4 4V5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    <strong>Pinnwand</strong>
+    <span class="count">{{ posts.length }}</span>
+  </div>
+
+  @if (reportInfo) {
+    <p class="report-info" role="status">{{ reportInfo }}</p>
+  }
+
+  @if (loading && posts.length === 0) {
+    <p class="muted">Lädt…</p>
+  } @else if (loadError) {
+    <p class="load-error" role="alert">
+      {{ loadError }}
+      <button type="button" class="link-btn" (click)="load()">Nochmal</button>
+    </p>
+  } @else if (posts.length === 0) {
+    <p class="muted">Noch keine Beiträge.{{ isParticipant ? ' Schreib den ersten!' : '' }}</p>
+  } @else {
+    <ul class="post-list">
+      @for (post of posts; track post.id) {
+        <li class="post" [class.own]="isOwn(post)">
+          <div class="post-meta">
+            <strong class="author">{{ isOwn(post) ? 'Du' : post.authorUsername }}</strong>
+            <time [attr.datetime]="post.createdAtUtc">{{ post.createdAtUtc | date:'dd.MM., HH:mm' }}</time>
+
+            @if (isOwn(post)) {
+              <button
+                type="button"
+                class="post-action delete"
+                [disabled]="deletingId === post.id"
+                (click)="deletePost(post)"
+                aria-label="Eigenen Beitrag löschen">
+                {{ deletingId === post.id ? '…' : 'Löschen' }}
+              </button>
+            } @else if (canReport(post)) {
+              @if (post.reportedByMe) {
+                <span class="reported-badge" title="Du hast diesen Beitrag gemeldet">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Gemeldet
+                </span>
+              } @else {
+                <button
+                  type="button"
+                  class="post-action report"
+                  (click)="openReport(post)"
+                  [attr.aria-label]="'Beitrag von ' + post.authorUsername + ' melden'">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Melden
+                </button>
+              }
+            }
+          </div>
+          <p class="post-text">{{ post.text }}</p>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (isParticipant) {
+    <form class="post-form" (ngSubmit)="submit()">
+      <label class="sr-only" for="pinnwand-input-{{ appointmentId }}">Neuer Beitrag</label>
+      <textarea
+        id="pinnwand-input-{{ appointmentId }}"
+        name="text"
+        rows="2"
+        [(ngModel)]="newText"
+        [attr.maxlength]="maxLength"
+        (keydown)="onKeydown($event)"
+        placeholder="Nachricht an die Gruppe…"></textarea>
+      <div class="form-row">
+        <small class="muted">Strg + Enter zum Senden</small>
+        <button type="submit" class="btn btn-primary btn-sm" [disabled]="sending || !newText.trim()">
+          {{ sending ? 'Sendet…' : 'Posten' }}
+        </button>
+      </div>
+      @if (sendError) {
+        <p class="load-error" role="alert">{{ sendError }}</p>
+      }
+    </form>
+  } @else {
+    <p class="join-hint">Tritt dem Termin bei, um zu schreiben oder Beiträge zu melden.</p>
+  }
+</section>
+
+@if (reportingPost) {
+  <app-report-dialog
+    [post]="reportingPost"
+    (reported)="onReported()"
+    (closed)="closeReport()" />
+}

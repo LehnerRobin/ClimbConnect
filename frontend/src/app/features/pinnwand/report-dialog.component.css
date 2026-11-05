@@ -1,0 +1,211 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(23, 21, 15, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.dialog {
+  position: relative;
+  width: min(30rem, 100%);
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  background: var(--paper-0);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 1.4rem 1.4rem 1.2rem;
+  font-family: var(--font-body);
+  color: var(--ink-950);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.dialog-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-md);
+  background: var(--brick-100);
+  color: var(--brick-600);
+}
+
+.dialog-icon svg { width: 1.25rem; height: 1.25rem; }
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--brick-600);
+}
+
+h2 {
+  margin: 0.1rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+}
+
+.close {
+  margin-left: auto;
+  align-self: flex-start;
+  border: none;
+  background: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink-500);
+  cursor: pointer;
+}
+.close:hover { color: var(--ink-950); }
+
+.quoted-post {
+  margin: 0 0 1.1rem;
+  padding: 0.75rem 0.9rem;
+  border-left: 3px solid var(--brick-500);
+  background: var(--paper-50);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.quoted-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 12.5px;
+  color: var(--ink-600);
+  margin-bottom: 0.25rem;
+}
+
+.quoted-post p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reasons {
+  border: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.reasons legend {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 0.5rem;
+  color: var(--ink-800);
+}
+
+.reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--paper-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.reason:hover { border-color: var(--paper-300); background: var(--paper-50); }
+
+.reason.selected {
+  border-color: var(--brick-500);
+  background: var(--brick-100);
+}
+
+.reason input {
+  margin-top: 0.2rem;
+  accent-color: var(--brick-500);
+}
+
+.reason-text { display: grid; gap: 0.1rem; }
+.reason-text strong { font-size: 14px; }
+.reason-text small { font-size: 12.5px; color: var(--ink-600); }
+
+.comment-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink-700);
+  margin-bottom: 0.3rem;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--paper-300);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink-950);
+  background: var(--paper-0);
+}
+
+textarea:focus {
+  outline: 2px solid var(--brick-500);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.comment-count {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-500);
+  margin-top: 0.2rem;
+}
+
+.privacy-note {
+  font-size: 12.5px;
+  color: var(--ink-600);
+  margin: 0.6rem 0 0;
+  line-height: 1.45;
+}
+
+.dialog-error {
+  margin: 0.8rem 0 0;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--brick-100);
+  color: var(--brick-700);
+  font-size: 13.5px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+}
+
+.btn-report {
+  background: var(--brick-500);
+  color: var(--paper-0);
+  border: 1px solid var(--brick-500);
+}
+.btn-report:hover:not(:disabled) { background: var(--brick-600); }

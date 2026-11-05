@@ -1,0 +1,70 @@
+<div class="backdrop" (click)="onEscape()"></div>
+
+<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="report-title">
+  <header class="dialog-header">
+    <span class="dialog-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </span>
+    <div>
+      <p class="eyebrow">Pinnwand · Melden</p>
+      <h2 id="report-title">Beitrag melden</h2>
+    </div>
+    <button type="button" class="close" (click)="onEscape()" [disabled]="sending" aria-label="Dialog schließen">×</button>
+  </header>
+
+  <blockquote class="quoted-post">
+    <div class="quoted-meta">
+      <strong>{{ post.authorUsername }}</strong>
+      <span>{{ post.createdAtUtc | date:'dd.MM.yyyy, HH:mm' }}</span>
+    </div>
+    <p>{{ post.text }}</p>
+  </blockquote>
+
+  <form (ngSubmit)="submit()">
+    <fieldset class="reasons">
+      <legend>Warum meldest du diesen Beitrag?</legend>
+
+      @for (r of reasons; track r.value; let first = $first) {
+        <label class="reason" [class.selected]="reason === r.value">
+          @if (first) {
+            <input #firstOption type="radio" name="reason" [value]="r.value" [(ngModel)]="reason">
+          } @else {
+            <input type="radio" name="reason" [value]="r.value" [(ngModel)]="reason">
+          }
+          <span class="reason-text">
+            <strong>{{ r.label }}</strong>
+            <small>{{ r.hint }}</small>
+          </span>
+        </label>
+      }
+    </fieldset>
+
+    <label class="comment-label" for="report-comment">
+      {{ commentRequired ? 'Beschreibung *' : 'Ergänzung (optional)' }}
+    </label>
+    <textarea
+      id="report-comment"
+      name="comment"
+      rows="3"
+      [(ngModel)]="comment"
+      [attr.maxlength]="maxCommentLength"
+      [placeholder]="commentRequired ? 'Was ist an dem Beitrag nicht in Ordnung?' : 'Zusätzliche Infos für den Admin…'"></textarea>
+    <div class="comment-count">{{ comment.length }} / {{ maxCommentLength }}</div>
+
+    <p class="privacy-note">
+      Der Admin sieht deinen Namen, den Grund und alle Beiträge dieses Termins.
+      Der Verfasser erfährt nicht, wer gemeldet hat.
+    </p>
+
+    @if (error) {
+      <p class="dialog-error" role="alert">{{ error }}</p>
+    }
+
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-secondary btn-sm" (click)="onEscape()" [disabled]="sending">Abbrechen</button>
+      <button type="submit" class="btn btn-report btn-sm" [disabled]="!canSubmit">
+        {{ sending ? 'Wird gesendet…' : 'Melden' }}
+      </button>
+    </div>
+  </form>
+</div>
