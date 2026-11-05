@@ -247,6 +247,13 @@
                     } @else {
                       <p class="loading-detail">Lädt...</p>
                     }
+
+                    <!-- Pinnwand: lesen für alle Eingeloggten, schreiben/melden nur für Teilnehmer -->
+                    @if (isLoggedIn()) {
+                      <app-pinnwand
+                        [appointmentId]="appointment.id"
+                        [isParticipant]="isSubscribed(appointment.id) || isOwnAppointment(appointment)" />
+                    }
                   }
 
                   @if (isOwnAppointment(appointment)) {
