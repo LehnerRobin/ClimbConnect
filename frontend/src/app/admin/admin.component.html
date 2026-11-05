@@ -3,7 +3,7 @@
   <div class="admin-header">
     <p class="eyebrow">ClimbConnect · Verwaltung</p>
     <h1>Admin-Bereich</h1>
-    <p>Gebiete, Sektoren und Routen verwalten</p>
+    <p>Gebiete, Sektoren, Routen und Meldungen verwalten</p>
   </div>
 
   @if (successMsg) { <p class="msg-success">{{ successMsg }}</p> }
@@ -26,6 +26,10 @@
     <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       Reports
+    </button>
+    <button [class.active]="activeTab === 'moderation'" (click)="setTab('moderation')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Pinnwand-Meldungen
     </button>
   </div>
 
@@ -352,6 +356,15 @@
           }
         </div>
       }
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: PINNWAND-MELDUNGEN                                                -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'moderation') {
+    <section class="tab-content">
+      <app-case-list />
     </section>
   }
 
