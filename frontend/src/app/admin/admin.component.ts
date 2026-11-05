@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../services/admin.service';
 import { Grade, GradeService, gradeLabel } from '../../services/grade.service';
+import { ActivatedRoute } from '@angular/router';
+import { CaseListComponent } from './moderation/case-list.component';
+
+type AdminTab = 'areas' | 'sectors' | 'routes' | 'reports' | 'moderation';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, CaseListComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
@@ -15,12 +19,13 @@ export class AdminComponent implements OnInit {
 
   private adminService = inject(AdminService);
   private gradeService = inject(GradeService);
+  private route = inject(ActivatedRoute);
 
   /** Grad-Tabelle aus dem Backend (GET /api/grades) für die Grad-Auswahl bei Routen. */
   grades: Grade[] = [];
   readonly gradeLabel = gradeLabel;
 
-  activeTab: 'areas' | 'sectors' | 'routes' | 'reports' = 'areas';
+  activeTab: AdminTab = 'areas';
 
   // ── Gebiete ────────────────────────────────────────────────────────────────
   areas: any[] = [];
@@ -50,6 +55,11 @@ export class AdminComponent implements OnInit {
   readonly styles = ['Sport', 'Trad', 'Boulder', 'Multi-Pitch', 'Klettersteig'];
 
   ngOnInit(): void {
+    // ?tab=moderation öffnet direkt einen Tab (z. B. nach "Fall erledigen")
+    const tab = this.route.snapshot.queryParamMap.get('tab') as AdminTab | null;
+    if (tab && ['areas', 'sectors', 'routes', 'reports', 'moderation'].includes(tab)) {
+      this.setTab(tab);
+    }
     this.loadAreas();
     this.gradeService.getGrades().subscribe({
       next: grades => this.grades = grades,
@@ -57,7 +67,7 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  setTab(tab: 'areas' | 'sectors' | 'routes' | 'reports'): void {
+  setTab(tab: AdminTab): void {
     this.activeTab = tab;
     this.clearMessages();
     this.resetForms();
