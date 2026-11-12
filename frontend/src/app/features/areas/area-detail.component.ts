@@ -105,8 +105,12 @@ export class AreaDetailComponent implements OnInit {
           loadingRoutes: false,
           routes: []
         }));
+        this.scrollToFragment();
       },
-      error: () => { this.sectorsError = 'Sektoren konnten nicht geladen werden.'; }
+      error: () => {
+        this.sectorsError = 'Sektoren konnten nicht geladen werden.';
+        this.scrollToFragment();
+      }
     });
 
     this.areasService.getAppointmentsByArea(areaId).subscribe({
@@ -146,6 +150,17 @@ export class AreaDetailComponent implements OnInit {
 
   isLoggedIn(): boolean {
     return this.authService.isAuthenticated();
+  }
+
+  /**
+   * Link von der Termin-Seite (/areas/:id#sektoren): nach dem Laden der Sektoren
+   * direkt zum Abschnitt "Sektoren & Routen" springen.
+   */
+  private scrollToFragment(): void {
+    const fragment = this.route.snapshot.fragment;
+    if (!fragment) return;
+    // Warten, bis Angular die Sektoren gerendert hat
+    setTimeout(() => document.getElementById(fragment)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   }
 
   isSubscribed(appointmentId: number): boolean {
