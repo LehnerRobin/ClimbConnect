@@ -889,3 +889,14 @@
     stroke-dashoffset: 0;
   }
 }
+
+.ticket-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ticket-title-link:hover,
+.ticket-title-link:focus-visible {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
