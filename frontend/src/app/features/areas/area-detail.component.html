@@ -174,7 +174,7 @@
                           @if (detail.averageGrade) {
                             <p class="appointment-avg-grade">Ø Grad der Gruppe: <strong>{{ detail.averageGrade }}</strong></p>
                           }
-                          @if (detail.participants?.length > 0) {
+                          @if (detail.participants.length > 0) {
                             <div class="participant-list">
                               @for (p of detail.participants; track p.userId) {
                                 <span class="participant-chip">{{ p.username }}</span>

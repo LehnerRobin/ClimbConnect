@@ -91,6 +91,37 @@ export interface Appointment {
   isCreator?: boolean;
 }
 
+/** Teilnehmer eines Termins (aus GET /api/appointments/{id}). */
+export interface AppointmentParticipant {
+  userId: number;
+  username: string;
+  comment: string | null;
+}
+
+/** Antwort von GET /api/appointments/{id}: Termin mit Teilnehmern und Durchschnittsgrad. */
+export interface AppointmentDetail {
+  id: number;
+  areaId: number;
+  createdByUserId: number;
+  title: string;
+  date: string | null;
+  meetingPoint: string | null;
+  description: string | null;
+  minParticipants: number | null;
+  maxParticipants: number | null;
+  participantCount: number;
+  /** Durchschnitt der besten Grade aller Teilnehmer, in der angefragten Skala. */
+  averageGrade: string | null;
+  participants: AppointmentParticipant[];
+}
+
+/** Antwort von GET /api/routes/{id}/community-grade. */
+export interface CommunityGrade {
+  /** null, solange noch niemand einen Grad abgegeben hat. */
+  communityGrade: string | null;
+  voteCount: number;
+}
+
 export interface AppointmentCreateRequest {
   title: string;
   date: string;
@@ -227,20 +258,20 @@ export class AreasService {
     return this.http.get<ClimbingRoute>(`${this.apiUrl}/routes/${id}?scale=${scale}`);
   }
 
-  getCommunityGrade(routeId: number, scale = 'french'): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/routes/${routeId}/community-grade?scale=${scale}`);
+  getCommunityGrade(routeId: number, scale = 'french'): Observable<CommunityGrade> {
+    return this.http.get<CommunityGrade>(`${this.apiUrl}/routes/${routeId}/community-grade?scale=${scale}`);
   }
 
   getRouteComments(routeId: number): Observable<RouteComment[]> {
     return this.http.get<RouteComment[]>(`${this.apiUrl}/routes/${routeId}/comments`);
   }
 
-  addAreaComment(areaId: number, text: string, photoUrl?: string | null): Observable<any> {
-    return this.http.post(`${this.apiUrl}/areas/${areaId}/comments`, { text, photoUrl });
+  addAreaComment(areaId: number, text: string, photoUrl?: string | null): Observable<AreaComment> {
+    return this.http.post<AreaComment>(`${this.apiUrl}/areas/${areaId}/comments`, { text, photoUrl });
   }
 
-  addRouteComment(routeId: number, text: string, photoUrl?: string | null): Observable<any> {
-    return this.http.post(`${this.apiUrl}/routes/${routeId}/comments`, { text, photoUrl });
+  addRouteComment(routeId: number, text: string, photoUrl?: string | null): Observable<RouteComment> {
+    return this.http.post<RouteComment>(`${this.apiUrl}/routes/${routeId}/comments`, { text, photoUrl });
   }
 
   deleteComment(commentId: number): Observable<void> {
@@ -253,8 +284,8 @@ export class AreasService {
 
   // ── Safety Reports ──────────────────────────────────────────────────────────
 
-  createReport(data: { routeId?: number; areaId?: number; text: string; severity: string; photoUrl?: string | null }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/reports`, data);
+  createReport(data: { routeId?: number; areaId?: number; text: string; severity: string; photoUrl?: string | null }): Observable<SafetyReport> {
+    return this.http.post<SafetyReport>(`${this.apiUrl}/reports`, data);
   }
 
   // ── Upload ─────────────────────────────────────────────────────────────────
@@ -267,16 +298,16 @@ export class AreasService {
 
   // ── Appointments Subscribe ──────────────────────────────────────────────────
 
-  subscribeToAppointment(id: number, comment?: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/appointments/${id}/subscribe`, { comment: comment ?? null });
+  subscribeToAppointment(id: number, comment?: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/appointments/${id}/subscribe`, { comment: comment ?? null });
   }
 
-  unsubscribeFromAppointment(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/appointments/${id}/subscribe`);
+  unsubscribeFromAppointment(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/appointments/${id}/subscribe`);
   }
 
-  getAppointmentById(id: number, scale = 'french'): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/appointments/${id}?scale=${scale}`);
+  getAppointmentById(id: number, scale = 'french'): Observable<AppointmentDetail> {
+    return this.http.get<AppointmentDetail>(`${this.apiUrl}/appointments/${id}?scale=${scale}`);
   }
 
   // ── Progress ───────────────────────────────────────────────────────────────

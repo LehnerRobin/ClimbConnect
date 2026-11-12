@@ -42,6 +42,20 @@ export interface PublicProfile {
   }[];
 }
 
+/** Eigenes Profil (GET /api/users/me). */
+export interface MyProfile {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  bio: string | null;
+  preferredGradeScale: string | null;
+  memberSince: string;
+}
+
+/** Antwort nach dem Speichern des Profils (PUT /api/users/me/profile) – ohne memberSince. */
+export type MyProfileUpdateResponse = Omit<MyProfile, 'memberSince'>;
+
 @Injectable({
   providedIn: 'root'
 })
@@ -76,13 +90,13 @@ export class UserService {
   }
 
   /// Eigenes Profil abrufen (GET /api/users/me)
-  getMe() {
-    return this.http.get<any>(`${this.apiUrl}/api/users/me`);
+  getMe(): Observable<MyProfile> {
+    return this.http.get<MyProfile>(`${this.apiUrl}/api/users/me`);
   }
 
   /// Profil aktualisieren (PUT /api/users/me/profile)
   updateProfile(profile: { bio: string | null; preferredGradeScale: string | null }) {
-    return this.http.put<any>(`${this.apiUrl}/api/users/me/profile`, profile).pipe(
+    return this.http.put<MyProfileUpdateResponse>(`${this.apiUrl}/api/users/me/profile`, profile).pipe(
       // Gemerkte Gradskala sofort aktualisieren, damit andere Seiten die neue Skala verwenden
       tap(data => {
         this.preferredScale$     = of(data?.preferredGradeScale ?? profile.preferredGradeScale ?? 'french');

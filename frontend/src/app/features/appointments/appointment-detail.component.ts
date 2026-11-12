@@ -3,28 +3,12 @@ import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, of, switchMap } from 'rxjs';
-import { Area, AreasService } from '../../../services/areas.service';
+import { AppointmentDetail, Area, AreasService } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
 import { PageBandComponent } from '../../shared/page-band.component';
 import { areaFallbackPhoto, gradeClass } from '../../shared/design-utils';
-
-/** Antwort von GET /api/appointments/{id}. */
-interface AppointmentDetail {
-  id: number;
-  areaId: number;
-  createdByUserId: number;
-  title: string;
-  date: string | null;
-  meetingPoint: string | null;
-  description: string | null;
-  minParticipants: number | null;
-  maxParticipants: number | null;
-  participantCount: number;
-  averageGrade: string | null;
-  participants: { userId: number; username: string; comment: string | null }[];
-}
 
 /**
  * Eigene Seite für einen Termin (/appointments/:id).

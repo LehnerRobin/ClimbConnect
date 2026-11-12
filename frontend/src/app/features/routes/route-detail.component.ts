@@ -96,7 +96,7 @@ export class RouteDetailComponent implements OnInit {
     });
 
     this.areasService.getCommunityGrade(id, this.gradeScale).subscribe({
-      next: (data) => { this.communityGrade = data?.communityGrade ?? null; },
+      next: (data) => { this.communityGrade = data.communityGrade; },
       // Der Community-Grad ist nur eine Zusatzinfo; Serverfehler meldet bereits der Toast
       error: () => { this.communityGrade = null; }
     });
