@@ -68,6 +68,17 @@
             <label>Bild-URL</label>
             <input type="text" [(ngModel)]="areaForm.imageUrl" placeholder="https://...">
           </div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label>Breitengrad</label>
+              <input type="number" [(ngModel)]="areaForm.latitude" placeholder="z. B. 47.8634" min="-90" max="90" step="any">
+            </div>
+            <div class="form-row">
+              <label>Längengrad</label>
+              <input type="number" [(ngModel)]="areaForm.longitude" placeholder="z. B. 13.8392" min="-180" max="180" step="any">
+            </div>
+          </div>
+          <p class="form-hint">Für die Karte: Koordinaten z. B. in Google Maps per Rechtsklick auf den Ort kopieren. Leer lassen, wenn das Gebiet nicht auf der Karte erscheinen soll.</p>
 
           <div class="form-actions">
             <button class="btn btn-secondary btn-sm" (click)="showAreaForm = false">Abbrechen</button>

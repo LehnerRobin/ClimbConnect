@@ -34,7 +34,7 @@ export class AdminComponent implements OnInit {
   areas: Area[] = [];
   showAreaForm = false;
   editingArea: Area | null = null;
-  areaForm = { name: '', location: '', description: '', imageUrl: '' };
+  areaForm = { name: '', location: '', description: '', imageUrl: '', latitude: null as number | null, longitude: null as number | null };
 
   // ── Sektoren ───────────────────────────────────────────────────────────────
   selectedAreaForSectors: Area | null = null;
@@ -88,7 +88,7 @@ export class AdminComponent implements OnInit {
 
   startCreateArea(): void {
     this.editingArea = null;
-    this.areaForm = { name: '', location: '', description: '', imageUrl: '' };
+    this.areaForm = { name: '', location: '', description: '', imageUrl: '', latitude: null as number | null, longitude: null as number | null };
     this.showAreaForm = true;
   }
 
@@ -98,20 +98,27 @@ export class AdminComponent implements OnInit {
       name: area.name ?? '',
       location: area.location ?? '',
       description: area.description ?? '',
-      imageUrl: area.imageUrl ?? ''
+      imageUrl: area.imageUrl ?? '',
+      // Koordinaten übernehmen, sonst würde das Speichern sie löschen (PUT ersetzt alle Felder)
+      latitude: area.latitude ?? null,
+      longitude: area.longitude ?? null
     };
     this.showAreaForm = true;
   }
 
   saveArea(): void {
     if (!this.areaForm.name.trim()) { this.errorMsg = 'Name ist erforderlich.'; return; }
+    const coordinateError = this.validateCoordinates(this.areaForm.latitude, this.areaForm.longitude);
+    if (coordinateError) { this.errorMsg = coordinateError; return; }
     this.clearMessages();
 
     const payload: AreaSaveRequest = {
       name:        this.areaForm.name.trim(),
       location:    this.areaForm.location.trim() || null,
       description: this.areaForm.description.trim() || null,
-      imageUrl:    this.areaForm.imageUrl.trim() || null
+      imageUrl:    this.areaForm.imageUrl.trim() || null,
+      latitude:    this.areaForm.latitude,
+      longitude:   this.areaForm.longitude
     };
 
     const req = this.editingArea
@@ -126,6 +133,20 @@ export class AdminComponent implements OnInit {
       },
       error: (err) => { this.errorMsg = err?.error?.error ?? 'Fehler beim Speichern.'; }
     });
+  }
+
+  /**
+   * Prüft die Koordinaten: entweder beide leer (Gebiet erscheint nicht auf der Karte)
+   * oder beide gesetzt und im gültigen Bereich. Gibt die Fehlermeldung zurück oder null.
+   */
+  private validateCoordinates(latitude: number | null, longitude: number | null): string | null {
+    if (latitude == null && longitude == null) return null;
+    if (latitude == null || longitude == null) {
+      return 'Bitte Breiten- und Längengrad beide angeben oder beide leer lassen.';
+    }
+    if (latitude < -90 || latitude > 90)     return 'Der Breitengrad muss zwischen -90 und 90 liegen.';
+    if (longitude < -180 || longitude > 180) return 'Der Längengrad muss zwischen -180 und 180 liegen.';
+    return null;
   }
 
   deleteArea(area: Area): void {

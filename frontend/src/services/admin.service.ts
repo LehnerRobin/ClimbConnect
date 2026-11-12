@@ -10,6 +10,9 @@ export interface AreaSaveRequest {
   location?: string | null;
   description?: string | null;
   imageUrl?: string | null;
+  /** Ohne Koordinaten erscheint das Gebiet nicht auf der Karte. */
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 /** Formulardaten zum Anlegen oder Bearbeiten eines Sektors. */
