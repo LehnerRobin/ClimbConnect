@@ -1,6 +1,6 @@
 # Roadmap – ClimbConnect
 
-Stand: 12.10.2026 (Sprint 1 abgeschlossen, Sprint 2 läuft) · Live: https://frontend-production-47f4.up.railway.app/
+Stand: 12.11.2026 (Sprint 1 abgeschlossen, Sprint 2 läuft, neues Design live) · Live: https://frontend-production-47f4.up.railway.app/
 
 Diese Datei beschreibt, was bereits umgesetzt ist und was als Nächstes kommt.
 Die Meilensteine aus Benutzersicht stehen in [meilensteine.md](meilensteine.md),
@@ -45,6 +45,21 @@ GitHub-Meilenstein **„Sprint bis 12.10.2026"** – alle Issues erledigt, Meile
 - **Tests:** manueller Testlauf mit aktualisierten Testfällen, Protokoll in
   `docs/tests/test-protocol-2026-10.md` (#180)
 - **Infrastruktur:** Docker-Setup, CI mit Backend- und Frontend-Tests bei jedem Push/PR
+
+---
+
+## Neues Design – erledigt am 12.11.2026
+
+Ganzes Frontend im neuen Design „Kombi III" (nur Aussehen, keine Funktionen geändert):
+
+- **Startseite** mit Foto, animiertem Abendlicht (WebGL), Session-Ticket, Gebieten im
+  Magazin-Stil und Polaroids am Seil (#266, PR #267)
+- **Alle anderen Seiten** im selben Stil: Foto-Kopfbereich mit Papier-Riss
+  (`app-page-band`), Glas-Menü, neuer Footer, Termine als Tickets, Karte mit eigenen
+  Pins (#268, PR #269)
+- **Gemeinsame Bausteine** in `frontend/src/design.css` und
+  `frontend/src/app/shared/design-utils.ts`, Schriften Fraunces, Manrope und Caveat,
+  Fotos von Unsplash in `frontend/src/assets/home/`
 
 ---
 
