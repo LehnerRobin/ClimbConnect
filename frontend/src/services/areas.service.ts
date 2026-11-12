@@ -29,6 +29,10 @@ export interface ClimbingRoute {
   id: number;
   sectorId: number;
   sectorName?: string | null;
+  /** Nur bei der Routensuche (GET /api/routes) dabei. */
+  areaId?: number | null;
+  /** Nur bei der Routensuche (GET /api/routes) dabei. */
+  areaName?: string | null;
   name: string;
   grade?: string | null;
   lengthMeters?: number | null;

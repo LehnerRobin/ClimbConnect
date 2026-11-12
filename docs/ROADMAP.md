@@ -13,15 +13,15 @@ die einzelnen Aufgaben als Issues im GitHub-Repo.
 | # | Meilenstein | Stand |
 |---|---|---|
 | 1 | Die App läuft und ich kann mich anmelden (live deployed) | ✅ live auf Railway, Registrierung, Login, Profil mit Gradskala |
-| 2 | Klettergebiete und Routen nachschlagen | 🟡 Gebietsliste mit Besucherandrang, Karte, Sektoren, Routen, Gebietssuche, Grade in drei Skalen – **Routensuche fehlt im Frontend** (#227, Backend: `GET /api/routes?search=`) |
+| 2 | Klettergebiete und Routen nachschlagen | ✅ Gebietsliste mit Besucherandrang, Karte, Sektoren, Routen, Gebietssuche, Routensuche (Seite „Routen", #227), Grade in drei Skalen |
 | 3 | Gebiete, Sektoren und Routen sind gepflegt | ✅ Admin-Bereich, Grad-Auswahl aus einer zentralen Grad-Tabelle, Community-Grad |
 | 4 | Kletterfortschritt dokumentieren | ✅ Begehungen mit Status, Begehungsart, Versuchen, subjektivem Grad; öffentliche Profile |
 | 5 | Verbesserung über Zeit sehen | ✅ Grad-Diagramm, Anzahl Routen, offene Projekte, Gebiet-Besuche, Lieblingsgebiet (meiste Besuche) |
 | 6 | Informationen zu Routen und Gebieten teilen | ✅ Kommentare mit Foto, Safety-Reports mit Schweregrad – wird in Sprint 2 umgebaut (geprüfte Safety-Reports, Feedback statt öffentlicher Kommentare) |
 | 7 | Kletterpartner finden | ✅ Termine erstellen, beitreten, austreten, bearbeiten; Ø-Grad der Gruppe |
 
-Die Meilensteine sind bis auf die Routensuche im Frontend (Meilenstein 2) funktional
-erfüllt. Die weitere Arbeit betrifft diese Lücke, Qualität, Moderation und Feinschliff.
+Alle Meilensteine sind funktional erfüllt. Die weitere Arbeit betrifft Qualität,
+Moderation und Feinschliff.
 
 ---
 
@@ -65,7 +65,7 @@ Ganzes Frontend im neuen Design „Kombi III" (nur Aussehen, keine Funktionen ge
 
 ## Sprint 2 – läuft (bis 26.10.2026)
 
-GitHub-Meilenstein **„Sprint 2"** – 13 Issues, 26 SP, davon 4 bereits erledigt (✅). Aufteilung: Frontend Mohamed Attia
+GitHub-Meilenstein **„Sprint 2"** – 13 Issues, 26 SP, davon 5 bereits erledigt (✅). Aufteilung: Frontend Mohamed Attia
 (Ansichten, Admin, Suche) und Faru Hamid (Termine, Auth, Upload), Backend und alles
 andere Robin Lehner.
 
@@ -85,7 +85,7 @@ andere Robin Lehner.
 |---|---|---|---|
 | ✅ #249 | Bei Flash und Onsight ist die Anzahl der Versuche fix 1 | 1 | Robin, Mohamed |
 | ✅ #250 | Subjektive Gradeinschätzung nur in der eigenen Skala (doppelte Werte mit franz. Grad) | 2 | Mohamed |
-| #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
+| ✅ #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
 | ✅ #247 | Gebietsname auf der Karte (am Handy dauerhaft sichtbar) | 1 | Mohamed |
 | #248 | Favoriten auch auf der Gebietsseite und deutlicher erkennbar | 1 | Faru |
 

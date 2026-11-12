@@ -1,0 +1,95 @@
+<section class="routes-page">
+
+  <app-page-band image="/assets/home/gebiet-fels-wald.jpg" position="center 40%">
+    <div class="band-content">
+      <p class="cc-eyebrow">ClimbConnect · Routen</p>
+      <h1 class="cc-h1">Route suchen,<br><em>schnell finden.</em></h1>
+
+      <form class="routes-toolbar cc-glass" role="search" (ngSubmit)="onSearchInput(searchTerm)">
+        <label class="search-box">
+          <span class="sr-only">Routen suchen</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input
+            name="routeSearch"
+            type="search"
+            autocomplete="off"
+            [ngModel]="searchTerm"
+            (ngModelChange)="onSearchInput($event)"
+            placeholder="Routenname, z. B. Fingerkante ...">
+        </label>
+
+        @if (searchTerm) {
+          <button type="button" class="cc-btn-glass" (click)="clearSearch()">Zurücksetzen</button>
+        }
+      </form>
+    </div>
+  </app-page-band>
+
+  <div class="cc-wrap routes-body">
+
+    @if (!hasSearchTerm) {
+
+      <div class="cc-state">
+        <h2 class="cc-h3">Welche Route suchst du?</h2>
+        <p class="cc-small">
+          Gib mindestens {{ minLength }} Zeichen ein. Gesucht wird in allen Gebieten und Sektoren.
+        </p>
+        <a class="cc-link" routerLink="/areas">Lieber nach Gebieten stöbern →</a>
+      </div>
+
+    } @else if (pending) {
+
+      <div class="cc-state">
+        <div class="spinner"></div>
+        <p class="cc-small">Routen werden gesucht...</p>
+      </div>
+
+    } @else if (errorMessage) {
+
+      <div class="cc-state">
+        <h2 class="cc-h3">Ups, da ist etwas schiefgelaufen.</h2>
+        <p class="cc-small">{{ errorMessage }}</p>
+        <button type="button" class="cc-btn-dark" (click)="retry()">Nochmal versuchen</button>
+      </div>
+
+    } @else if (routes.length === 0) {
+
+      <div class="cc-state">
+        <h2 class="cc-h3">Keine Routen gefunden</h2>
+        <p class="cc-small">Zu „{{ searchedTerm }}" gibt es keine Route. Prüfe die Schreibweise oder versuche einen kürzeren Begriff.</p>
+        <button type="button" class="cc-btn-dark" (click)="clearSearch()">Suche zurücksetzen</button>
+      </div>
+
+    } @else {
+
+      <section class="results-section" aria-labelledby="results-title">
+        <div class="cc-section-head cc-section-head-ruled">
+          <div>
+            <p class="cc-eyebrow">Suchergebnis</p>
+            <h2 id="results-title" class="cc-h2">Routen zu <em>„{{ searchedTerm }}"</em></h2>
+          </div>
+          <span class="cc-chip tnum">{{ routes.length }} Treffer</span>
+        </div>
+
+        <div class="cc-card results-box">
+          @for (route of routes; track route.id) {
+            <a class="result-row" [routerLink]="['/routes', route.id]">
+              <span class="result-main">
+                <strong>{{ route.name }}</strong>
+                <small>{{ location(route) || 'Ort unbekannt' }}</small>
+              </span>
+              <span class="result-meta">
+                @if (route.style) { <span>{{ route.style }}</span> }
+                @if (route.lengthMeters) { <span>{{ route.lengthMeters }} m</span> }
+              </span>
+              <span [class]="'cc-grade ' + gradeClass(route.grade)" [attr.aria-label]="'Grad ' + (route.grade || 'unbekannt')">{{ route.grade || '–' }}</span>
+            </a>
+          }
+        </div>
+      </section>
+
+    }
+
+  </div>
+
+</section>
