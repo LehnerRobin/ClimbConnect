@@ -134,9 +134,11 @@ export class AppointmentFormComponent implements OnInit {
       : this.areasService.createAppointment(this.areaId, appointment);
 
     request.subscribe({
-      next: () => {
+      next: (saved) => {
         this.submitting = false;
-        this.router.navigate(['/areas', this.areaId]);
+        // Nach dem Speichern direkt die Termin-Seite zeigen
+        const id = this.appointmentId ?? saved?.id;
+        this.router.navigate(id ? ['/appointments', id] : ['/areas', this.areaId]);
       },
       error: (error) => {
         console.error('Appointment save error:', error);
