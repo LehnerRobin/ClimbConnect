@@ -2,42 +2,61 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--paper-50);
+  background: var(--cc-paper);
 }
 
+/* Das Menü liegt absolut über dem Foto-Kopfbereich jeder Seite */
 .app-main {
+  position: relative;
   flex: 1;
   width: 100%;
 }
 
+/* ---- Abspann: großer Schriftzug auf dunklem Grund ---- */
 .app-footer {
   margin-top: auto;
+  background: var(--cc-ink);
+  color: #9A9387;
+}
+
+.app-footer-inner {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 20px 32px;
-  border-top: 1px solid var(--paper-200);
-  background: var(--paper-0);
-  color: var(--ink-500);
-  font-size: 13.5px;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 72px 32px 40px;
+  box-sizing: border-box;
 }
 
 .app-footer-brand {
-  font-family: var(--font-display);
-  font-weight: 800;
-  color: var(--ink-800);
-  letter-spacing: -0.01em;
+  font-family: var(--cc-serif);
+  font-weight: 300;
+  font-size: clamp(48px, 12vw, 180px);
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  color: var(--cc-cream);
+  overflow-wrap: anywhere;
 }
 
-.app-footer span {
-  max-width: 1200px;
+.app-footer-brand em {
+  font-weight: 400;
+  color: var(--cc-accent);
+}
+
+.app-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(245, 241, 232, 0.16);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {
-  .app-footer {
-    padding: 16px 20px;
-    flex-direction: column;
-    gap: 2px;
-    text-align: center;
+  .app-footer-inner {
+    padding: 56px 20px 32px;
   }
 }

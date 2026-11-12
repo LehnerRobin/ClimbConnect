@@ -5,11 +5,13 @@ import { CommonModule } from '@angular/common';
 import { Area, AreasService } from '../../../services/areas.service';
 import { FavoritesService } from '../../../services/favorites.service';
 import { AreaMapComponent } from './area-map.component';
+import { PageBandComponent } from '../../shared/page-band.component';
+import { areaFallbackPhoto } from '../../shared/design-utils';
 
 @Component({
   selector: 'app-areas-page',
   standalone: true,
-  imports: [RouterLink, FormsModule, CommonModule, AreaMapComponent],
+  imports: [RouterLink, FormsModule, CommonModule, AreaMapComponent, PageBandComponent],
   templateUrl: './areas-page.component.html',
   styleUrl: './areas-page.component.css',
 })
@@ -87,29 +89,23 @@ export class AreasPageComponent implements OnInit {
     return area.name?.trim().charAt(0).toUpperCase() || '?';
   }
 
-  /** Gibt das echte Bild zurück oder wählt eine lokale SVG-Illustration als Fallback. */
+  /** Gibt das echte Bild zurück oder ein Kletterfoto als Ersatz. */
   getAreaImage(area: Area): string {
-    if (area.imageUrl) return area.imageUrl;
-    const imgs = [
-      '/assets/areas/area-alpine.svg',
-      '/assets/areas/area-wall.svg',
-      '/assets/areas/area-ridge.svg'
-    ];
-    return imgs[area.id % imgs.length];
-  }
-  /** Fallback auf lokale SVG-Illustration wenn imageUrl nicht geladen werden kann. */
-  onImageError(event: Event, area: { id: number }): void {
-    const img = event.target as HTMLImageElement;
-    const imgs = [
-      '/assets/areas/area-alpine.svg',
-      '/assets/areas/area-wall.svg',
-      '/assets/areas/area-ridge.svg'
-    ];
-    // Verhindern dass der Fehler-Handler sich selbst aufruft wenn die SVG auch nicht lädt
-    img.onerror = null;
-    img.src = imgs[area.id % imgs.length];
+    return area.imageUrl || areaFallbackPhoto(area.id);
   }
 
+  /** Ersatzfoto, wenn imageUrl nicht geladen werden kann. */
+  onImageError(event: Event, area: { id: number }): void {
+    const img = event.target as HTMLImageElement;
+    // Verhindern, dass der Fehler-Handler sich selbst erneut aufruft
+    img.onerror = null;
+    img.src = areaFallbackPhoto(area.id);
+  }
+
+  /** Formatiert 1 → "01" für die großen Nummern auf den Fotos. */
+  pad(position: number): string {
+    return position.toString().padStart(2, '0');
+  }
 
   get displayedAreas(): Area[] {
     if (!this.showOnlyFavorites) return this.areas;

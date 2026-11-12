@@ -1,156 +1,184 @@
 <section class="route-detail-page">
 
-  @if (loading) {
-    <div class="state-box">
-      <div class="spinner"></div>
-      <p class="loading-msg">Route wird geladen...</p>
-    </div>
-  }
+  <app-page-band image="/assets/home/gebiet-fels-wald.jpg" position="center 60%">
+    <a routerLink="/areas" class="cc-back">← Alle Gebiete</a>
 
-  @if (errorMessage) {
-    <div class="state-box error-state">
-      <p class="error-msg">{{ errorMessage }}</p>
-    </div>
-  }
+    @if (loading) {
+      <div class="band-state">
+        <div class="spinner"></div>
+        <p class="cc-lead">Route wird geladen...</p>
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="band-state">
+        <h1 class="cc-h1">Route nicht <em>gefunden</em></h1>
+        <p class="cc-lead">{{ errorMessage }}</p>
+      </div>
+    }
+
+    @if (!loading && route) {
+      <div class="band-head">
+        <div class="band-copy">
+          <p class="cc-eyebrow">Sektor · {{ route.sectorName }}</p>
+          <h1 class="cc-h1">{{ route.name }}</h1>
+          @if (route.description) {
+            <p class="cc-lead">{{ route.description }}</p>
+          }
+          <div class="band-chips">
+            @if (route.style) { <span class="cc-chip-glass cc-glass">{{ route.style }}</span> }
+            @if (route.lengthMeters) { <span class="cc-chip-glass cc-glass">{{ route.lengthMeters }} m</span> }
+            @if (communityGrade) { <span class="cc-chip-glass cc-glass">Community-Grad · {{ communityGrade }}</span> }
+          </div>
+          @if (isLoggedIn) {
+            <div>
+              <a
+                class="cc-btn"
+                [routerLink]="['/progress/new']"
+                [queryParams]="{ routeId: route.id, routeName: route.name }">
+                + Begehung eintragen
+              </a>
+            </div>
+          }
+        </div>
+
+        <div class="big-grade" [attr.aria-label]="'Grad ' + route.grade">
+          <span class="cc-hand big-grade-note" aria-hidden="true">Grad</span>
+          <span class="big-grade-value" aria-hidden="true">{{ route.grade }}</span>
+        </div>
+      </div>
+    }
+  </app-page-band>
 
   @if (!loading && route) {
-    <div class="route-header">
-      <p class="eyebrow">{{ route.sectorName }}</p>
-      <h1>{{ route.name }}</h1>
+    <div class="cc-wrap cc-main">
+      <div class="cards">
 
-      <div class="route-meta">
-        <span class="grade-badge">{{ route.grade }}</span>
-        @if (communityGrade) {
-          <span class="community-grade">Community: {{ communityGrade }}</span>
-        }
-        @if (route.style) { <span class="tag">{{ route.style }}</span> }
-        @if (route.lengthMeters) { <span class="tag">{{ route.lengthMeters }} m</span> }
-      </div>
-
-      @if (route.description) {
-        <p class="route-description">{{ route.description }}</p>
-      }
-
-      @if (isLoggedIn) {
-        <a
-          class="btn btn-primary btn-log-ascent"
-          [routerLink]="['/progress/new']"
-          [queryParams]="{ routeId: route.id, routeName: route.name }">
-          + Begehung eintragen
-        </a>
-      }
-    </div>
-
-    <!-- Safety Reports -->
-    <section class="section-card">
-      <div class="section-header">
-        <h2>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          Sicherheitsmeldungen
-        </h2>
-        @if (isLoggedIn) {
-          <button type="button" class="btn btn-secondary btn-sm" (click)="showReportForm = !showReportForm">
-            {{ showReportForm ? 'Abbrechen' : '+ Meldung erstellen' }}
-          </button>
-        }
-      </div>
-
-      @if (showReportForm) {
-        <div class="report-form">
-          <textarea [(ngModel)]="reportText" placeholder="Beschreibe das Problem..."></textarea>
-          <select [(ngModel)]="reportSeverity">
-            <option value="Low">Niedrig</option>
-            <option value="Medium">Mittel</option>
-            <option value="High">Hoch</option>
-          </select>
-          <label class="file-field">
-            <span>Foto anhängen (optional)</span>
-            <input type="file" accept="image/*" (change)="onReportPhotoSelected($event)">
-          </label>
-          @if (reportError) { <p class="error-msg">{{ reportError }}</p> }
-          <button type="button" class="btn btn-dark report-submit" (click)="submitReport()" [disabled]="reportSending || !reportText.trim()">
-            {{ reportSending ? 'Wird gesendet...' : 'Meldung abschicken' }}
-          </button>
-        </div>
-      }
-
-      @if (reportsLoadError) {
-        <p class="error-msg" role="alert">{{ reportsLoadError }}</p>
-      } @else if (reports.length === 0) {
-        <p class="empty-hint">Keine offenen Sicherheitsmeldungen.</p>
-      }
-
-      @for (report of reports; track report.id) {
-        <div class="report-item" [class]="severityClass(report.severity)">
-          <div class="report-severity-badge">{{ report.severity }}</div>
-          <p>{{ report.text }}</p>
-          @if (report.photoUrl) {
-            <img [src]="report.photoUrl" alt="Report Foto" class="report-photo">
-          }
-          <small>{{ report.authorName }} · {{ report.createdAtUtc | date:'dd.MM.yyyy' }}</small>
-        </div>
-      }
-    </section>
-
-    <!-- Kommentare -->
-    <section class="section-card">
-      <div class="section-header">
-        <h2>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-          Kommentare
-        </h2>
-      </div>
-
-      @if (isLoggedIn) {
-        <div class="comment-form">
-          <textarea [(ngModel)]="newCommentText" placeholder="Kommentar schreiben..."></textarea>
-          <label class="file-field">
-            <span>Foto anhängen (optional)</span>
-            <input type="file" accept="image/*" (change)="onCommentPhotoSelected($event)">
-          </label>
-          @if (commentPhotoPreview) {
-            <img [src]="commentPhotoPreview" alt="Vorschau" class="photo-preview">
-          }
-          @if (commentError) { <p class="error-msg">{{ commentError }}</p> }
-          @if (commentSuccess) { <p class="success-msg">Kommentar gespeichert!</p> }
-          <button type="button" class="btn btn-dark comment-submit" (click)="submitComment()" [disabled]="commentSending || !newCommentText.trim()">
-            {{ commentSending ? 'Wird gesendet...' : 'Kommentar abschicken' }}
-          </button>
-        </div>
-      }
-
-      @if (commentsLoadError) {
-        <p class="error-msg" role="alert">{{ commentsLoadError }}</p>
-      } @else if (comments.length === 0) {
-        <p class="empty-hint">Noch keine Kommentare.</p>
-      }
-
-      @for (comment of comments; track comment.id) {
-        <div class="comment-item">
-          <div class="comment-author">
-            @if (comment.user?.id) {
-              <a [routerLink]="['/users', comment.user!.id]">{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</a>
-            } @else {
-              {{ comment.user?.username || comment.authorName || 'Unbekannter User' }}
+        <!-- Safety Reports -->
+        <section class="cc-card cc-stack card" aria-labelledby="reports-title">
+          <div class="cc-section-head">
+            <div>
+              <p class="cc-eyebrow">Sicherheit</p>
+              <h2 id="reports-title" class="cc-h3 card-title">Sicherheits<em>meldungen</em></h2>
+            </div>
+            @if (isLoggedIn) {
+              <button type="button" class="cc-btn-outline cc-btn-sm" (click)="showReportForm = !showReportForm">
+                {{ showReportForm ? 'Abbrechen' : '+ Meldung erstellen' }}
+              </button>
             }
           </div>
-          <p>{{ comment.text }}</p>
-          @if (comment.photoUrl) {
-            <img [src]="comment.photoUrl" alt="Kommentar Foto" class="comment-photo">
+
+          @if (showReportForm) {
+            <div class="inline-form">
+              <div class="cc-field">
+                <label for="report-text">Beschreibung</label>
+                <textarea id="report-text" class="cc-input" [(ngModel)]="reportText" placeholder="Beschreibe das Problem..."></textarea>
+              </div>
+              <div class="cc-field">
+                <label for="report-severity">Schweregrad</label>
+                <select id="report-severity" class="cc-input" [(ngModel)]="reportSeverity">
+                  <option value="Low">Niedrig</option>
+                  <option value="Medium">Mittel</option>
+                  <option value="High">Hoch</option>
+                </select>
+              </div>
+              <label class="file-field">
+                <span>Foto anhängen (optional)</span>
+                <input type="file" accept="image/*" (change)="onReportPhotoSelected($event)">
+              </label>
+              @if (reportError) { <p class="cc-msg cc-msg-error">{{ reportError }}</p> }
+              <button type="button" class="cc-btn-dark form-submit" (click)="submitReport()" [disabled]="reportSending || !reportText.trim()">
+                {{ reportSending ? 'Wird gesendet...' : 'Meldung abschicken' }}
+              </button>
+            </div>
           }
-          <small>{{ comment.createdAtUtc | date:'dd.MM.yyyy' }}</small>
-          @if (isOwnComment(comment)) {
-            <button
-              type="button"
-              class="btn-delete-comment"
-              [disabled]="deletingCommentId === comment.id"
-              (click)="deleteComment(comment.id)">
-              {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
-            </button>
+
+          @if (reportsLoadError) {
+            <p class="cc-msg cc-msg-error" role="alert">{{ reportsLoadError }}</p>
+          } @else if (reports.length === 0) {
+            <p class="cc-small">Keine offenen Sicherheitsmeldungen.</p>
           }
-        </div>
-      }
-    </section>
+
+          @for (report of reports; track report.id) {
+            <article class="report-item" [class]="severityClass(report.severity)">
+              <span class="report-severity-badge">{{ report.severity }}</span>
+              <div class="report-body">
+                <p class="report-text">{{ report.text }}</p>
+                @if (report.photoUrl) {
+                  <img [src]="report.photoUrl" alt="Foto zur Meldung" class="report-photo">
+                }
+                <small>{{ report.authorName }} · {{ report.createdAtUtc | date:'dd.MM.yyyy' }}</small>
+              </div>
+            </article>
+          }
+        </section>
+
+        <!-- Kommentare -->
+        <section class="cc-card cc-stack card" aria-labelledby="comments-title">
+          <div class="cc-section-head">
+            <div>
+              <p class="cc-eyebrow">Community</p>
+              <h2 id="comments-title" class="cc-h3 card-title">Kommentare</h2>
+            </div>
+          </div>
+
+          @if (isLoggedIn) {
+            <div class="inline-form">
+              <label class="sr-only" for="route-comment">Kommentar</label>
+              <textarea id="route-comment" class="cc-input" [(ngModel)]="newCommentText" placeholder="Kommentar schreiben..."></textarea>
+              <label class="file-field">
+                <span>Foto anhängen (optional)</span>
+                <input type="file" accept="image/*" (change)="onCommentPhotoSelected($event)">
+              </label>
+              @if (commentPhotoPreview) {
+                <img [src]="commentPhotoPreview" alt="Vorschau" class="polaroid-photo">
+              }
+              @if (commentError) { <p class="cc-msg cc-msg-error">{{ commentError }}</p> }
+              @if (commentSuccess) { <p class="cc-msg cc-msg-success">Kommentar gespeichert!</p> }
+              <button type="button" class="cc-btn-dark form-submit" (click)="submitComment()" [disabled]="commentSending || !newCommentText.trim()">
+                {{ commentSending ? 'Wird gesendet...' : 'Kommentar abschicken' }}
+              </button>
+            </div>
+          }
+
+          @if (commentsLoadError) {
+            <p class="cc-msg cc-msg-error" role="alert">{{ commentsLoadError }}</p>
+          } @else if (comments.length === 0) {
+            <p class="cc-small">Noch keine Kommentare.</p>
+          }
+
+          @for (comment of comments; track comment.id) {
+            <article class="comment-item">
+              <span class="cc-avatar">{{ (comment.user?.username || comment.authorName || 'U').charAt(0).toUpperCase() }}</span>
+              <div class="comment-body">
+                <div class="comment-meta">
+                  @if (comment.user?.id) {
+                    <a [routerLink]="['/users', comment.user!.id]" class="author-link">{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</a>
+                  } @else {
+                    <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
+                  }
+                  <small>· {{ comment.createdAtUtc | date:'dd.MM.yyyy' }}</small>
+                </div>
+                <p class="comment-text">{{ comment.text }}</p>
+                @if (comment.photoUrl) {
+                  <img [src]="comment.photoUrl" alt="Foto zum Kommentar" class="polaroid-photo">
+                }
+                @if (isOwnComment(comment)) {
+                  <button
+                    type="button"
+                    class="delete-link"
+                    [disabled]="deletingCommentId === comment.id"
+                    (click)="deleteComment(comment.id)">
+                    {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </section>
+
+      </div>
+    </div>
   }
 
 </section>

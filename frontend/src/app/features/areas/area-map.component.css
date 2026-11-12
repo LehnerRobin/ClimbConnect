@@ -1,25 +1,53 @@
 .area-map {
   width: 100%;
-  height: 360px;
-  border-radius: 12px;
+  height: 460px;
+  border-radius: 26px;
   overflow: hidden;
   cursor: pointer;
+  background: #E7DFCD;
+}
+
+/* Kartenkacheln etwas wärmer und ruhiger, passend zum Papier-Look */
+:host ::ng-deep .leaflet-tile-pane {
+  filter: sepia(0.35) saturate(0.75) contrast(0.95) brightness(1.02);
+}
+
+/* Eigener Pin: Leaflet setzt sonst einen weißen Kasten als Hintergrund */
+:host ::ng-deep .area-pin {
+  background: none;
+  border: none;
 }
 
 /* Leaflet erzeugt die Tooltips selbst, deshalb ::ng-deep (durch :host bleibt es auf die Karte begrenzt) */
 :host ::ng-deep .area-tooltip {
-  background: var(--ink-900);
-  color: var(--paper-50);
-  border: none;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-md);
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 4px 8px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  background: rgba(15, 14, 12, 0.78);
+  color: var(--cc-cream);
+  box-shadow: 0 8px 20px rgba(15, 14, 12, 0.25);
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 /* Das kleine Dreieck unter dem Tooltip in derselben Farbe */
 :host ::ng-deep .leaflet-tooltip-top.area-tooltip::before {
-  border-top-color: var(--ink-900);
+  border-top-color: rgba(15, 14, 12, 0.78);
+}
+
+/* Zoom-Knöpfe im Glas-Look */
+:host ::ng-deep .leaflet-bar a {
+  background: rgba(15, 14, 12, 0.7);
+  color: var(--cc-cream);
+  border-bottom-color: rgba(255, 255, 255, 0.15);
+}
+
+:host ::ng-deep .leaflet-bar a:hover {
+  background: rgba(15, 14, 12, 0.85);
+  color: var(--cc-accent);
+}
+
+@media (max-width: 900px) {
+  .area-map { height: 360px; }
 }

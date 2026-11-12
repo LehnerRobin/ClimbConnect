@@ -6,11 +6,12 @@ import { AreasService, ProgressUpdateRequest } from '../../../services/areas.ser
 import { forkJoin } from 'rxjs';
 import { GradeOption, GradeService, buildGradeOptions } from '../../../services/grade.service';
 import { UserService } from '../../../services/user.service';
+import { PageBandComponent } from '../../shared/page-band.component';
 
 @Component({
   selector: 'app-progress-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PageBandComponent],
   templateUrl: './progress-form.component.html',
   styleUrl: './progress-form.component.css'
 })

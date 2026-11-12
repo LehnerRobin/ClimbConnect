@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { AreasService, ClimbingRoute, RouteComment, SafetyReport } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
+import { PageBandComponent } from '../../shared/page-band.component';
 
 @Component({
   selector: 'app-route-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PageBandComponent],
   templateUrl: './route-detail.component.html',
   styleUrl: './route-detail.component.css'
 })

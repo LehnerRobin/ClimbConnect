@@ -1,0 +1,13 @@
+<section class="band cc-on-dark" [class.band-tall]="size === 'tall'">
+  <img class="band-img" [src]="image" alt="" [style.object-position]="position">
+  <div class="band-shade" aria-hidden="true"></div>
+
+  <div class="band-inner">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Papier-Riss als Übergang in den hellen Teil -->
+  <svg class="band-tear" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 56 L0 26 L28 16 L58 30 L77 14 L121 27 L142 22 L178 13 L212 18 L231 14 L262 24 L282 18 L302 27 L333 13 L377 28 L398 18 L436 30 L472 13 L508 28 L538 13 L563 13 L598 16 L625 24 L647 27 L668 28 L695 27 L739 31 L762 15 L798 28 L836 18 L865 15 L900 32 L920 28 L939 29 L963 26 L1002 27 L1033 33 L1061 25 L1097 25 L1126 20 L1151 34 L1174 32 L1216 18 L1236 28 L1263 26 L1296 21 L1337 25 L1364 29 L1384 15 L1418 24 L1440 33 L1440 56 Z"/>
+  </svg>
+</section>

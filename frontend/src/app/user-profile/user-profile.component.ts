@@ -5,6 +5,8 @@ import { RouterLink } from '@angular/router';
 import { AreaVisit, UserService } from '../../services/user.service';
 import { Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
+import { PageBandComponent } from '../shared/page-band.component';
+import { ascentStatusClass, gradeClass as gradeColorClass } from '../shared/design-utils';
 
 Chart.register(...registerables);
 
@@ -17,7 +19,7 @@ interface MyAppointment extends Appointment {
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink],
+  imports: [FormsModule, CommonModule, RouterLink, PageBandComponent],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })
@@ -202,16 +204,12 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
    * reinen Toprope-Begehungen unterschieden werden können.
    */
   statusClass(status: string): string {
-    switch (status) {
-      case 'Rotpunkt':
-      case 'Flash':
-      case 'Onsight':
-        return 'status-sent';
-      case 'Projekt':
-        return 'status-project';
-      default:
-        return 'status-toprope';
-    }
+    return ascentStatusClass(status);
+  }
+
+  /** Klassen für den farbigen Grad-Kreis einer Route (neues Design). */
+  gradeClass(grade: string | null | undefined): string {
+    return 'cc-grade ' + gradeColorClass(grade);
   }
 
   private buildChart(): void {
@@ -234,11 +232,11 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         datasets: [{
           label: 'Höchster Grad',
           data: this.gradeProgression.map(p => p.rank),
-          borderColor: '#C3791F',
-          backgroundColor: 'rgba(195, 121, 31, 0.12)',
-          pointBackgroundColor: '#17150F',
-          pointBorderColor: '#F7F4EB',
-          pointBorderWidth: 2,
+          borderColor: '#A8431B',
+          backgroundColor: 'rgba(168, 67, 27, 0.08)',
+          pointBackgroundColor: '#FFFDF8',
+          pointBorderColor: '#A8431B',
+          pointBorderWidth: 3,
           pointHoverRadius: 7,
           tension: 0.3,
           fill: true,
@@ -248,9 +246,9 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
       options: {
         plugins: {
           tooltip: {
-            backgroundColor: '#17150F',
-            titleFont: { family: "'IBM Plex Sans', sans-serif", weight: 600 },
-            bodyFont: { family: "'IBM Plex Mono', monospace" },
+            backgroundColor: '#1C1A16',
+            titleFont: { family: "'Manrope', sans-serif", weight: 700 },
+            bodyFont: { family: "'Fraunces', serif", size: 14 },
             padding: 10,
             cornerRadius: 8,
             callbacks: {
@@ -262,7 +260,7 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
         scales: {
           x: {
             grid: { color: 'rgba(23, 21, 15, 0.06)' },
-            ticks: { color: '#756C53', font: { family: "'IBM Plex Sans', sans-serif", size: 12 } }
+            ticks: { color: '#6A6357', font: { family: "'Manrope', sans-serif", size: 12, weight: 700 } }
           },
           y: {
             min: Math.min(...ranks) - 1,
@@ -272,8 +270,8 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
             },
             grid: { color: 'rgba(23, 21, 15, 0.06)' },
             ticks: {
-              color: '#756C53',
-              font: { family: "'IBM Plex Mono', monospace", size: 12 },
+              color: '#6A6357',
+              font: { family: "'Fraunces', serif", size: 15, style: 'italic' },
               callback: (value) => gradeByRank.get(Number(value)) ?? ''
             }
           }

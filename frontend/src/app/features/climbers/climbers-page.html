@@ -1,46 +1,56 @@
 <section class="climbers-page">
 
-  <div class="page-header">
-    <p class="eyebrow">ClimbConnect · Community</p>
-    <h1>Kletterer</h1>
-    <p>Suche andere Kletterer und sieh ihre letzten Begehungen.</p>
-  </div>
+  <app-page-band image="/assets/home/community-wandfuss.jpg" position="center 60%">
+    <div class="band-content">
+      <p class="cc-eyebrow">ClimbConnect · Community</p>
+      <h1 class="cc-h1">Die <em>Kletterer</em></h1>
+      <p class="cc-lead">Suche andere Kletterer und sieh ihre letzten Begehungen.</p>
 
-  <div class="search-bar">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    <input
-      type="text"
-      [(ngModel)]="searchTerm"
-      placeholder="Benutzername suchen..."
-      class="search-input">
-  </div>
+      <label class="search-bar cc-glass">
+        <span class="sr-only">Benutzername suchen</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Benutzername suchen..."
+          class="search-input">
+      </label>
+    </div>
+  </app-page-band>
 
-  @if (loading) {
-    <div class="state-box">
-      <div class="spinner"></div>
-      <p class="loading-msg">Wird geladen...</p>
-    </div>
-  } @else if (errorMessage) {
-    <div class="state-box error-state">
-      <p class="error-msg">{{ errorMessage }}</p>
-    </div>
-  } @else if (filteredUsers.length === 0) {
-    <div class="state-box">
-      <p class="empty-hint">Kein Benutzer gefunden.</p>
-    </div>
-  } @else {
-    <div class="user-list">
-      @for (user of filteredUsers; track user.id) {
-        <a class="user-card" [routerLink]="['/users', user.id]">
-          <div class="user-avatar">{{ user.username.charAt(0).toUpperCase() }}</div>
-          <div class="user-info">
+  <div class="cc-wrap cc-main">
+
+    @if (loading) {
+      <div class="cc-state">
+        <div class="spinner"></div>
+        <p class="cc-small">Wird geladen...</p>
+      </div>
+    } @else if (errorMessage) {
+      <p class="cc-msg cc-msg-error" role="alert">{{ errorMessage }}</p>
+    } @else if (filteredUsers.length === 0) {
+      <div class="cc-state">
+        <p class="cc-small">Kein Benutzer gefunden.</p>
+      </div>
+    } @else {
+      <div class="cc-section-head cc-section-head-ruled list-head">
+        <div>
+          <h2 class="cc-h2">Alle <em>Mitglieder</em></h2>
+        </div>
+        <span class="cc-chip tnum">{{ filteredUsers.length }} Kletterer</span>
+      </div>
+
+      <div class="user-list">
+        @for (user of filteredUsers; track user.id) {
+          <a class="user-card" [routerLink]="['/users', user.id]">
+            <span class="user-avatar" aria-hidden="true">{{ user.username.charAt(0).toUpperCase() }}</span>
             <strong>{{ user.username }}</strong>
             <small>Dabei seit {{ user.memberSince | date:'MMMM yyyy' : '' : 'de' }}</small>
-          </div>
-          <span class="profile-link">Profil ansehen →</span>
-        </a>
-      }
-    </div>
-  }
+            <span class="profile-link cc-hand">Profil ansehen →</span>
+          </a>
+        }
+      </div>
+    }
+
+  </div>
 
 </section>

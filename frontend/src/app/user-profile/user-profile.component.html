@@ -1,323 +1,341 @@
 <section class="profile-page">
 
-  <div class="profile-header">
-    <div>
-      <p class="eyebrow">ClimbConnect</p>
-      <h1>Mein Profil</h1>
-      <p>Verwalte dein Kletterprofil und deine persönlichen Einstellungen.</p>
+  <app-page-band image="/assets/home/hero-kletterinnen.jpg" position="40% center">
+    <div class="band-head">
+      <span class="band-avatar" aria-hidden="true">{{ (user.username || '?').charAt(0) }}</span>
+      <div class="band-copy">
+        <p class="cc-eyebrow">ClimbConnect · Mein Profil</p>
+        <h1 class="cc-h1">{{ user.username || 'Mein Profil' }}</h1>
+        <p class="cc-lead">Verwalte dein Kletterprofil und deine persönlichen Einstellungen.</p>
+      </div>
     </div>
-  </div>
+  </app-page-band>
 
-  @if (profileError) {
-    <p class="error-msg" role="alert">{{ profileError }}</p>
-  }
+  <div class="cc-wrap profile-body">
 
-  <div class="profile-layout">
+    @if (profileError) {
+      <p class="cc-msg cc-msg-error" role="alert">{{ profileError }}</p>
+    }
 
-    <section class="profile-card profile-info-card">
-      <h2>Profil informationen</h2>
-
-      <div class="form-grid">
-
-        <div class="form-field full-width">
-          <label>Benutzername</label>
-          <input type="text" [value]="user.username" disabled>
-        </div>
-
-        <div class="form-field full-width">
-          <label>E-Mail</label>
-          <input type="text" [value]="user.email" disabled>
-        </div>
-
-        <div class="form-field full-width">
-          <label for="bio">Über mich</label>
-          <textarea
-            id="bio"
-            [(ngModel)]="user.bio"
-            placeholder="Schreib kurz etwas über dich...">
-          </textarea>
-        </div>
-
-        <div class="form-field">
-          <label for="gradeScale">Bevorzugte Bewertungsskala</label>
-          <select id="gradeScale" [(ngModel)]="user.preferredGradeScale">
-            <option value="uiaa">UIAA</option>
-            <option value="french">Französisch</option>
-            <option value="american">Amerikanisch</option>
-          </select>
-        </div>
-
-        <div class="form-field">
-          <label>Mitglied seit</label>
-          <input type="text" [value]="user.memberSince" disabled>
-        </div>
-
+    <!-- ================= Zahlen ================= -->
+    <section class="stats" aria-label="Statistiken">
+      <div class="stat">
+        <span class="cc-num stat-value">{{ stats.totalAscents }}</span>
+        <span class="cc-label">Begehungen</span>
       </div>
-
-      @if (saveSuccess) {
-        <p class="success-msg">Profil erfolgreich gespeichert!</p>
-      }
-      @if (saveError) {
-        <p class="error-msg">{{ saveError }}</p>
-      }
-
-      <div class="button-row">
-        <button type="button" class="btn btn-primary" (click)="saveProfile()">
-          Profil speichern
-        </button>
+      <div class="stat">
+        <span class="cc-num stat-value stat-accent">{{ stats.openProjects }}</span>
+        <span class="cc-label">Offene Projekte</span>
+      </div>
+      <div class="stat stat-wide">
+        <span class="stat-text">{{ stats.favoriteArea }}</span>
+        <span class="cc-label">Lieblingsgebiet</span>
       </div>
     </section>
 
-    <section class="profile-card password-card">
-      <h2>Passwort ändern</h2>
+    @if (statsError) {
+      <p class="cc-msg cc-msg-error" role="alert">{{ statsError }}</p>
+    }
 
-      <div class="form-group">
-        <label>Aktuelles Passwort</label>
-        <input type="password" [(ngModel)]="passwordForm.current" autocomplete="current-password">
-      </div>
-      <div class="form-group">
-        <label>Neues Passwort</label>
-        <input type="password" [(ngModel)]="passwordForm.newPw" autocomplete="new-password">
-      </div>
-      <div class="form-group">
-        <label>Neues Passwort bestätigen</label>
-        <input type="password" [(ngModel)]="passwordForm.confirm" autocomplete="new-password">
-      </div>
-
-      @if (passwordSuccess) {
-        <p class="success-msg">Passwort erfolgreich geändert!</p>
-      }
-      @if (passwordError) {
-        <p class="error-msg">{{ passwordError }}</p>
+    <!-- ================= Diagramm + Gebiete ================= -->
+    <div class="duo">
+      @if (gradeProgression.length > 0) {
+        <section class="cc-card chart-card" aria-labelledby="chart-title">
+          <div class="cc-section-head">
+            <div>
+              <p class="cc-eyebrow">Statistik</p>
+              <h2 id="chart-title" class="cc-h3 card-title">Grad-<em>Entwicklung</em></h2>
+            </div>
+          </div>
+          <canvas #gradeChart></canvas>
+        </section>
       }
 
-      <div class="button-row">
-        <button
-          type="button"
-          class="btn btn-primary"
-          [disabled]="!passwordForm.current || !passwordForm.newPw || !passwordForm.confirm"
-          (click)="changePassword()">
-          Passwort ändern
-        </button>
-      </div>
-    </section>
+      @if (gradeProgression.length === 0 && stats.totalAscents === 0) {
+        <section class="cc-card chart-card chart-empty">
+          <p class="cc-eyebrow">Statistik</p>
+          <h2 class="cc-h3 card-title">Grad-<em>Entwicklung</em></h2>
+          <p class="cc-hand empty-note">Trage deine ersten Begehungen ein um die Grad-Entwicklung zu sehen.</p>
+        </section>
+      }
 
-    <aside class="profile-card statistics-card">
-      <h2>Statistiken</h2>
-
-      <div class="stat-list">
-        <div class="stat-item">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Begehungen</span>
-          <strong class="tnum">{{ stats.totalAscents }}</strong>
-        </div>
-
-        <div class="stat-item">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
-          <span>Projekte</span>
-          <strong class="tnum">{{ stats.openProjects }}</strong>
-        </div>
-
-        <div class="stat-item favorite-item">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
-          <span>Lieblingsgebiet</span>
-          <strong class="favorite-area">{{ stats.favoriteArea }}</strong>
-        </div>
-      </div>
-
-      <!-- Besuche pro Gebiet (ein Besuch = ein Tag mit mindestens einem Eintrag) -->
       @if (areaVisits.length > 0) {
-        <h3 class="area-visits-title">Meine Gebiete</h3>
-        <ul class="area-visits">
-          @for (visit of areaVisits; track visit.areaId) {
-            <li class="area-visit">
-              <div class="area-visit-head">
-                <a [routerLink]="['/areas', visit.areaId]">{{ visit.areaName }}</a>
-                <span class="tnum">{{ visit.visits }} {{ visit.visits === 1 ? 'Tag' : 'Tage' }}</span>
-              </div>
-              <div class="area-visit-bar" aria-hidden="true">
-                <div [style.width.%]="(visit.visits / maxAreaVisits) * 100"></div>
-              </div>
-            </li>
-          }
-        </ul>
+        <section class="cc-card visits-card" aria-labelledby="visits-title">
+          <p class="cc-eyebrow">Unterwegs</p>
+          <h2 id="visits-title" class="cc-h3 card-title">Meine Gebiete</h2>
+          <!-- Besuche pro Gebiet (ein Besuch = ein Tag mit mindestens einem Eintrag) -->
+          <ul class="area-visits">
+            @for (visit of areaVisits; track visit.areaId) {
+              <li class="area-visit">
+                <div class="area-visit-head">
+                  <a [routerLink]="['/areas', visit.areaId]">{{ visit.areaName }}</a>
+                  <span class="cc-chip tnum">{{ visit.visits }} {{ visit.visits === 1 ? 'Tag' : 'Tage' }}</span>
+                </div>
+                <div class="area-visit-bar" aria-hidden="true">
+                  <div [style.width.%]="(visit.visits / maxAreaVisits) * 100"></div>
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
       }
-    </aside>
-
-  </div>
-
-  <!-- Eigene Termine -->
-  <section class="profile-card appointments-card">
-    <div class="appointments-header">
-      <div>
-        <p class="eyebrow">Sessions</p>
-        <h2>Meine Termine</h2>
-        <p>Hier siehst du alle Klettersessions, die du erstellt hast oder denen du beigetreten bist.</p>
-      </div>
     </div>
 
-    @if (appointmentError) {
-      <p class="error-msg">{{ appointmentError }}</p>
-    }
+    <!-- ================= Termine ================= -->
+    <section class="block" aria-labelledby="appointments-title">
+      <div class="cc-section-head">
+        <div>
+          <p class="cc-eyebrow">Sessions</p>
+          <h2 id="appointments-title" class="cc-h2">Meine <em>Termine</em></h2>
+          <p class="cc-small">Hier siehst du alle Klettersessions, die du erstellt hast oder denen du beigetreten bist.</p>
+        </div>
+      </div>
 
-    @if (loadingAppointments) {
-      <p class="empty-hint">Termine werden geladen...</p>
-    } @else if (myAppointments.length === 0) {
-      <p class="empty-hint">Du hast noch keine Termine.</p>
-    } @else {
-      <div class="appointment-list">
-        @for (appointment of myAppointments; track appointment.id) {
-          <article class="appointment-item">
-            <div class="appointment-main">
-              <div>
-                <h3>{{ appointment.title }}</h3>
-                <a [routerLink]="['/areas', appointment.areaId]" class="area-link">
-                  {{ appointment.areaName }}
-                </a>
+      @if (appointmentError) {
+        <p class="cc-msg cc-msg-error">{{ appointmentError }}</p>
+      }
+
+      @if (loadingAppointments) {
+        <p class="cc-small">Termine werden geladen...</p>
+      } @else if (myAppointments.length === 0) {
+        <p class="cc-small">Du hast noch keine Termine.</p>
+      } @else {
+        <div class="ticket-grid">
+          @for (appointment of myAppointments; track appointment.id) {
+            <article class="cc-ticket">
+              <div class="ticket-top">
+                <span class="cc-label ticket-label">{{ appointment.isCreator ? 'Du organisierst' : 'Du bist dabei' }}</span>
               </div>
-
-              <span class="appointment-date-badge">
-                @if (appointment.date) {
-                  {{ appointment.date | date:'dd.MM.yyyy, HH:mm' }} Uhr
-                } @else {
-                  Kein Datum
+              <h3 class="ticket-title">{{ appointment.title }}</h3>
+              <a [routerLink]="['/areas', appointment.areaId]" class="ticket-area">
+                {{ appointment.areaName }}
+                @if (appointment.areaLocation) {
+                  · {{ appointment.areaLocation }}
                 }
-              </span>
-            </div>
-
-            <div class="appointment-meta">
-              @if (appointment.areaLocation) {
-                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-12a7 7 0 1 0-14 0c0 5.6 7 12 7 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="9" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>{{ appointment.areaLocation }}</span>
-              }
-
+              </a>
               @if (appointment.meetingPoint) {
-                <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v3M16 2v3M3.5 9h17M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ appointment.meetingPoint }}</span>
+                <p class="ticket-note">Treffpunkt: {{ appointment.meetingPoint }}</p>
+              }
+              @if (appointment.description) {
+                <p class="ticket-note">{{ appointment.description }}</p>
               }
 
-              <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{{ appointment.minParticipants ?? '-' }}–{{ appointment.maxParticipants ?? '-' }} TN</span>
-            </div>
+              <div class="cc-perf" aria-hidden="true"></div>
 
-            @if (appointment.description) {
-              <p class="appointment-description">{{ appointment.description }}</p>
-            }
-
-            @if (appointment.isCreator) {
-              <div class="appointment-actions">
-                <a
-                  class="edit-appointment-button"
-                  [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
-                  Bearbeiten
-                </a>
-
-                <button
-                  type="button"
-                  class="delete-appointment-button"
-                  [disabled]="deletingAppointmentId === appointment.id"
-                  (click)="deleteOwnAppointment(appointment)">
-                  @if (deletingAppointmentId === appointment.id) {
-                    Löscht...
-                  } @else {
-                    Löschen
-                  }
-                </button>
+              <div class="ticket-stub">
+                <div>
+                  <span class="cc-label">Datum</span>
+                  <span class="stub-value">
+                    @if (appointment.date) {
+                      {{ appointment.date | date:'dd.MM.yyyy' }}
+                    } @else {
+                      Kein Datum
+                    }
+                  </span>
+                </div>
+                @if (appointment.date) {
+                  <div>
+                    <span class="cc-label">Uhrzeit</span>
+                    <span class="stub-value stub-accent">{{ appointment.date | date:'HH:mm' }}</span>
+                  </div>
+                }
+                <div>
+                  <span class="cc-label">Leute</span>
+                  <span class="stub-value">{{ appointment.minParticipants ?? '-' }}–{{ appointment.maxParticipants ?? '-' }}</span>
+                </div>
               </div>
-            }
-          </article>
-        }
-      </div>
-    }
-  </section>
 
-
-  @if (statsError) {
-    <p class="error-msg" role="alert">{{ statsError }}</p>
-  }
-
-  <!-- Grad-Entwicklungs-Chart -->
-  @if (gradeProgression.length > 0) {
-    <section class="profile-card chart-card">
-      <h2>Grad-Entwicklung</h2>
-      <canvas #gradeChart></canvas>
+              @if (appointment.isCreator) {
+                <div class="ticket-actions">
+                  <a
+                    class="ticket-link"
+                    [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">
+                    Bearbeiten
+                  </a>
+                  <button
+                    type="button"
+                    class="ticket-link ticket-delete"
+                    [disabled]="deletingAppointmentId === appointment.id"
+                    (click)="deleteOwnAppointment(appointment)">
+                    @if (deletingAppointmentId === appointment.id) {
+                      Löscht...
+                    } @else {
+                      Löschen
+                    }
+                  </button>
+                </div>
+              }
+            </article>
+          }
+        </div>
+      }
     </section>
-  }
 
-  @if (gradeProgression.length === 0 && stats.totalAscents === 0) {
-    <p class="empty-chart-hint">Trage deine ersten Begehungen ein um die Grad-Entwicklung zu sehen.</p>
-  }
-
-  <!-- Meine Begehungen -->
-  <section class="profile-card progress-card">
-    <div class="progress-header">
-      <div>
-        <p class="eyebrow">Fortschritt</p>
-        <h2>Meine Begehungen</h2>
-        <p>Hier kannst du deine eingetragenen Begehungen bearbeiten oder löschen.</p>
+    <!-- ================= Tourenbuch ================= -->
+    <section class="block" aria-labelledby="progress-title">
+      <div class="cc-section-head cc-section-head-ruled">
+        <div>
+          <p class="cc-eyebrow">Fortschritt</p>
+          <h2 id="progress-title" class="cc-h2">Meine <em>Begehungen</em></h2>
+          <p class="cc-small">Hier kannst du deine eingetragenen Begehungen bearbeiten oder löschen.</p>
+        </div>
+        <span class="cc-hand logbook-note" aria-hidden="true">jede Begehung zählt</span>
       </div>
-    </div>
 
-    @if (progressError) {
-      <p class="error-msg">{{ progressError }}</p>
-    }
+      @if (progressError) {
+        <p class="cc-msg cc-msg-error">{{ progressError }}</p>
+      }
 
-    @if (myProgress.length === 0) {
-      <p class="empty-hint">Noch keine Begehungen eingetragen.</p>
-    } @else {
-      <div class="progress-list">
-        @for (p of myProgress; track p.id) {
-          <article class="progress-item">
-            <div class="progress-main">
-              <div>
-                <a [routerLink]="['/routes', p.route?.id]" class="route-link">
-                  {{ p.route?.name ?? 'Route' }}
-                </a>
-                <div class="progress-meta">
+      @if (myProgress.length === 0) {
+        <p class="cc-small">Noch keine Begehungen eingetragen.</p>
+      } @else {
+        <div class="logbook">
+          @for (p of myProgress; track p.id) {
+            <article class="log-row">
+              <span [class]="gradeClass(p.route?.grade)">{{ p.route?.grade || '–' }}</span>
+
+              <div class="log-main">
+                <a [routerLink]="['/routes', p.route?.id]" class="route-link">{{ p.route?.name ?? 'Route' }}</a>
+                <div class="log-meta">
                   <span>{{ p.date | date:'dd.MM.yyyy' }}</span>
                   <span>{{ p.climbingStyle }}</span>
                   <span>{{ p.attempts }} Versuch(e)</span>
                 </div>
-              </div>
-
-              <span class="status-badge" [class]="statusClass(p.status)">{{ p.status }}</span>
-            </div>
-
-            @if (p.notes) {
-              <p class="progress-notes">{{ p.notes }}</p>
-            }
-
-            @if (p.subjectiveGrade || p.subjectiveGradeComment) {
-              <div class="progress-grade">
-                @if (p.subjectiveGrade) {
-                  <span>Grad: {{ p.subjectiveGrade }}</span>
+                @if (p.notes) {
+                  <p class="log-notes">{{ p.notes }}</p>
                 }
-                @if (p.subjectiveGradeComment) {
-                  <span>{{ p.subjectiveGradeComment }}</span>
+                @if (p.subjectiveGrade || p.subjectiveGradeComment) {
+                  <p class="log-grade">
+                    @if (p.subjectiveGrade) {
+                      <span>Mein Grad: <strong>{{ p.subjectiveGrade }}</strong></span>
+                    }
+                    @if (p.subjectiveGradeComment) {
+                      <span>„{{ p.subjectiveGradeComment }}“</span>
+                    }
+                  </p>
                 }
               </div>
-            }
 
-            <div class="progress-actions">
-              <a
-                class="edit-progress-button"
-                [routerLink]="['/progress', p.id, 'edit']">
-                Bearbeiten
-              </a>
+              <div class="log-side">
+                <span [class]="statusClass(p.status)">{{ p.status }}</span>
+                <div class="log-actions">
+                  <a class="log-link" [routerLink]="['/progress', p.id, 'edit']">Bearbeiten</a>
+                  <button
+                    type="button"
+                    class="log-link log-delete"
+                    [disabled]="deletingProgressId === p.id"
+                    (click)="deleteProgress(p)">
+                    @if (deletingProgressId === p.id) {
+                      Löscht...
+                    } @else {
+                      Löschen
+                    }
+                  </button>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
 
-              <button
-                type="button"
-                class="delete-progress-button"
-                [disabled]="deletingProgressId === p.id"
-                (click)="deleteProgress(p)">
-                @if (deletingProgressId === p.id) {
-                  Löscht...
-                } @else {
-                  Löschen
-                }
-              </button>
-            </div>
-          </article>
-        }
+    <!-- ================= Einstellungen ================= -->
+    <section class="block" aria-labelledby="settings-title">
+      <div class="cc-section-head">
+        <div>
+          <p class="cc-eyebrow">Einstellungen</p>
+          <h2 id="settings-title" class="cc-h2">Konto &amp; <em>Profil</em></h2>
+        </div>
       </div>
-    }
-  </section>
+
+      <div class="settings">
+        <section class="cc-card settings-main">
+          <h3 class="cc-h3">Profil-Informationen</h3>
+
+          <div class="cc-form">
+            <div class="cc-field">
+              <label for="username">Benutzername</label>
+              <input id="username" class="cc-input" type="text" [value]="user.username" disabled>
+            </div>
+
+            <div class="cc-field">
+              <label for="email">E-Mail</label>
+              <input id="email" class="cc-input" type="text" [value]="user.email" disabled>
+            </div>
+
+            <div class="cc-field cc-full">
+              <label for="bio">Über mich</label>
+              <textarea
+                id="bio"
+                class="cc-input"
+                [(ngModel)]="user.bio"
+                placeholder="Schreib kurz etwas über dich...">
+              </textarea>
+            </div>
+
+            <div class="cc-field">
+              <label for="gradeScale">Bevorzugte Bewertungsskala</label>
+              <select id="gradeScale" class="cc-input" [(ngModel)]="user.preferredGradeScale">
+                <option value="uiaa">UIAA</option>
+                <option value="french">Französisch</option>
+                <option value="american">Amerikanisch</option>
+              </select>
+            </div>
+
+            <div class="cc-field">
+              <label for="memberSince">Mitglied seit</label>
+              <input id="memberSince" class="cc-input" type="text" [value]="user.memberSince" disabled>
+            </div>
+          </div>
+
+          @if (saveSuccess) {
+            <p class="cc-msg cc-msg-success">Profil erfolgreich gespeichert!</p>
+          }
+          @if (saveError) {
+            <p class="cc-msg cc-msg-error">{{ saveError }}</p>
+          }
+
+          <div>
+            <button type="button" class="cc-btn" (click)="saveProfile()">Profil speichern</button>
+          </div>
+        </section>
+
+        <section class="cc-card settings-side">
+          <h3 class="cc-h3">Passwort ändern</h3>
+
+          <div class="cc-field">
+            <label for="pw-current">Aktuelles Passwort</label>
+            <input id="pw-current" class="cc-input" type="password" [(ngModel)]="passwordForm.current" autocomplete="current-password">
+          </div>
+          <div class="cc-field">
+            <label for="pw-new">Neues Passwort</label>
+            <input id="pw-new" class="cc-input" type="password" [(ngModel)]="passwordForm.newPw" autocomplete="new-password">
+          </div>
+          <div class="cc-field">
+            <label for="pw-confirm">Neues Passwort bestätigen</label>
+            <input id="pw-confirm" class="cc-input" type="password" [(ngModel)]="passwordForm.confirm" autocomplete="new-password">
+          </div>
+
+          @if (passwordSuccess) {
+            <p class="cc-msg cc-msg-success">Passwort erfolgreich geändert!</p>
+          }
+          @if (passwordError) {
+            <p class="cc-msg cc-msg-error">{{ passwordError }}</p>
+          }
+
+          <div>
+            <button
+              type="button"
+              class="cc-btn-dark"
+              [disabled]="!passwordForm.current || !passwordForm.newPw || !passwordForm.confirm"
+              (click)="changePassword()">
+              Passwort ändern
+            </button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+  </div>
 
 </section>

@@ -1,518 +1,363 @@
-.profile-page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px 20px 64px;
-}
+/* Mein Profil im neuen Design. Gemeinsame Bausteine (cc-…) kommen aus src/design.css. */
 
-.profile-header {
-  margin-bottom: 24px;
-}
-
-.profile-header h1 {
-  font-size: clamp(1.9rem, 4vw, 2.4rem);
-}
-
-.profile-header p {
-  margin: 8px 0 0;
-  color: var(--ink-500);
-}
-
-.profile-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 340px;
-  gap: 24px;
-  align-items: start;
-}
-
-.profile-card {
-  background: var(--paper-0);
-  border-radius: var(--radius-xl);
-  padding: 28px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--paper-200);
-}
-
-.profile-card h2 {
-  margin: 0 0 22px;
-  font-size: 1.55rem;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.form-field,
-.form-group {
+/* ---------- Kopfbereich ---------- */
+.band-head {
   display: flex;
-  flex-direction: column;
-  gap: 7px;
-  margin-bottom: 0;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.full-width {
-  grid-column: 1 / -1;
-}
-
-label {
-  color: var(--ink-700);
-  font-weight: 700;
-  font-size: 14px;
-}
-
-textarea,
-input,
-select {
-  width: 100%;
-  border: 1px solid var(--paper-300);
-  border-radius: var(--radius-md);
-  padding: 11px 12px;
-  background: var(--paper-50);
-  color: var(--ink-950);
-  outline: none;
-  font: inherit;
-}
-
-input:disabled {
-  color: var(--ink-500);
-  background: var(--paper-100);
-  cursor: not-allowed;
-}
-
-textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-textarea:focus,
-input:focus,
-select:focus {
-  border-color: var(--amber-500);
-  box-shadow: 0 0 0 3px rgba(195, 121, 31, 0.16);
-  background: var(--paper-0);
-}
-
-.button-row {
-  margin-top: 22px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.success-msg {
-  margin: 14px 0 0;
-  color: var(--pine-600);
-  font-size: 13.5px;
-  font-weight: 700;
-}
-
-.error-msg {
-  margin: 14px 0 0;
-  color: var(--brick-600);
-  font-size: 13.5px;
-  font-weight: 700;
-}
-
-/* ============ Stats sidebar ============ */
-.stat-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: var(--radius-md);
-  background: var(--paper-50);
-  border: 1px solid var(--paper-200);
-}
-
-.stat-item svg {
-  width: 19px;
-  height: 19px;
-  flex: none;
-  color: var(--amber-500);
-}
-
-.stat-item span {
-  flex: 1;
-  color: var(--ink-600);
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.stat-item strong {
-  color: var(--ink-950);
-  font-family: var(--font-display);
-  font-weight: 800;
-}
-
-/* Bei Gleichstand stehen mehrere Gebiete da – reicht der Platz nicht,
-   rutschen die Namen rechtsbündig in die nächste Zeile (nur zwischen Wörtern umbrechen) */
-.stat-item.favorite-item {
   flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 36px;
 }
 
-.stat-item strong.favorite-area {
-  margin-left: auto;
-  text-align: right;
-  overflow-wrap: break-word;
+.band-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: var(--cc-accent);
+  color: var(--cc-ink);
+  font-family: var(--cc-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 110px;
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.12);
 }
 
-/* ---- Besuche pro Gebiet ---- */
-.area-visits-title {
-  margin: 24px 0 12px;
-  font-size: 1.05rem;
+.band-copy {
+  flex: 1 1 420px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---------- Inhalt ---------- */
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 64px;
+  padding-bottom: 120px;
+}
+
+.profile-body > .cc-msg { margin-bottom: 24px; }
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 16px 0 56px;
+  border-bottom: 1px solid var(--cc-line);
+}
+
+.stat {
+  flex: 1 1 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.stat + .stat {
+  padding-left: 28px;
+  border-left: 1px solid var(--cc-line);
+}
+
+.stat-wide { flex: 2 1 320px; }
+
+.stat-value { font-size: 120px; }
+
+.stat-accent {
+  font-style: italic;
+  color: var(--cc-rust);
+}
+
+.stat-text {
+  font-family: var(--cc-serif);
+  font-weight: 300;
+  font-size: 46px;
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
+
+.duo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 32px;
+  padding-top: 56px;
+}
+
+.duo:empty { display: none; }
+
+.card-title { font-size: 40px; }
+
+.chart-card {
+  flex: 1 1 620px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-empty { justify-content: center; }
+
+.empty-note {
+  margin: 8px 0 0;
+  font-size: 26px;
+  transform: rotate(-2deg);
+}
+
+.visits-card {
+  flex: 1 1 320px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .area-visits {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.area-visit {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--cc-line);
 }
+
+.area-visit:last-child { border-bottom: 0; }
 
 .area-visit-head {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  font-size: 14px;
-  margin-bottom: 6px;
 }
 
 .area-visit-head a {
-  color: var(--ink-950);
-  font-weight: 600;
+  font-family: var(--cc-serif);
+  font-size: 20px;
+  color: var(--cc-text);
   text-decoration: none;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.area-visit-head a:hover {
-  color: var(--amber-600);
-  text-decoration: underline;
-}
-
-.area-visit-head span {
-  flex: none;
-  color: var(--ink-600);
-  font-weight: 600;
-}
+.area-visit-head a:hover { color: var(--cc-rust); }
 
 .area-visit-bar {
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--paper-100);
+  height: 4px;
+  border-radius: 2px;
+  background: #EAE3D5;
   overflow: hidden;
 }
 
-.area-visit-bar > div {
+.area-visit-bar div {
   height: 100%;
-  min-width: 6px;
-  border-radius: var(--radius-pill);
-  background: var(--amber-500);
+  background: var(--cc-rust);
 }
 
-@media (max-width: 900px) {
-  .profile-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 600px) {
-  .profile-page {
-    padding: 24px 16px 48px;
-  }
-
-  .profile-card {
-    padding: 22px;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .button-row {
-    justify-content: stretch;
-  }
-
-  .button-row .btn {
-    width: 100%;
-  }
-}
-
-/* ============ Begehungen ============ */
-.progress-card {
-  margin-top: 1.5rem;
-}
-
-.progress-header,
-.appointments-header {
+.block {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  align-items: flex-start;
-  margin-bottom: 18px;
+  flex-direction: column;
+  gap: 26px;
+  padding-top: 96px;
 }
 
-.progress-header h2,
-.appointments-header h2 {
-  margin-bottom: 8px;
-}
-
-.progress-header p:last-child,
-.appointments-header p:last-child {
-  margin: 0;
-  color: var(--ink-500);
-  line-height: 1.5;
-}
-
-.progress-list,
-.appointment-list {
+/* ---------- Termine als Tickets ---------- */
+.ticket-grid {
   display: grid;
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
+  gap: 24px;
 }
 
-.progress-item,
-.appointment-item {
-  padding: 18px;
-  border: 1px solid var(--paper-200);
-  border-radius: var(--radius-lg);
-  background: var(--paper-50);
+.ticket-label { color: var(--cc-accent) !important; }
+
+.ticket-title {
+  margin: 10px 0 4px;
+  font-family: var(--cc-serif);
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--cc-cream);
+  overflow-wrap: anywhere;
 }
 
-.progress-main,
-.appointment-main {
+.ticket-area {
+  color: #CFC9BD;
+  text-decoration: none;
+}
+
+.ticket-area:hover { color: var(--cc-accent); }
+
+.ticket-note {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #CFC9BD;
+}
+
+.ticket-stub {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+}
+
+.stub-value {
+  display: block;
+  font-family: var(--cc-serif);
+  font-size: 26px;
+}
+
+.stub-accent { color: var(--cc-accent); }
+
+.ticket-actions {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.ticket-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 800;
+  color: #CFC9BD;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.ticket-link:hover { color: var(--cc-accent); }
+.ticket-delete:hover { color: #F2A48A; }
+
+/* ---------- Tourenbuch ---------- */
+.logbook-note {
+  font-size: 26px;
+  transform: rotate(-3deg);
+}
+
+.logbook {
+  display: flex;
+  flex-direction: column;
+}
+
+.log-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 22px;
+  padding: 22px 4px;
+  border-bottom: 1px solid var(--cc-line);
+}
+
+.log-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
 }
 
 .route-link {
-  display: inline-block;
-  margin-bottom: 8px;
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--ink-950);
+  font-family: var(--cc-serif);
+  font-size: 26px;
+  line-height: 1.15;
+  color: var(--cc-text);
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
-.route-link:hover {
-  color: var(--amber-600);
-}
+.route-link:hover { color: var(--cc-rust); }
 
-.status-badge {
-  padding: 6px 11px;
-  border-radius: var(--radius-pill);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 600;
-  white-space: nowrap;
-  background: var(--paper-100);
-  color: var(--ink-700);
-}
-
-.status-badge.status-sent {
-  background: var(--pine-100);
-  color: var(--pine-700);
-}
-
-.status-badge.status-project {
-  background: var(--amber-100);
-  color: var(--amber-700);
-}
-
-.status-badge.status-toprope {
-  background: var(--glacier-100);
-  color: var(--glacier-700);
-}
-
-.progress-meta {
+.log-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px 14px;
+  font-size: 14px;
+  color: var(--cc-soft);
 }
 
-.progress-meta span,
-.progress-grade span {
-  padding: 6px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--paper-0);
-  border: 1px solid var(--paper-200);
-  color: var(--ink-600);
-  font-size: 12.5px;
-  font-weight: 600;
+.log-notes {
+  margin: 4px 0 0;
+  font-family: var(--cc-serif);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--cc-muted);
 }
 
-.progress-notes {
-  margin: 14px 0 0;
-  color: var(--ink-600);
-  line-height: 1.55;
-}
-
-.progress-grade {
+.log-grade {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--cc-soft);
 }
 
-.progress-actions,
-.appointment-actions {
+.log-side {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
 }
 
-.edit-progress-button,
-.delete-progress-button,
-.edit-appointment-button,
-.delete-appointment-button {
-  min-width: 110px;
-  border-radius: var(--radius-sm);
-  padding: 9px 14px;
-  font-weight: 700;
-  font-size: 13.5px;
+.log-actions {
+  display: flex;
+  gap: 14px;
+}
+
+.log-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--cc-soft);
+  text-decoration: underline;
+  text-underline-offset: 4px;
   cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  border: 1px solid transparent;
 }
 
-.edit-progress-button,
-.edit-appointment-button {
-  border-color: var(--amber-200);
-  background: var(--amber-100);
-  color: var(--amber-700);
-}
+.log-link:hover { color: var(--cc-text); }
+.log-delete:hover { color: var(--cc-rust); }
 
-.edit-progress-button:hover,
-.edit-appointment-button:hover {
-  background: var(--amber-200);
-}
-
-.delete-progress-button,
-.delete-appointment-button {
-  border-color: rgba(161, 64, 45, 0.25);
-  background: var(--brick-100);
-  color: var(--brick-700);
-}
-
-.delete-progress-button:hover:not(:disabled),
-.delete-appointment-button:hover:not(:disabled) {
-  background: #ecccc0;
-}
-
-.delete-progress-button:disabled,
-.delete-appointment-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.empty-hint {
-  color: var(--ink-400);
-  font-style: italic;
-}
-
-.empty-chart-hint {
-  color: var(--ink-400);
-  font-style: italic;
-  margin-top: 0.5rem;
-}
-
-@media (max-width: 700px) {
-  .progress-main,
-  .progress-actions,
-  .appointment-main,
-  .appointment-actions {
-    flex-direction: column;
-  }
-
-  .status-badge,
-  .appointment-date-badge,
-  .edit-progress-button,
-  .delete-progress-button,
-  .edit-appointment-button,
-  .delete-appointment-button {
-    width: 100%;
-  }
-}
-
-/* ============ Termine ============ */
-.appointments-card {
-  margin-top: 1.5rem;
-}
-
-.appointment-main h3 {
-  margin: 0 0 6px;
-  font-size: 1.18rem;
-}
-
-.area-link {
-  color: var(--amber-600);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.area-link:hover {
-  color: var(--amber-500);
-}
-
-.appointment-date-badge {
-  padding: 6px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--amber-100);
-  color: var(--amber-700);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.appointment-meta {
+/* ---------- Einstellungen ---------- */
+.settings {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  align-items: flex-start;
+  gap: 32px;
 }
 
-.appointment-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 10px;
-  border-radius: var(--radius-pill);
-  background: var(--paper-0);
-  border: 1px solid var(--paper-200);
-  color: var(--ink-600);
-  font-size: 12.5px;
-  font-weight: 600;
+.settings-main {
+  flex: 1 1 560px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
-.appointment-meta svg {
-  width: 14px;
-  height: 14px;
+.settings-side {
+  flex: 1 1 360px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
 
-.appointment-description {
-  margin: 14px 0 0;
-  color: var(--ink-600);
-  line-height: 1.55;
-}
-
-/* ============ Chart ============ */
-.chart-card canvas {
-  max-height: 320px;
+@media (max-width: 900px) {
+  .band-avatar { width: 120px; height: 120px; font-size: 76px; }
+  .stat + .stat { padding-left: 0; border-left: 0; }
+  .stat-value { font-size: 96px; }
+  .block { padding-top: 72px; }
+  .log-row { grid-template-columns: auto minmax(0, 1fr); }
+  .log-side { grid-column: 2; align-items: flex-start; }
 }

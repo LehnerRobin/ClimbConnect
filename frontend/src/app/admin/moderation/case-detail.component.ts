@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ModerationService } from '../../../services/moderation.service';
 import { CasePost, ModerationCaseDetail, REPORT_REASONS, reportReasonLabel } from '../../../models/pinnwand.model';
 import { daysUntil } from './moderation-utils';
+import { PageBandComponent } from '../../shared/page-band.component';
 
 /**
  * Admin: Details eines Falls.
@@ -15,7 +16,7 @@ import { daysUntil } from './moderation-utils';
 @Component({
   selector: 'app-case-detail',
   standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink],
+  imports: [DatePipe, FormsModule, RouterLink, PageBandComponent],
   templateUrl: './case-detail.component.html',
   styleUrl: './moderation.css'
 })

@@ -1,98 +1,102 @@
 <section class="auth-page">
 
-  <div class="auth-card">
+  <app-page-band image="/assets/home/community-wandfuss.jpg" position="center 60%" size="tall">
+    <div class="auth-layout">
 
-    <svg class="auth-mark" viewBox="0 0 64 64" aria-hidden="true">
-      <rect width="64" height="64" rx="14" fill="var(--ink-950)"/>
-      <path d="M8 46 L24 20 L31 31 L38 16 L56 46 Z" fill="var(--amber-500)"/>
-      <path d="M14 46 Q24 32 30 33 T39 21" fill="none" stroke="var(--paper-50)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.2 6"/>
-      <circle cx="39" cy="21" r="3" fill="var(--paper-50)"/>
-    </svg>
+      <div class="auth-intro">
+        <p class="cc-eyebrow">Neu bei ClimbConnect</p>
+        <h1 class="cc-h1">Werde Teil der<br><em>Seilschaft.</em></h1>
+        <p class="cc-lead">Erstelle ein Konto, um deine Kletterdaten und dein Profil zu speichern.</p>
+      </div>
 
-    <div class="auth-header">
-      <p class="eyebrow">ClimbConnect</p>
-      <h1>Registrieren</h1>
-      <p>Erstelle ein Konto, um deine Kletterdaten und dein Profil zu speichern.</p>
+      <div class="auth-card">
+        <span class="cc-hand auth-note" aria-hidden="true">los geht’s!</span>
+        <h2 class="cc-h2 auth-title">Registrieren</h2>
+
+        <form
+          class="auth-form"
+          novalidate
+          (submit)="register(username.value, email.value, password.value, confirmPassword.value); $event.preventDefault()">
+
+          <div class="cc-field">
+            <label for="username">Benutzername</label>
+            <input
+              id="username"
+              class="cc-input"
+              #username
+              type="text"
+              placeholder="Dein Benutzername"
+              autocomplete="username"
+              [class.invalid]="fieldErrors.username">
+            @if (fieldErrors.username) {
+              <small class="field-error">{{ fieldErrors.username }}</small>
+            }
+          </div>
+
+          <div class="cc-field">
+            <label for="email">E-Mail</label>
+            <input
+              id="email"
+              class="cc-input"
+              #email
+              type="email"
+              placeholder="deine.email@example.com"
+              autocomplete="email"
+              [class.invalid]="fieldErrors.email">
+            @if (fieldErrors.email) {
+              <small class="field-error">{{ fieldErrors.email }}</small>
+            }
+          </div>
+
+          <div class="cc-field">
+            <label for="password">Passwort</label>
+            <input
+              id="password"
+              class="cc-input"
+              #password
+              type="password"
+              placeholder="Mindestens 8 Zeichen"
+              autocomplete="new-password"
+              [class.invalid]="fieldErrors.password">
+            @if (fieldErrors.password) {
+              <small class="field-error">{{ fieldErrors.password }}</small>
+            }
+          </div>
+
+          <div class="cc-field">
+            <label for="confirmPassword">Passwort wiederholen</label>
+            <input
+              id="confirmPassword"
+              class="cc-input"
+              #confirmPassword
+              type="password"
+              placeholder="Passwort erneut eingeben"
+              autocomplete="new-password"
+              [class.invalid]="fieldErrors.confirmPassword">
+            @if (fieldErrors.confirmPassword) {
+              <small class="field-error">{{ fieldErrors.confirmPassword }}</small>
+            }
+          </div>
+
+          @if (errorMessage) {
+            <div class="cc-msg cc-msg-error" role="alert">
+              {{ errorMessage }}
+            </div>
+          }
+
+          <button type="submit" class="cc-btn auth-button">
+            Konto erstellen
+          </button>
+
+        </form>
+
+        <p class="auth-switch">
+          Du hast schon ein Konto?
+          <a routerLink="/login">Jetzt anmelden</a>
+        </p>
+      </div>
+
     </div>
-
-    <form
-      class="auth-form"
-      novalidate
-      (submit)="register(username.value, email.value, password.value, confirmPassword.value); $event.preventDefault()">
-
-      <div class="form-field">
-        <label for="username">Benutzername</label>
-        <input
-          id="username"
-          #username
-          type="text"
-          placeholder="Dein Benutzername"
-          autocomplete="username"
-          [class.invalid]="fieldErrors.username">
-        @if (fieldErrors.username) {
-          <small class="field-error">{{ fieldErrors.username }}</small>
-        }
-      </div>
-
-      <div class="form-field">
-        <label for="email">E-Mail</label>
-        <input
-          id="email"
-          #email
-          type="email"
-          placeholder="deine.email@example.com"
-          autocomplete="email"
-          [class.invalid]="fieldErrors.email">
-        @if (fieldErrors.email) {
-          <small class="field-error">{{ fieldErrors.email }}</small>
-        }
-      </div>
-
-      <div class="form-field">
-        <label for="password">Passwort</label>
-        <input
-          id="password"
-          #password
-          type="password"
-          placeholder="Mindestens 8 Zeichen"
-          autocomplete="new-password"
-          [class.invalid]="fieldErrors.password">
-        @if (fieldErrors.password) {
-          <small class="field-error">{{ fieldErrors.password }}</small>
-        }
-      </div>
-
-      <div class="form-field">
-        <label for="confirmPassword">Passwort wiederholen</label>
-        <input
-          id="confirmPassword"
-          #confirmPassword
-          type="password"
-          placeholder="Passwort erneut eingeben"
-          autocomplete="new-password"
-          [class.invalid]="fieldErrors.confirmPassword">
-        @if (fieldErrors.confirmPassword) {
-          <small class="field-error">{{ fieldErrors.confirmPassword }}</small>
-        }
-      </div>
-
-      @if (errorMessage) {
-        <div class="error-box">
-          {{ errorMessage }}
-        </div>
-      }
-
-      <button type="submit" class="btn btn-primary auth-button">
-        Konto erstellen
-      </button>
-
-    </form>
-
-    <p class="auth-switch">
-      Du hast schon ein Konto?
-      <a routerLink="/login">Jetzt anmelden</a>
-    </p>
-
-  </div>
+  </app-page-band>
 
 </section>

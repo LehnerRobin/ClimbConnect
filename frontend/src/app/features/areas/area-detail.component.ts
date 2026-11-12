@@ -13,6 +13,8 @@ import {
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
+import { PageBandComponent } from '../../shared/page-band.component';
+import { areaFallbackPhoto, gradeClass } from '../../shared/design-utils';
 
 interface SectorWithRoutes extends Sector {
   expanded: boolean;
@@ -23,7 +25,7 @@ interface SectorWithRoutes extends Sector {
 @Component({
   selector: 'app-area-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, PinnwandComponent],
+  imports: [CommonModule, RouterLink, FormsModule, PinnwandComponent, PageBandComponent],
   templateUrl: './area-detail.component.html',
   styleUrl: './area-detail.component.css'
 })
@@ -268,27 +270,24 @@ export class AreaDetailComponent implements OnInit {
     });
   }
 
-  /** Gibt das echte Bild zurück oder wählt eine lokale SVG-Illustration als Fallback. */
+  /** Gibt das echte Bild zurück oder ein Kletterfoto als Ersatz. */
   getAreaImage(area: { id: number; imageUrl?: string | null }): string {
-    if (area.imageUrl) return area.imageUrl;
-    const imgs = [
-      '/assets/areas/area-alpine.svg',
-      '/assets/areas/area-wall.svg',
-      '/assets/areas/area-ridge.svg'
-    ];
-    return imgs[area.id % imgs.length];
+    return area.imageUrl || areaFallbackPhoto(area.id);
   }
-  /** Fallback auf lokale SVG-Illustration wenn imageUrl nicht geladen werden kann. */
-  onImageError(event: Event, area: { id: number }): void {
-    const img = event.target as HTMLImageElement;
-    const imgs = [
-      '/assets/areas/area-alpine.svg',
-      '/assets/areas/area-wall.svg',
-      '/assets/areas/area-ridge.svg'
-    ];
-    // Verhindern dass der Fehler-Handler sich selbst aufruft wenn die SVG auch nicht lädt
-    img.onerror = null;
-    img.src = imgs[area.id % imgs.length];
+
+  /** Farbe des Grad-Kreises (siehe design-utils). */
+  gradeClass(grade: string | null | undefined): string {
+    return gradeClass(grade);
+  }
+
+  /** Buchstabe für den Sektor-Kopf: 0 → "A", 1 → "B" … */
+  sectorLetter(index: number): string {
+    return String.fromCharCode(65 + (index % 26));
+  }
+
+  /** Formatiert 1 → "01" für die Routen-Nummern. */
+  pad(position: number): string {
+    return position.toString().padStart(2, '0');
   }
 
 }
