@@ -169,6 +169,41 @@
   color: var(--brick-500);
 }
 
+/* ---- Startseite: Glas-Leiste über dem Hero-Foto ---- */
+.menu.menu-home {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+.menu-home .menu-bar {
+  width: calc(100% - 48px);
+  max-width: 1360px;
+  margin: 18px auto 0;
+  padding: 8px 10px 8px 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+
+.menu-home .auth-area {
+  border-left-color: rgba(255, 255, 255, 0.18);
+}
+
+.menu-home .action-item:hover,
+.menu-home .logout-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.menu-home .user-chip {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* ---- Mobile hamburger toggle ---- */
 .menu-toggle {
   display: none;
@@ -234,6 +269,18 @@
   .actions.open {
     max-height: 480px;
     padding: 10px 16px 18px;
+  }
+
+  .menu-home .menu-bar {
+    width: calc(100% - 24px);
+    margin-top: 12px;
+    padding: 8px 10px 8px 16px;
+  }
+
+  .menu-home .actions {
+    top: calc(100% + 8px);
+    border-radius: 18px;
+    border-bottom: none;
   }
 
   .nav-links,
