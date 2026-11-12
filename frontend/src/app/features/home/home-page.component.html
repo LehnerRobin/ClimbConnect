@@ -172,7 +172,7 @@
           @if (leadArea; as area) {
             <article class="lead-area">
               <a class="area-photo area-photo-lead" [routerLink]="['/areas', area.id]" tabindex="-1" aria-hidden="true">
-                <img [src]="getAreaImage(area, 0)" alt="" (error)="onImageError($event, 0)">
+                <img [src]="areaImage(area)" alt="" (error)="showAreaFallbackPhoto($event, area.id)">
                 <span class="area-number area-number-lead">{{ pad(1) }}</span>
                 <span class="glass-chip">{{ area.todayVisitors ?? 0 }} heute</span>
                 @if (isNextSessionArea(area)) {
@@ -197,7 +197,7 @@
               @for (area of otherAreas; track area.id; let i = $index) {
                 <article class="pair-area" [class.pair-area-offset]="i % 2 === 1">
                   <a class="area-photo" [routerLink]="['/areas', area.id]" tabindex="-1" aria-hidden="true">
-                    <img [src]="getAreaImage(area, i + 1)" alt="" (error)="onImageError($event, i + 1)">
+                    <img [src]="areaImage(area)" alt="" (error)="showAreaFallbackPhoto($event, area.id)">
                     <span class="area-number">{{ pad(i + 2) }}</span>
                     <span class="glass-chip">{{ area.todayVisitors ?? 0 }} heute</span>
                     @if (isNextSessionArea(area)) {

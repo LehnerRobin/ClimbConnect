@@ -107,7 +107,7 @@
 
               <article class="area-card" [class.area-card-offset]="i % 2 === 1">
                 <a class="cc-photo area-image" [routerLink]="['/areas', area.id]" tabindex="-1" aria-hidden="true">
-                  <img [src]="getAreaImage(area)" alt="" (error)="onImageError($event, area)">
+                  <img [src]="areaImage(area)" alt="" (error)="showAreaFallbackPhoto($event, area.id)">
                   <span class="area-number">{{ pad(i + 1) }}</span>
                   <span class="cc-chip-glass cc-glass image-badge">{{ area.todayVisitors ?? 0 }} heute</span>
                 </a>

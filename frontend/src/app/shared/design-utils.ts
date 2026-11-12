@@ -15,6 +15,24 @@ export function areaFallbackPhoto(areaId: number): string {
   return AREA_FALLBACK_PHOTOS[Math.abs(areaId) % AREA_FALLBACK_PHOTOS.length];
 }
 
+/** Echtes Bild des Gebiets oder – wenn es keins hat – ein Ersatzfoto (immer dasselbe pro Gebiet). */
+export function areaImage(area: { id: number; imageUrl?: string | null }): string {
+  return area.imageUrl || areaFallbackPhoto(area.id);
+}
+
+/**
+ * Fehler-Handler für <img (error)="…">: Lädt das Gebietsbild nicht, wird das Ersatzfoto gezeigt.
+ * Das data-Attribut merkt sich, dass schon ersetzt wurde. Sonst würde sich der Handler endlos
+ * selbst aufrufen, falls auch das Ersatzfoto nicht lädt. (img.onerror = null hilft hier nicht,
+ * weil Angular den Handler per addEventListener anhängt.)
+ */
+export function showAreaFallbackPhoto(event: Event, areaId: number): void {
+  const img = event.target as HTMLImageElement;
+  if (img.dataset['fallback']) return;
+  img.dataset['fallback'] = 'true';
+  img.src = areaFallbackPhoto(areaId);
+}
+
 /**
  * Liefert die CSS-Klasse für den farbigen Grad-Kreis (cc-grade-4 … cc-grade-8).
  * Funktioniert für alle drei Skalen, die der User einstellen kann:

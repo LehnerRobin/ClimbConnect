@@ -1,6 +1,6 @@
 <section class="area-detail">
 
-  <app-page-band [image]="area ? getAreaImage(area) : '/assets/home/gebiet-fels-wald.jpg'">
+  <app-page-band [image]="area ? areaImage(area) : '/assets/home/gebiet-fels-wald.jpg'">
     <a routerLink="/areas" class="cc-back">← Zurück zu Gebieten</a>
 
     @if (loading) {
