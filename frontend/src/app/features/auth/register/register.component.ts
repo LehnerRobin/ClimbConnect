@@ -19,7 +19,7 @@ interface FieldErrors {
   standalone: true,
   imports: [RouterLink, PageBandComponent],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: '../auth.css'
 })
 export class RegisterComponent {
 

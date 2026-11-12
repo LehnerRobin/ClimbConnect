@@ -11,7 +11,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   standalone: true,
   imports: [RouterLink, PageBandComponent],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: '../auth.css'
 })
 export class LoginComponent {
 
