@@ -1,4 +1,5 @@
-/* Anmelden/Registrieren im neuen Design: großes Foto, darauf ein schräger Formular-Zettel. */
+/* Anmelden/Registrieren im neuen Design: großes Foto, darauf ein schräger Formular-Zettel.
+   Gemeinsame Datei für login.component.ts und register.component.ts – nur hier ändern. */
 
 .auth-layout {
   display: flex;
