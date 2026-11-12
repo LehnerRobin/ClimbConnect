@@ -222,7 +222,7 @@
       @if (selectedSectorForRoutes) {
 
         <div class="section-toolbar sub-toolbar">
-          <span>{{ selectedAreaForRoutes.name }} › {{ selectedSectorForRoutes.name }}</span>
+          <span>{{ selectedAreaForRoutes?.name }} › {{ selectedSectorForRoutes.name }}</span>
           <button class="btn btn-primary btn-sm" (click)="startCreateRoute()">+ Neue Route</button>
         </div>
 
@@ -335,8 +335,8 @@
 
               <p class="report-text">{{ report.text }}</p>
 
-              @if (report.user?.username) {
-                <small class="report-author">Gemeldet von: {{ report.user.username }}</small>
+              @if (report.user; as user) {
+                <small class="report-author">Gemeldet von: {{ user.username }}</small>
               }
 
               @if (report.routeId) {
