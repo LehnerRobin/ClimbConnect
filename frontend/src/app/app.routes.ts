@@ -36,6 +36,11 @@ export const routes: Routes = [
   },
 
   {
+    path: 'appointments/:id',
+    loadComponent: () => import('./features/appointments/appointment-detail.component').then(m => m.AppointmentDetailComponent)
+  },
+
+  {
     path: 'areas/:id',
     loadComponent: () => import('./features/areas/area-detail.component').then(m => m.AreaDetailComponent)
   },
