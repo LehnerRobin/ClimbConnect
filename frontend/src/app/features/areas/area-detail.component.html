@@ -39,7 +39,7 @@
       <div class="cc-columns">
 
         <!-- ================= Sektoren & Routen ================= -->
-        <section class="cc-col-main routes-section" aria-labelledby="routes-title">
+        <section class="cc-col-main routes-section" id="sektoren" aria-labelledby="routes-title">
           <div class="cc-section-head">
             <div>
               <p class="cc-eyebrow">Routenübersicht</p>
@@ -151,6 +151,9 @@
                       </span>
                       <span class="toggle-hint">{{ expandedAppointmentId === appointment.id ? 'Weniger ↑' : 'Details ↓' }}</span>
                     </button>
+
+                    <!-- Alle Infos auf der eigenen Termin-Seite -->
+                    <a class="appointment-page-link" [routerLink]="['/appointments', appointment.id]">Zur Termin-Seite →</a>
 
                     @if (appointment.meetingPoint) {
                       <p class="appointment-meeting">Treffpunkt: {{ appointment.meetingPoint }}</p>
