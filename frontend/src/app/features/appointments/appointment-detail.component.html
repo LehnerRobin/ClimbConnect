@@ -1,0 +1,225 @@
+<section class="appointment-detail">
+
+  <app-page-band [image]="bandImage">
+    @if (appointment) {
+      <a [routerLink]="['/areas', appointment.areaId]" class="cc-back">← Zum Gebiet</a>
+    } @else {
+      <a routerLink="/areas" class="cc-back">← Zu den Gebieten</a>
+    }
+
+    @if (loading) {
+      <div class="band-state">
+        <div class="spinner"></div>
+        <p class="cc-lead">Termin wird geladen...</p>
+      </div>
+
+    } @else if (notFound) {
+      <div class="band-state">
+        <h1 class="cc-h1">Termin nicht <em>gefunden</em></h1>
+        <p class="cc-lead">Diesen Termin gibt es nicht (mehr). Vielleicht wurde er abgesagt oder gelöscht.</p>
+        <div>
+          <a routerLink="/areas" class="cc-btn">Zu den Gebieten</a>
+        </div>
+      </div>
+
+    } @else if (loadError) {
+      <div class="band-state">
+        <h1 class="cc-h1">Termin konnte nicht <em>geladen werden</em></h1>
+        <p class="cc-lead">{{ loadError }}</p>
+        <div>
+          <button type="button" class="cc-btn" (click)="load()">Nochmal laden</button>
+        </div>
+      </div>
+
+    } @else if (appointment) {
+      <div class="band-head">
+        <div class="band-copy">
+          <p class="cc-eyebrow">Session · {{ area?.name ?? 'Klettergebiet' }}</p>
+          <h1 class="cc-h1">{{ appointment.title }}</h1>
+          @if (appointment.date) {
+            <!-- Das Backend liefert UTC; die DatePipe zeigt automatisch Ortszeit -->
+            <p class="cc-lead">
+              <time [attr.datetime]="appointment.date">
+                {{ appointment.date | date:'EEEE, d. MMMM yyyy' }} · {{ appointment.date | date:'HH:mm' }} Uhr
+              </time>
+            </p>
+          } @else {
+            <p class="cc-lead">Kein Datum angegeben</p>
+          }
+          <div class="band-chips">
+            <span class="cc-chip-glass cc-glass"><strong class="tnum">{{ participantLabel }}</strong> Teilnehmer</span>
+            @if (appointment.averageGrade) {
+              <span class="cc-chip-glass cc-glass">Ø <strong>{{ appointment.averageGrade }}</strong></span>
+            }
+            @if (isSubscribed) {
+              <span class="cc-chip-glass cc-glass">Du bist dabei</span>
+            }
+            @if (isPast) {
+              <span class="cc-chip-glass cc-glass">Vergangen</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </app-page-band>
+
+  @if (!loading && appointment) {
+    <div class="cc-wrap cc-main">
+      <div class="cc-columns">
+
+        <!-- ================= Infos ================= -->
+        <div class="cc-col-main cc-stack main-stack">
+
+          <section class="cc-card" aria-labelledby="details-title">
+            <div class="cc-section-head">
+              <div>
+                <p class="cc-eyebrow">Alles auf einen Blick</p>
+                <h2 id="details-title" class="cc-h3">Details zur <em>Session</em></h2>
+              </div>
+            </div>
+
+            <dl class="facts">
+              <div>
+                <dt class="cc-label">Datum</dt>
+                <dd>
+                  @if (appointment.date) {
+                    {{ appointment.date | date:'dd.MM.yyyy' }} · {{ appointment.date | date:'HH:mm' }} Uhr
+                  } @else {
+                    Kein Datum angegeben
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt class="cc-label">Treffpunkt</dt>
+                <dd>{{ appointment.meetingPoint || 'Kein Treffpunkt angegeben' }}</dd>
+              </div>
+              <div>
+                <dt class="cc-label">Erstellt von</dt>
+                <dd>
+                  @if (creatorName) {
+                    <a class="cc-link" [routerLink]="['/users', appointment.createdByUserId]">{{ creatorName }}</a>
+                    @if (isCreator) { <span class="muted"> (du)</span> }
+                  } @else {
+                    <span class="muted">Unbekannt</span>
+                  }
+                </dd>
+              </div>
+              <div>
+                <dt class="cc-label">Ø Grad der Gruppe</dt>
+                <dd class="grade-fact">
+                  @if (appointment.averageGrade) {
+                    <span [class]="'cc-grade ' + gradeClass(appointment.averageGrade)">{{ appointment.averageGrade }}</span>
+                    <span class="muted">{{ scaleLabel }}</span>
+                  } @else {
+                    <span class="muted">Noch keine Begehungen der Gruppe</span>
+                  }
+                </dd>
+              </div>
+            </dl>
+
+            @if (appointment.description) {
+              <div class="description-block">
+                <p class="cc-label">Beschreibung</p>
+                <p class="description">{{ appointment.description }}</p>
+              </div>
+            }
+          </section>
+
+          <!-- Gebiet: Link direkt zum Abschnitt "Sektoren & Routen" -->
+          <a class="area-teaser" [routerLink]="['/areas', appointment.areaId]" fragment="sektoren">
+            <span class="cc-photo area-teaser-photo">
+              <img [src]="bandImage" alt="">
+            </span>
+            <span class="area-teaser-copy">
+              <span class="cc-label">Gebiet</span>
+              <span class="area-teaser-name">{{ area?.name ?? 'Zum Gebiet' }}</span>
+              @if (area?.location) {
+                <span class="muted">{{ area?.location }}</span>
+              }
+              <span class="area-teaser-cta">Sektoren &amp; Routen ansehen →</span>
+            </span>
+          </a>
+
+          @if (isLoggedIn) {
+            <section class="cc-card pinnwand-card">
+              <app-pinnwand
+                [appointmentId]="appointment.id"
+                [isParticipant]="isSubscribed || isCreator" />
+            </section>
+          }
+        </div>
+
+        <!-- ================= Teilnahme ================= -->
+        <aside class="cc-col-side cc-stack">
+
+          <section class="cc-ticket join-ticket" aria-labelledby="join-title">
+            <span id="join-title" class="cc-label">Teilnehmer</span>
+            <p class="count tnum">{{ participantLabel }}</p>
+            @if (appointment.minParticipants && appointment.minParticipants > 1) {
+              <p class="count-hint">mindestens {{ appointment.minParticipants }}</p>
+            }
+            @if (appointment.maxParticipants) {
+              <div class="fill-bar" role="progressbar"
+                   [attr.aria-valuenow]="appointment.participantCount"
+                   aria-valuemin="0"
+                   [attr.aria-valuemax]="appointment.maxParticipants">
+                <span [style.width.%]="fillPercent" [class.full]="isFull"></span>
+              </div>
+            }
+
+            <div class="cc-perf" aria-hidden="true"></div>
+
+            @if (!isLoggedIn) {
+              <a routerLink="/login" class="cc-btn join-btn">Anmelden, um beizutreten</a>
+            } @else if (isSubscribed) {
+              <button type="button" class="cc-btn-glass join-btn" (click)="leave()" [disabled]="actionRunning">
+                {{ actionRunning ? 'Bitte warten...' : 'Austreten' }}
+              </button>
+            } @else if (isPast) {
+              <p class="join-hint">Dieser Termin ist bereits vorbei.</p>
+            } @else if (isFull) {
+              <p class="join-hint">Der Termin ist voll.</p>
+            } @else {
+              <button type="button" class="cc-btn join-btn" (click)="join()" [disabled]="actionRunning">
+                {{ actionRunning ? 'Bitte warten...' : 'Beitreten' }}
+              </button>
+            }
+
+            @if (actionError) {
+              <p class="cc-msg cc-msg-error action-error" role="alert">{{ actionError }}</p>
+            }
+
+            @if (canManage) {
+              <div class="owner-actions">
+                <a class="owner-link" [routerLink]="['/areas', appointment.areaId, 'appointments', appointment.id, 'edit']">Bearbeiten</a>
+                <button type="button" class="owner-link owner-delete" (click)="deleteAppointment()" [disabled]="actionRunning">Löschen</button>
+              </div>
+            }
+          </section>
+
+          <section class="cc-card" aria-labelledby="participants-title">
+            <h2 id="participants-title" class="cc-h3">Wer ist <em>dabei?</em></h2>
+            @if (appointment.participants.length === 0) {
+              <p class="muted empty">Noch niemand – sei die erste Person!</p>
+            } @else {
+              <ul class="participants">
+                @for (p of appointment.participants; track p.userId) {
+                  <li>
+                    <span class="cc-avatar" aria-hidden="true">{{ p.username.charAt(0).toUpperCase() }}</span>
+                    <span class="participant-text">
+                      <a [routerLink]="['/users', p.userId]">{{ p.username }}</a>
+                      @if (p.userId === appointment.createdByUserId) { <span class="cc-chip creator-chip">Ersteller</span> }
+                      @if (p.comment) { <span class="participant-comment">„{{ p.comment }}“</span> }
+                    </span>
+                  </li>
+                }
+              </ul>
+            }
+          </section>
+        </aside>
+
+      </div>
+    </div>
+  }
+
+</section>
