@@ -1,0 +1,123 @@
+/* Routen-Seite (#227). Gemeinsame Bausteine (cc-…) kommen aus src/design.css.
+   Suchfeld und Trefferzeilen sind bewusst wie auf der Gebiets- bzw. Gebietsdetailseite gestaltet. */
+
+.band-content {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  max-width: 900px;
+}
+
+/* ---- Suchfeld in Glas über dem Foto ---- */
+.routes-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  max-width: 760px;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 20px;
+}
+
+.search-box {
+  flex: 1 1 320px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 0 14px;
+  color: var(--cc-accent);
+}
+
+.search-box svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--cc-cream);
+  font: 500 16px var(--cc-sans);
+}
+
+.search-box input::placeholder { color: rgba(245, 241, 232, 0.6); }
+.search-box input:focus { outline: none; }
+
+/* ---- Inhalt ---- */
+.routes-body {
+  padding-top: 72px;
+  padding-bottom: 120px;
+}
+
+.results-section {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.results-box { padding: 8px 24px; }
+
+/* Eine Zeile = ein Treffer, die ganze Zeile ist der Link zur Routendetailseite */
+.result-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 8px;
+  border-bottom: 1px solid var(--cc-line);
+  color: var(--cc-text);
+  text-decoration: none;
+  transition: background-color .2s ease, padding .25s ease;
+}
+
+.result-row:last-child { border-bottom: 0; }
+
+.result-row:hover,
+.result-row:focus-visible {
+  background: #FBF7EE;
+  padding-left: 14px;
+}
+
+.result-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.result-main strong {
+  font-family: var(--cc-serif);
+  font-weight: 400;
+  font-size: 23px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.result-main small {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--cc-soft);
+}
+
+.result-meta {
+  display: flex;
+  gap: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5A544A;
+  white-space: nowrap;
+}
+
+/* ---- Handy ---- */
+@media (max-width: 640px) {
+  .results-box { padding: 4px 12px; }
+  .result-row { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+  .result-meta { display: none; }
+}

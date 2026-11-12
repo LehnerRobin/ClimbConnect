@@ -30,9 +30,9 @@ Das Projekt wird im **Scrum-Prozess** umgesetzt (User Stories mit Akzeptanzkrite
 
 ## 📍 Stand
 
-Die Meilensteine aus [meilensteine.md](docs/meilensteine.md) sind bis auf die Routensuche im Frontend (#227) erfüllt; die App läuft live auf Railway. Aktuell geplant:
+Die Meilensteine aus [meilensteine.md](docs/meilensteine.md) sind erfüllt; die App läuft live auf Railway. Aktuell geplant:
 
-- **Sprint 2:** Impressum & Datenschutz, Konto löschen, Login-Schutz, Routensuche, Verbesserungen bei Terminen
+- **Sprint 2:** Impressum & Datenschutz, Konto löschen, Login-Schutz, Verbesserungen bei Terminen
 - **Sprint 3:** Safety-Reports werden vom Team geprüft, bevor sie als Warnung erscheinen (#224); öffentliche Kommentare werden durch einen Feedback-Knopf ersetzt, den nur das Team sieht (#244); Termin-Kalender
 
 Details und Issue-Nummern: [docs/ROADMAP.md](docs/ROADMAP.md)

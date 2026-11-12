@@ -12,13 +12,18 @@ public static class RouteEndpoints
 {
     public static void MapRouteEndpoints(this IEndpointRouteBuilder app)
     {
-        // Globale Routen-Suche über alle Sektoren
+        // Globale Routen-Suche über alle Sektoren.
+        // Liefert zusätzlich Gebiet (AreaId, AreaName), damit die Suchtreffer im Frontend
+        // ohne weitere Anfragen „Gebiet · Sektor" anzeigen können.
         app.MapGet("/api/routes", async (string? search, string? scale, int? page, int? pageSize, AppDbContext db) =>
         {
             var p  = Math.Max(1, page ?? 1);
             var ps = Math.Clamp(pageSize ?? 20, 1, 100);
 
-            var query = db.Routes.Include(r => r.Sector).AsQueryable();
+            var query = db.Routes
+                .Include(r => r.Sector)
+                .ThenInclude(s => s.Area)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
             {
@@ -39,6 +44,8 @@ public static class RouteEndpoints
             {
                 r.Id, r.SectorId,
                 SectorName = r.Sector.Name,
+                r.Sector.AreaId,
+                AreaName   = r.Sector.Area.Name,
                 r.Name,
                 Grade      = GradeConversionService.Convert(r.Grade, scale ?? "french"),
                 r.LengthMeters, r.Style, r.Description, r.CreatedAtUtc
