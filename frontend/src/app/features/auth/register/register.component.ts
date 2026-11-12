@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
@@ -65,7 +66,7 @@ export class RegisterComponent {
 
     this.authService.register({ username, email, password }).subscribe({
       next: () => this.router.navigate(['/home']),
-      error: (error: any) => {
+      error: (error: HttpErrorResponse) => {
         const message: string | undefined = error.error?.error;
         const field: string | undefined = error.error?.field;
 

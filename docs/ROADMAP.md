@@ -144,7 +144,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 |---|---|---|
 | #203 | Integrationstests für Termine, Kommentare, Reports, Upload, Statistik | 8 |
 | #199 | Refactoring: doppelten Code im Backend zusammenführen | 5 |
-| #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen | 5 |
+| ✅ #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen (kein `any` mehr im Frontend-Code) | 5 |
 | #181 | Favoriten im Backend speichern statt im Browser | 5 |
 | #242 | Laufende Termine hervorheben, auschecken, am Tagesende löschen – besuchte Sessions bleiben im Profil | 8 |
 | #264 | Pinnwand-Beiträge melden, Verlauf 30 Tage für den Admin aufbewahren (nach #245) | 5 |

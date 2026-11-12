@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
@@ -50,7 +51,7 @@ export class LoginComponent {
 
     this.authService.login(email, password).subscribe({
       next: () => this.router.navigate(['/home']),
-      error: (error: any) => {
+      error: (error: HttpErrorResponse) => {
         if (error.status === 401) {
           // Absichtlich keine Unterscheidung „E-Mail unbekannt“ / „Passwort falsch“:
           // sonst könnte man ausprobieren, welche E-Mails registriert sind (User Enumeration)

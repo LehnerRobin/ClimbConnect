@@ -146,6 +146,14 @@
   gap: 18px;
 }
 
+/* Kleiner Hinweis unter Formularfeldern (z. B. woher man Koordinaten bekommt) */
+.form-hint {
+  margin: -4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cc-soft);
+}
+
 .form-actions {
   display: flex;
   flex-wrap: wrap;

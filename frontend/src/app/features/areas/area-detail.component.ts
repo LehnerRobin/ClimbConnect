@@ -2,14 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {
-  Area,
-  AreaComment,
-  Appointment,
-  AreasService,
-  ClimbingRoute,
-  Sector
-} from '../../../services/areas.service';
+import { Appointment, AppointmentDetail, Area, AreaComment, AreasService, ClimbingRoute, Sector } from '../../../services/areas.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
@@ -51,7 +44,7 @@ export class AreaDetailComponent implements OnInit {
   appointmentActionError = '';
 
   expandedAppointmentId: number | null = null;
-  appointmentDetails: { [id: number]: any } = {};
+  appointmentDetails: { [id: number]: AppointmentDetail } = {};
 
   gradeScale = 'french';
 

@@ -14,6 +14,22 @@ interface JwtPayload {
   username?: string;
 }
 
+/** Daten für die Registrierung (POST /api/auth/register). */
+export interface RegisterRequest {
+  username: string;
+  email: string;
+  password: string;
+}
+
+/** Antwort von Login und Registrierung: JWT plus die wichtigsten User-Daten. */
+export interface AuthResponse {
+  token: string;
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,14 +40,14 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(response => this.saveToken(response))
     );
   }
 
-  register(user: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register`, user).pipe(
+  register(user: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, user).pipe(
       tap(response => this.saveToken(response))
     );
   }
@@ -112,7 +128,7 @@ export class AuthService {
     return Number.isFinite(id) ? id : null;
   }
 
-  private saveToken(response: any): void {
+  private saveToken(response: AuthResponse): void {
     if (response?.token) {
       localStorage.setItem(this.tokenKey, response.token);
     }
