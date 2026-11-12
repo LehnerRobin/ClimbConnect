@@ -1,7 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AdminService } from '../../services/admin.service';
+import { AdminReport, AdminService, AreaSaveRequest, RouteSaveRequest, SectorSaveRequest } from '../../services/admin.service';
+import { Area, AreasService, ClimbingRoute, Sector } from '../../services/areas.service';
 import { Grade, GradeService, gradeLabel } from '../../services/grade.service';
 import { ActivatedRoute } from '@angular/router';
 import { CaseListComponent } from './moderation/case-list.component';
@@ -19,6 +20,7 @@ type AdminTab = 'areas' | 'sectors' | 'routes' | 'reports' | 'moderation';
 export class AdminComponent implements OnInit {
 
   private adminService = inject(AdminService);
+  private areasService = inject(AreasService);
   private gradeService = inject(GradeService);
   private route = inject(ActivatedRoute);
 
@@ -29,25 +31,25 @@ export class AdminComponent implements OnInit {
   activeTab: AdminTab = 'areas';
 
   // ── Gebiete ────────────────────────────────────────────────────────────────
-  areas: any[] = [];
+  areas: Area[] = [];
   showAreaForm = false;
-  editingArea: any = null;
+  editingArea: Area | null = null;
   areaForm = { name: '', location: '', description: '', imageUrl: '' };
 
   // ── Sektoren ───────────────────────────────────────────────────────────────
-  selectedAreaForSectors: any = null;
-  sectors: any[] = [];
+  selectedAreaForSectors: Area | null = null;
+  sectors: Sector[] = [];
   showSectorForm = false;
-  editingSector: any = null;
+  editingSector: Sector | null = null;
   sectorForm = { name: '', description: '' };
 
   // ── Routen ─────────────────────────────────────────────────────────────────
-  selectedAreaForRoutes: any = null;
-  sectorsForRoutes: any[] = [];
-  selectedSectorForRoutes: any = null;
-  routes: any[] = [];
+  selectedAreaForRoutes: Area | null = null;
+  sectorsForRoutes: Sector[] = [];
+  selectedSectorForRoutes: Sector | null = null;
+  routes: ClimbingRoute[] = [];
   showRouteForm = false;
-  editingRoute: any = null;
+  editingRoute: ClimbingRoute | null = null;
   routeForm = { name: '', grade: '', style: '', lengthMeters: null as number | null, description: '' };
 
   errorMsg = '';
@@ -78,7 +80,7 @@ export class AdminComponent implements OnInit {
   // ── Gebiete ────────────────────────────────────────────────────────────────
 
   loadAreas(): void {
-    this.adminService.getAreas().subscribe({
+    this.areasService.getAreas().subscribe({
       next: (data) => { this.areas = data; },
       error: () => { this.errorMsg = 'Gebiete konnten nicht geladen werden.'; }
     });
@@ -90,7 +92,7 @@ export class AdminComponent implements OnInit {
     this.showAreaForm = true;
   }
 
-  startEditArea(area: any): void {
+  startEditArea(area: Area): void {
     this.editingArea = area;
     this.areaForm = {
       name: area.name ?? '',
@@ -105,7 +107,7 @@ export class AdminComponent implements OnInit {
     if (!this.areaForm.name.trim()) { this.errorMsg = 'Name ist erforderlich.'; return; }
     this.clearMessages();
 
-    const payload = {
+    const payload: AreaSaveRequest = {
       name:        this.areaForm.name.trim(),
       location:    this.areaForm.location.trim() || null,
       description: this.areaForm.description.trim() || null,
@@ -126,7 +128,7 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  deleteArea(area: any): void {
+  deleteArea(area: Area): void {
     if (!confirm(`Gebiet "${area.name}" wirklich löschen? Alle zugehörigen Sektoren und Routen werden ebenfalls gelöscht.`)) return;
     this.adminService.deleteArea(area.id).subscribe({
       next: () => { this.successMsg = 'Gebiet gelöscht.'; this.loadAreas(); },
@@ -136,12 +138,14 @@ export class AdminComponent implements OnInit {
 
   // ── Sektoren ───────────────────────────────────────────────────────────────
 
-  selectAreaForSectors(area: any): void {
-    this.selectedAreaForSectors = area;
+  /** Wird auch mit undefined aufgerufen, wenn im Auswahlfeld „— Gebiet wählen —" gewählt wird. */
+  selectAreaForSectors(area: Area | undefined): void {
+    this.selectedAreaForSectors = area ?? null;
     this.showSectorForm = false;
     this.editingSector = null;
     this.clearMessages();
-    this.adminService.getSectorsByArea(area.id).subscribe({
+    if (!area) { this.sectors = []; return; }
+    this.areasService.getSectorsByArea(area.id).subscribe({
       next: (data) => { this.sectors = data; },
       error: () => { this.errorMsg = 'Sektoren konnten nicht geladen werden.'; }
     });
@@ -153,7 +157,7 @@ export class AdminComponent implements OnInit {
     this.showSectorForm = true;
   }
 
-  startEditSector(sector: any): void {
+  startEditSector(sector: Sector): void {
     this.editingSector = sector;
     this.sectorForm = { name: sector.name ?? '', description: sector.description ?? '' };
     this.showSectorForm = true;
@@ -161,33 +165,36 @@ export class AdminComponent implements OnInit {
 
   saveSector(): void {
     if (!this.sectorForm.name.trim()) { this.errorMsg = 'Name ist erforderlich.'; return; }
+    const area = this.selectedAreaForSectors;
+    if (!area) return;
     this.clearMessages();
 
-    const payload = {
+    const payload: SectorSaveRequest = {
       name:        this.sectorForm.name.trim(),
       description: this.sectorForm.description.trim() || null
     };
 
     const req = this.editingSector
       ? this.adminService.updateSector(this.editingSector.id, payload)
-      : this.adminService.createSector(this.selectedAreaForSectors.id, payload);
+      : this.adminService.createSector(area.id, payload);
 
     req.subscribe({
       next: () => {
         this.successMsg = this.editingSector ? 'Sektor aktualisiert.' : 'Sektor erstellt.';
         this.showSectorForm = false;
-        this.selectAreaForSectors(this.selectedAreaForSectors);
+        this.selectAreaForSectors(area);
       },
       error: (err) => { this.errorMsg = err?.error?.error ?? 'Fehler beim Speichern.'; }
     });
   }
 
-  deleteSector(sector: any): void {
+  deleteSector(sector: Sector): void {
     if (!confirm(`Sektor "${sector.name}" wirklich löschen? Alle zugehörigen Routen werden ebenfalls gelöscht.`)) return;
+    const area = this.selectedAreaForSectors;
     this.adminService.deleteSector(sector.id).subscribe({
       next: () => {
         this.successMsg = 'Sektor gelöscht.';
-        this.selectAreaForSectors(this.selectedAreaForSectors);
+        this.selectAreaForSectors(area ?? undefined);
       },
       error: (err) => { this.errorMsg = err?.error?.error ?? 'Fehler beim Löschen.'; }
     });
@@ -195,24 +202,32 @@ export class AdminComponent implements OnInit {
 
   // ── Routen ─────────────────────────────────────────────────────────────────
 
-  selectAreaForRoutes(area: any): void {
-    this.selectedAreaForRoutes = area;
+  /** Wird auch mit undefined aufgerufen, wenn im Auswahlfeld „— Gebiet wählen —" gewählt wird. */
+  selectAreaForRoutes(area: Area | undefined): void {
+    this.selectedAreaForRoutes = area ?? null;
     this.selectedSectorForRoutes = null;
+    this.sectorsForRoutes = [];
     this.routes = [];
     this.showRouteForm = false;
     this.clearMessages();
-    this.adminService.getSectorsByArea(area.id).subscribe({
+    if (!area) return;
+    this.areasService.getSectorsByArea(area.id).subscribe({
       next: (data) => { this.sectorsForRoutes = data; },
       error: () => { this.errorMsg = 'Sektoren konnten nicht geladen werden.'; }
     });
   }
 
-  selectSectorForRoutes(sector: any): void {
-    this.selectedSectorForRoutes = sector;
+  /**
+   * Wird auch mit undefined aufgerufen, wenn „— Sektor wählen —" gewählt wird.
+   * Routen immer in französischer Skala laden: So wird der Grad gespeichert und geprüft.
+   */
+  selectSectorForRoutes(sector: Sector | undefined): void {
+    this.selectedSectorForRoutes = sector ?? null;
     this.showRouteForm = false;
     this.editingRoute = null;
     this.clearMessages();
-    this.adminService.getRoutesBySector(sector.id).subscribe({
+    if (!sector) { this.routes = []; return; }
+    this.areasService.getRoutesBySector(sector.id, 'french').subscribe({
       next: (data) => { this.routes = data; },
       error: () => { this.errorMsg = 'Routen konnten nicht geladen werden.'; }
     });
@@ -224,7 +239,7 @@ export class AdminComponent implements OnInit {
     this.showRouteForm = true;
   }
 
-  startEditRoute(route: any): void {
+  startEditRoute(route: ClimbingRoute): void {
     this.editingRoute = route;
     this.routeForm = {
       name:         route.name ?? '',
@@ -239,9 +254,11 @@ export class AdminComponent implements OnInit {
   saveRoute(): void {
     if (!this.routeForm.name.trim()) { this.errorMsg = 'Name ist erforderlich.'; return; }
     if (!this.routeForm.grade.trim()) { this.errorMsg = 'Bitte einen Grad auswählen.'; return; }
+    const sector = this.selectedSectorForRoutes;
+    if (!sector) return;
     this.clearMessages();
 
-    const payload = {
+    const payload: RouteSaveRequest = {
       name:         this.routeForm.name.trim(),
       grade:        this.routeForm.grade.trim().toLowerCase(),
       style:        this.routeForm.style.trim() || null,
@@ -251,24 +268,25 @@ export class AdminComponent implements OnInit {
 
     const req = this.editingRoute
       ? this.adminService.updateRoute(this.editingRoute.id, payload)
-      : this.adminService.createRoute(this.selectedSectorForRoutes.id, payload);
+      : this.adminService.createRoute(sector.id, payload);
 
     req.subscribe({
       next: () => {
         this.successMsg = this.editingRoute ? 'Route aktualisiert.' : 'Route erstellt.';
         this.showRouteForm = false;
-        this.selectSectorForRoutes(this.selectedSectorForRoutes);
+        this.selectSectorForRoutes(sector);
       },
       error: (err) => { this.errorMsg = err?.error?.error ?? 'Fehler beim Speichern.'; }
     });
   }
 
-  deleteRoute(route: any): void {
+  deleteRoute(route: ClimbingRoute): void {
     if (!confirm(`Route "${route.name}" wirklich löschen?`)) return;
+    const sector = this.selectedSectorForRoutes;
     this.adminService.deleteRoute(route.id).subscribe({
       next: () => {
         this.successMsg = 'Route gelöscht.';
-        this.selectSectorForRoutes(this.selectedSectorForRoutes);
+        this.selectSectorForRoutes(sector ?? undefined);
       },
       error: (err) => { this.errorMsg = err?.error?.error ?? 'Fehler beim Löschen.'; }
     });
@@ -276,7 +294,7 @@ export class AdminComponent implements OnInit {
 
   // ── Reports ────────────────────────────────────────────────────────────────
 
-  reports: any[] = [];
+  reports: AdminReport[] = [];
   showResolvedReports = false;
 
   loadReports(): void {
@@ -287,7 +305,7 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  resolveReport(report: any): void {
+  resolveReport(report: AdminReport): void {
     this.clearMessages();
     this.adminService.resolveReport(report.id).subscribe({
       next: () => {
@@ -298,7 +316,7 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  get visibleReports(): any[] {
+  get visibleReports(): AdminReport[] {
     return this.showResolvedReports
       ? this.reports
       : this.reports.filter(r => r.status !== 'Resolved');
