@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { EveningLightComponent } from './evening-light.component';
 import { HomeCommunityComponent } from './home-community.component';
+import { areaImage, showAreaFallbackPhoto } from '../../shared/design-utils';
 
 interface HomeAppointment extends Appointment {
   areaId: number;
@@ -40,12 +41,9 @@ export class HomePageComponent implements OnInit {
 
   username: string | null = null;
 
-  /** Fotos, die verwendet werden, wenn ein Gebiet kein eigenes Bild hat (nach Position in der Liste). */
-  private readonly fallbackAreaPhotos = [
-    '/assets/home/gebiet-grat.jpg',
-    '/assets/home/gebiet-fels-wald.jpg',
-    '/assets/home/gebiet-schlucht.jpg'
-  ];
+  /** Gemeinsame Bild-Helfer aus design-utils, damit das Template sie aufrufen kann. */
+  readonly areaImage = areaImage;
+  readonly showAreaFallbackPhoto = showAreaFallbackPhoto;
 
   ngOnInit(): void {
     this.username = this.authService.getUsername();
@@ -153,22 +151,5 @@ export class HomePageComponent implements OnInit {
         return (b.createdAtUtc ?? '').localeCompare(a.createdAtUtc ?? '');
       })
       .slice(0, 3);
-  }
-
-  /** Gibt das echte Bild des Gebiets zurück oder ein passendes Kletterfoto als Ersatz. */
-  getAreaImage(area: { id: number; imageUrl?: string | null }, position: number): string {
-    return area.imageUrl || this.fallbackAreaPhoto(position);
-  }
-
-  /** Ersatzfoto, wenn imageUrl nicht geladen werden kann. */
-  onImageError(event: Event, position: number): void {
-    const img = event.target as HTMLImageElement;
-    // Verhindern, dass der Fehler-Handler sich selbst erneut aufruft
-    img.onerror = null;
-    img.src = this.fallbackAreaPhoto(position);
-  }
-
-  private fallbackAreaPhoto(position: number): string {
-    return this.fallbackAreaPhotos[position % this.fallbackAreaPhotos.length];
   }
 }

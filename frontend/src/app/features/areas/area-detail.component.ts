@@ -14,7 +14,7 @@ import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
 import { PageBandComponent } from '../../shared/page-band.component';
-import { areaFallbackPhoto, gradeClass } from '../../shared/design-utils';
+import { areaImage, gradeClass } from '../../shared/design-utils';
 
 interface SectorWithRoutes extends Sector {
   expanded: boolean;
@@ -35,6 +35,9 @@ export class AreaDetailComponent implements OnInit {
   private areasService = inject(AreasService);
   private authService = inject(AuthService);
   private userService = inject(UserService);
+
+  /** Gemeinsamer Bild-Helfer aus design-utils, damit das Template ihn aufrufen kann. */
+  readonly areaImage = areaImage;
 
   area?: Area;
   sectors: SectorWithRoutes[] = [];
@@ -283,11 +286,6 @@ export class AreaDetailComponent implements OnInit {
         this.commentSending = false;
       }
     });
-  }
-
-  /** Gibt das echte Bild zurück oder ein Kletterfoto als Ersatz. */
-  getAreaImage(area: { id: number; imageUrl?: string | null }): string {
-    return area.imageUrl || areaFallbackPhoto(area.id);
   }
 
   /** Farbe des Grad-Kreises (siehe design-utils). */

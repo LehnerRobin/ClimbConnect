@@ -6,7 +6,7 @@ import { Area, AreasService } from '../../../services/areas.service';
 import { FavoritesService } from '../../../services/favorites.service';
 import { AreaMapComponent } from './area-map.component';
 import { PageBandComponent } from '../../shared/page-band.component';
-import { areaFallbackPhoto } from '../../shared/design-utils';
+import { areaImage, showAreaFallbackPhoto } from '../../shared/design-utils';
 
 @Component({
   selector: 'app-areas-page',
@@ -19,6 +19,10 @@ export class AreasPageComponent implements OnInit {
 
   private areasService = inject(AreasService);
   favoritesService = inject(FavoritesService);
+
+  /** Gemeinsame Bild-Helfer aus design-utils, damit das Template sie aufrufen kann. */
+  readonly areaImage = areaImage;
+  readonly showAreaFallbackPhoto = showAreaFallbackPhoto;
 
   showOnlyFavorites = false;
 
@@ -87,19 +91,6 @@ export class AreasPageComponent implements OnInit {
 
   getInitial(area: Area): string {
     return area.name?.trim().charAt(0).toUpperCase() || '?';
-  }
-
-  /** Gibt das echte Bild zurück oder ein Kletterfoto als Ersatz. */
-  getAreaImage(area: Area): string {
-    return area.imageUrl || areaFallbackPhoto(area.id);
-  }
-
-  /** Ersatzfoto, wenn imageUrl nicht geladen werden kann. */
-  onImageError(event: Event, area: { id: number }): void {
-    const img = event.target as HTMLImageElement;
-    // Verhindern, dass der Fehler-Handler sich selbst erneut aufruft
-    img.onerror = null;
-    img.src = areaFallbackPhoto(area.id);
   }
 
   /** Formatiert 1 → "01" für die großen Nummern auf den Fotos. */
