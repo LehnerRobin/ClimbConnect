@@ -388,3 +388,19 @@
   .route-row { grid-template-columns: 32px minmax(0, 1fr) auto; gap: 12px; }
   .route-length { display: none; }
 }
+
+/* Link vom Termin-Ticket zur eigenen Termin-Seite */
+.appointment-page-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--cc-accent);
+  text-underline-offset: 4px;
+}
+
+.appointment-page-link:hover { color: var(--cc-cream); }
+
+/* Sprung von der Termin-Seite: Abstand zur fixen Navigation lassen */
+#sektoren { scroll-margin-top: 100px; }
