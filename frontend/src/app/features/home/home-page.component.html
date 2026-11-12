@@ -71,7 +71,9 @@
               <h2 id="session-title" class="ticket-title ticket-title-small">Wird geladen…</h2>
               <p class="ticket-text">Wir suchen gerade aktuelle Klettertermine.</p>
             } @else if (nextAppointment; as appointment) {
-              <h2 id="session-title" class="ticket-title">{{ appointment.title }}</h2>
+              <h2 id="session-title" class="ticket-title">
+                <a class="ticket-title-link" [routerLink]="['/appointments', appointment.id]">{{ appointment.title }}</a>
+              </h2>
               <p class="ticket-text">
                 {{ appointment.areaName }}
                 @if (appointment.areaLocation) {
@@ -96,7 +98,7 @@
                   <span class="ticket-stub-label">Uhrzeit</span>
                   <span class="ticket-stub-value ticket-stub-accent">{{ appointment.date | date:'HH:mm' }}</span>
                 </div>
-                <a class="ticket-link" [routerLink]="['/areas', appointment.areaId]">Zum Gebiet →</a>
+                <a class="ticket-link" [routerLink]="['/appointments', appointment.id]">Zur Session →</a>
               </div>
             }
           }
@@ -232,7 +234,7 @@
           <ol class="session-list">
             @for (appointment of upcomingAppointments; track appointment.id) {
               <li>
-                <a class="session-row" [routerLink]="['/areas', appointment.areaId]">
+                <a class="session-row" [routerLink]="['/appointments', appointment.id]">
                   <span class="session-day">{{ appointment.date | date:'dd.MM.' }}</span>
                   <span class="session-info">
                     <span class="session-name">{{ appointment.title }}</span>
