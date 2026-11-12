@@ -1,16 +1,20 @@
 <div class="admin-page">
 
-  <div class="admin-header">
-    <p class="eyebrow">ClimbConnect · Verwaltung</p>
-    <h1>Admin-Bereich</h1>
-    <p>Gebiete, Sektoren, Routen und Meldungen verwalten</p>
-  </div>
+  <app-page-band image="/assets/home/gebiet-schlucht.jpg" position="center 35%">
+    <div class="band-copy">
+      <p class="cc-eyebrow">ClimbConnect · Verwaltung</p>
+      <h1 class="cc-h1">Admin-<em>Bereich</em></h1>
+      <p class="cc-lead">Gebiete, Sektoren, Routen und Meldungen verwalten</p>
+    </div>
+  </app-page-band>
+
+  <div class="cc-wrap admin-body">
 
   @if (successMsg) { <p class="msg-success">{{ successMsg }}</p> }
   @if (errorMsg)   { <p class="msg-error">{{ errorMsg }}</p> }
 
   <!-- Tabs -->
-  <div class="tabs">
+  <div class="tabs cc-tabs" role="tablist">
     <button [class.active]="activeTab === 'areas'"   (click)="setTab('areas')">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20 L9 9 L12.5 14.5 L16 7 L21 20Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
       Gebiete
@@ -367,5 +371,7 @@
       <app-case-list />
     </section>
   }
+
+  </div>
 
 </div>

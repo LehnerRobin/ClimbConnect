@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
+import { PageBandComponent } from '../../../shared/page-band.component';
 
 /** Einfache Prüfung auf das Format name@domain.tld */
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -8,7 +9,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, PageBandComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })

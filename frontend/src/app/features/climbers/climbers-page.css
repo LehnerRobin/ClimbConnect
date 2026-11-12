@@ -1,146 +1,103 @@
-.climbers-page {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 32px 16px 64px;
-}
+/* Kletterer-Seite im neuen Design: Mitglieder als Polaroids. */
 
-.page-header {
-  margin-bottom: 24px;
-}
-
-.page-header h1 {
-  font-size: clamp(1.9rem, 4vw, 2.4rem);
-}
-
-.page-header p {
-  margin: 8px 0 0;
-  color: var(--ink-500);
+.band-content {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  max-width: 860px;
 }
 
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 24px;
-  padding: 0 16px;
-  border: 1px solid var(--paper-200);
-  border-radius: var(--radius-lg);
-  background: var(--paper-0);
-  box-shadow: var(--shadow-sm);
+  gap: 12px;
+  max-width: 620px;
+  padding: 6px 18px;
+  border-radius: 20px;
+  color: var(--cc-accent);
 }
 
 .search-bar svg {
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
   flex: none;
-  color: var(--ink-400);
 }
 
 .search-input {
-  width: 100%;
-  min-height: 50px;
-  border: none;
-  outline: none;
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  border: 0;
   background: transparent;
-  color: var(--ink-950);
-  font-size: 15px;
-  font: inherit;
+  color: var(--cc-cream);
+  font: 500 16px var(--cc-sans);
 }
 
-.search-input::placeholder {
-  color: var(--ink-400);
-}
+.search-input::placeholder { color: rgba(245, 241, 232, 0.6); }
+.search-input:focus { outline: none; }
 
-.state-box {
-  padding: 40px;
-  text-align: center;
-  border: 1px solid var(--paper-200);
-  border-radius: var(--radius-xl);
-  background: var(--paper-0);
-  box-shadow: var(--shadow-sm);
-}
-
-.state-box .spinner {
-  margin: 0 auto 14px;
-}
-
-.error-state {
-  border-color: rgba(161, 64, 45, 0.25);
-  background: var(--brick-100);
-}
-
-.loading-msg { margin: 0; color: var(--ink-500); }
-.error-msg   { margin: 0; color: var(--brick-600); font-weight: 600; }
-.empty-hint  { margin: 0; color: var(--ink-400); font-style: italic; }
+.list-head { margin-bottom: 56px; }
 
 .user-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+  gap: 48px 36px;
+}
+
+/* Jede Karte ist ein Polaroid, Farbe und Neigung wechseln reihum */
+.user-card {
+  --c: #E9A04B;
+  --r: -3deg;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;
+  padding: 14px 14px 22px;
+  background: #FFFFFF;
+  box-shadow: 0 18px 36px rgba(28, 26, 22, 0.14);
+  color: var(--cc-text);
+  text-decoration: none;
+  transform: rotate(var(--r));
+  transition: transform .5s cubic-bezier(.2, .7, .2, 1), box-shadow .5s ease;
 }
 
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid var(--paper-200);
-  border-radius: var(--radius-lg);
-  background: var(--paper-0);
-  color: inherit;
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-}
+.user-card:nth-child(4n + 2) { --c: #2A7F86; --r: 2deg; }
+.user-card:nth-child(4n + 3) { --c: #A8431B; --r: -1.5deg; }
+.user-card:nth-child(4n + 4) { --c: #4F8A5B; --r: 2.5deg; }
 
 .user-card:hover {
-  border-color: var(--amber-500);
-  transform: translateX(4px);
-  box-shadow: var(--shadow-md);
+  transform: rotate(0deg) translateY(-8px);
+  box-shadow: 0 30px 50px rgba(28, 26, 22, 0.22);
 }
 
 .user-avatar {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--ink-950);
-  color: var(--amber-500);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 1.05rem;
+  width: 100%;
+  height: 240px;
+  background: var(--c);
+  font-family: var(--cc-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 150px;
+  color: #FFFDF8;
 }
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
+.user-card strong {
+  margin-top: 18px;
+  font-family: var(--cc-serif);
+  font-weight: 400;
+  font-size: 30px;
+  text-align: center;
+  overflow-wrap: anywhere;
 }
 
-.user-info strong {
-  color: var(--ink-950);
-  font-size: 15.5px;
-}
-
-.user-info small {
-  margin-top: 2px;
-  color: var(--ink-500);
-  font-size: 13px;
+.user-card small {
+  font-size: 14px;
+  color: var(--cc-soft);
+  text-align: center;
 }
 
 .profile-link {
-  flex: none;
-  color: var(--amber-600);
-  font-weight: 700;
-  font-size: 13.5px;
-  white-space: nowrap;
-}
-
-@media (max-width: 480px) {
-  .profile-link {
-    display: none;
-  }
+  margin-top: 10px;
+  font-size: 24px;
 }

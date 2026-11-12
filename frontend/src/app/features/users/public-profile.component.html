@@ -1,47 +1,58 @@
 <section class="public-profile-page">
 
-  @if (loading) {
-    <div class="state-box">
-      <div class="spinner"></div>
-      <p class="loading-msg">Profil wird geladen...</p>
-    </div>
-  }
+  <app-page-band image="/assets/home/gebiet-grat.jpg" position="66% center">
+    <a routerLink="/climbers" class="cc-back">← Alle Kletterer</a>
 
-  @if (errorMessage) {
-    <div class="state-box error-state">
-      <p class="error-msg">{{ errorMessage }}</p>
-    </div>
-  }
+    @if (loading) {
+      <div class="band-state">
+        <div class="spinner"></div>
+        <p class="cc-lead">Profil wird geladen...</p>
+      </div>
+    }
+
+    @if (errorMessage) {
+      <div class="band-state">
+        <h1 class="cc-h1">Profil nicht <em>gefunden</em></h1>
+        <p class="cc-lead">{{ errorMessage }}</p>
+      </div>
+    }
+
+    @if (!loading && profile) {
+      <div class="band-head">
+        <span class="band-avatar" aria-hidden="true">{{ profile.username.charAt(0) }}</span>
+        <div class="band-copy">
+          <p class="cc-eyebrow">ClimbConnect-Profil</p>
+          <h1 class="cc-h1">{{ profile.username }}</h1>
+          <p class="cc-lead">Mitglied seit {{ profile.memberSince }}</p>
+        </div>
+      </div>
+    }
+  </app-page-band>
 
   @if (!loading && profile) {
-    <div class="profile-header">
-      <div class="profile-avatar">{{ profile.username.charAt(0).toUpperCase() }}</div>
-      <div>
-        <p class="eyebrow">ClimbConnect-Profil</p>
-        <h1>{{ profile.username }}</h1>
-        <p class="member-since">Mitglied seit {{ profile.memberSince }}</p>
+    <div class="cc-wrap cc-main ascents">
+      <div class="cc-section-head cc-section-head-ruled">
+        <div>
+          <p class="cc-eyebrow">Tourenbuch</p>
+          <h2 class="cc-h2">Letzte <em>Begehungen</em></h2>
+        </div>
+        <span class="cc-chip tnum">{{ profile.recentAscents.length }} Einträge</span>
       </div>
-    </div>
-
-    <div class="ascents-card">
-      <h2>Letzte Begehungen</h2>
 
       @if (profile.recentAscents.length === 0) {
-        <p class="empty-hint">Noch keine Begehungen eingetragen.</p>
+        <p class="cc-small empty">Noch keine Begehungen eingetragen.</p>
       }
 
       @for (ascent of profile.recentAscents; track $index) {
-        <div class="ascent-item">
+        <article class="ascent-item">
+          <span [class]="gradeClass(ascent.grade)">{{ ascent.grade }}</span>
           <div class="ascent-main">
             <span class="ascent-route">{{ ascent.routeName }}</span>
-            <span class="ascent-grade">{{ ascent.grade }}</span>
+            <span class="ascent-area">{{ ascent.area }}</span>
           </div>
-          <div class="ascent-meta">
-            <span>{{ ascent.area }}</span>
-            <span class="status-badge" [class]="statusClass(ascent.status)">{{ statusLabel(ascent.status) }}</span>
-            <span>{{ ascent.date | date:'dd.MM.yyyy' }}</span>
-          </div>
-        </div>
+          <span [class]="statusClass(ascent.status)">{{ statusLabel(ascent.status) }}</span>
+          <span class="ascent-date">{{ ascent.date | date:'dd.MM.yyyy' }}</span>
+        </article>
       }
     </div>
   }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../services/auth.service';
+import { PageBandComponent } from '../../../shared/page-band.component';
 
 /** Einfache Prüfung auf das Format name@domain.tld */
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,7 +17,7 @@ interface FieldErrors {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, PageBandComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })

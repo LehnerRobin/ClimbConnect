@@ -1,147 +1,149 @@
-<div class="admin-page case-page">
+<div class="case-page">
 
-  <a class="back-link" [routerLink]="['/admin']" [queryParams]="{ tab: 'moderation' }">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    Zurück zu den Meldungen
-  </a>
+  <app-page-band image="/assets/home/gebiet-schlucht.jpg" position="center 35%">
+    <a class="cc-back" [routerLink]="['/admin']" [queryParams]="{ tab: 'moderation' }">← Zurück zu den Meldungen</a>
 
-  @if (loading) {
-    <p class="empty-hint">Lädt…</p>
-  } @else if (error) {
-    <p class="msg-error">{{ error }}</p>
-  } @else if (caseData) {
-
-    <header class="case-header">
-      <div>
-        <p class="eyebrow">Fall #{{ caseData.id }} · Pinnwand-Meldung</p>
-        <h1>
-          {{ caseData.appointmentTitle }}
+    @if (loading) {
+      <p class="cc-lead band-state">Lädt…</p>
+    } @else if (error) {
+      <p class="cc-msg cc-msg-error band-state">{{ error }}</p>
+    } @else if (caseData) {
+      <header class="band-head">
+        <div class="band-copy">
+          <p class="cc-eyebrow">Fall #{{ caseData.id }} · Pinnwand-Meldung</p>
+          <h1 class="cc-h1">{{ caseData.appointmentTitle }}</h1>
           @if (caseData.appointmentDeleted) {
-            <span class="tag tag-muted">Termin gelöscht</span>
+            <span class="tag tag-muted band-tag">Termin gelöscht</span>
           }
-        </h1>
-        <p class="case-sub">
-          {{ caseData.areaName ?? 'Unbekanntes Gebiet' }}
-          @if (caseData.appointmentDate) {
-            · {{ caseData.appointmentDate | date:'dd.MM.yyyy, HH:mm' }} Uhr
-          }
-        </p>
-      </div>
-
-      <div class="case-header-actions">
-        <button type="button" class="btn btn-resolve-case" (click)="resolve()" [disabled]="resolving">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          {{ resolving ? 'Wird erledigt…' : 'Fall erledigen' }}
-        </button>
-        <small>Löscht den Fall endgültig</small>
-      </div>
-    </header>
-
-    @if (resolveError) { <p class="msg-error">{{ resolveError }}</p> }
-
-    <div class="case-overview">
-      <dl class="case-stats wide">
-        <div>
-          <dt>Meldungen</dt>
-          <dd class="stat-alert">{{ caseData.reportCount }}</dd>
-        </div>
-        <div>
-          <dt>Gemeldete Beiträge</dt>
-          <dd>{{ caseData.reportedPostCount }} / {{ caseData.postCount }}</dd>
-        </div>
-        <div>
-          <dt>Fall erstellt</dt>
-          <dd>{{ caseData.createdAtUtc | date:'dd.MM.yyyy, HH:mm' }}</dd>
-        </div>
-        <div>
-          <dt>Letzte Meldung</dt>
-          <dd>{{ caseData.lastReportAtUtc | date:'dd.MM.yyyy, HH:mm' }}</dd>
-        </div>
-        <div>
-          <dt>Auto-Löschung</dt>
-          <dd [class.stat-alert]="daysUntil(caseData.deleteAfterUtc) <= 5">
-            in {{ daysUntil(caseData.deleteAfterUtc) }} Tagen
-            <small>({{ caseData.deleteAfterUtc | date:'dd.MM.yyyy' }})</small>
-          </dd>
-        </div>
-      </dl>
-
-      <div class="case-chips">
-        @if (reasonSummary.length) {
-          <div class="chip-group">
-            <span class="chip-label">Gründe</span>
-            @for (r of reasonSummary; track r.label) {
-              <span class="tag tag-alert">{{ r.label }} · {{ r.count }}</span>
+          <p class="cc-lead">
+            {{ caseData.areaName ?? 'Unbekanntes Gebiet' }}
+            @if (caseData.appointmentDate) {
+              · {{ caseData.appointmentDate | date:'dd.MM.yyyy, HH:mm' }} Uhr
             }
-          </div>
-        }
-        @if (reportedAuthors.length) {
-          <div class="chip-group">
-            <span class="chip-label">Gemeldete Verfasser</span>
-            @for (name of reportedAuthors; track name) {
-              <span class="tag">{{ name }}</span>
-            }
-          </div>
-        }
-      </div>
-    </div>
-
-    <section class="timeline-section">
-      <div class="section-header">
-        <div>
-          <h2>Pinnwand-Verlauf</h2>
-          <p class="section-sub">Gespeicherte Kopie – bleibt erhalten, auch wenn Beiträge oder der Termin gelöscht werden.</p>
+          </p>
         </div>
-        <label class="toggle-label">
-          <input type="checkbox" [(ngModel)]="onlyReported">
-          Nur gemeldete Beiträge
-        </label>
-      </div>
 
-      <ol class="timeline">
-        @for (post of visiblePosts; track post.id) {
-          <li class="timeline-post" [class.reported]="post.reports.length > 0">
-            <div class="timeline-dot" aria-hidden="true"></div>
+        <div class="case-header-actions">
+          <button type="button" class="cc-btn" (click)="resolve()" [disabled]="resolving">
+            <svg viewBox="0 0 24 24" aria-hidden="true" width="18" height="18"><path d="m5 13 4 4L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {{ resolving ? 'Wird erledigt…' : 'Fall erledigen' }}
+          </button>
+          <small>Löscht den Fall endgültig</small>
+        </div>
+      </header>
+    }
+  </app-page-band>
 
-            <div class="timeline-body">
-              <div class="post-meta">
-                <strong>{{ post.authorUsername }}</strong>
-                <time [attr.datetime]="post.createdAtUtc">{{ post.createdAtUtc | date:'dd.MM.yyyy, HH:mm' }}</time>
-                @if (post.reports.length > 0) {
-                  <span class="tag tag-alert">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    {{ post.reports.length }}× gemeldet
-                  </span>
-                }
-                @if (post.deletedByAuthor) {
-                  <span class="tag tag-muted" title="Der Verfasser hat das Original auf der Pinnwand gelöscht">Vom Verfasser gelöscht</span>
-                }
-              </div>
+  @if (!loading && !error && caseData) {
+    <div class="cc-wrap cc-main case-body">
 
-              <p class="post-text">{{ post.text }}</p>
+      @if (resolveError) { <p class="msg-error">{{ resolveError }}</p> }
 
-              @if (post.reports.length > 0) {
-                <ul class="report-list">
-                  @for (r of post.reports; track r.id) {
-                    <li>
-                      <div class="report-line">
-                        <span class="report-reason">{{ reasonLabel(r.reason) }}</span>
-                        <span>gemeldet von <strong>{{ r.reporterUsername }}</strong></span>
-                        <time>{{ r.createdAtUtc | date:'dd.MM., HH:mm' }}</time>
-                      </div>
-                      @if (r.comment) {
-                        <p class="report-comment">„{{ r.comment }}“</p>
-                      }
-                    </li>
-                  }
-                </ul>
+      <div class="case-overview">
+        <dl class="case-stats wide">
+          <div>
+            <dt>Meldungen</dt>
+            <dd class="stat-alert">{{ caseData.reportCount }}</dd>
+          </div>
+          <div>
+            <dt>Gemeldete Beiträge</dt>
+            <dd>{{ caseData.reportedPostCount }} / {{ caseData.postCount }}</dd>
+          </div>
+          <div>
+            <dt>Fall erstellt</dt>
+            <dd>{{ caseData.createdAtUtc | date:'dd.MM.yyyy, HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Letzte Meldung</dt>
+            <dd>{{ caseData.lastReportAtUtc | date:'dd.MM.yyyy, HH:mm' }}</dd>
+          </div>
+          <div>
+            <dt>Auto-Löschung</dt>
+            <dd [class.stat-alert]="daysUntil(caseData.deleteAfterUtc) <= 5">
+              in {{ daysUntil(caseData.deleteAfterUtc) }} Tagen
+              <small>({{ caseData.deleteAfterUtc | date:'dd.MM.yyyy' }})</small>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="case-chips">
+          @if (reasonSummary.length) {
+            <div class="chip-group">
+              <span class="chip-label">Gründe</span>
+              @for (r of reasonSummary; track r.label) {
+                <span class="tag tag-alert">{{ r.label }} · {{ r.count }}</span>
               }
             </div>
-          </li>
-        } @empty {
-          <li class="empty-hint">Keine Beiträge in dieser Ansicht.</li>
-        }
-      </ol>
-    </section>
+          }
+          @if (reportedAuthors.length) {
+            <div class="chip-group">
+              <span class="chip-label">Gemeldete Verfasser</span>
+              @for (name of reportedAuthors; track name) {
+                <span class="tag">{{ name }}</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <section class="timeline-section">
+        <div class="section-header">
+          <div>
+            <h2>Pinnwand-Verlauf</h2>
+            <p class="section-sub">Gespeicherte Kopie – bleibt erhalten, auch wenn Beiträge oder der Termin gelöscht werden.</p>
+          </div>
+          <label class="toggle-label">
+            <input type="checkbox" [(ngModel)]="onlyReported">
+            Nur gemeldete Beiträge
+          </label>
+        </div>
+
+        <ol class="timeline">
+          @for (post of visiblePosts; track post.id) {
+            <li class="timeline-post" [class.reported]="post.reports.length > 0">
+              <div class="timeline-dot" aria-hidden="true"></div>
+
+              <div class="timeline-body">
+                <div class="post-meta">
+                  <strong>{{ post.authorUsername }}</strong>
+                  <time [attr.datetime]="post.createdAtUtc">{{ post.createdAtUtc | date:'dd.MM.yyyy, HH:mm' }}</time>
+                  @if (post.reports.length > 0) {
+                    <span class="tag tag-alert">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                      {{ post.reports.length }}× gemeldet
+                    </span>
+                  }
+                  @if (post.deletedByAuthor) {
+                    <span class="tag tag-muted" title="Der Verfasser hat das Original auf der Pinnwand gelöscht">Vom Verfasser gelöscht</span>
+                  }
+                </div>
+
+                <p class="post-text">{{ post.text }}</p>
+
+                @if (post.reports.length > 0) {
+                  <ul class="report-list">
+                    @for (r of post.reports; track r.id) {
+                      <li>
+                        <div class="report-line">
+                          <span class="report-reason">{{ reasonLabel(r.reason) }}</span>
+                          <span>gemeldet von <strong>{{ r.reporterUsername }}</strong></span>
+                          <time>{{ r.createdAtUtc | date:'dd.MM., HH:mm' }}</time>
+                        </div>
+                        @if (r.comment) {
+                          <p class="report-comment">„{{ r.comment }}“</p>
+                        }
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+            </li>
+          } @empty {
+            <li class="empty-hint">Keine Beiträge in dieser Ansicht.</li>
+          }
+        </ol>
+      </section>
+
+    </div>
   }
 </div>

@@ -7,11 +7,12 @@ import {
   AppointmentUpdateRequest,
   AreasService
 } from '../../../services/areas.service';
+import { PageBandComponent } from '../../shared/page-band.component';
 
 @Component({
   selector: 'app-appointment-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PageBandComponent],
   templateUrl: './appointment-form.component.html',
   styleUrl: './appointment-form.component.css'
 })

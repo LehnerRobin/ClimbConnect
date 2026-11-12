@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { UserService, UserListItem } from '../../../services/user.service';
+import { PageBandComponent } from '../../shared/page-band.component';
 
 @Component({
   selector: 'app-climbers-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, PageBandComponent],
   templateUrl: './climbers-page.html',
   styleUrl: './climbers-page.css',
 })

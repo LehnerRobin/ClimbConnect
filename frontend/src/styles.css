@@ -1,3 +1,6 @@
+/* Neues Design: gemeinsame Bausteine (cc-…) – muss ganz oben stehen */
+@import './design.css';
+
 /* ============================================================
    ClimbConnect — Design Tokens & Basisstile
    Palette: warmes Kalkstein-Papier + Tinten-Schiefer + Bernstein
@@ -9,7 +12,7 @@
 :root {
   /* ---- Neutrals: warmes Papier (hell) ---- */
   --paper-0: #FFFFFF;
-  --paper-50: #F7F4EB;
+  --paper-50: #F6F2EA;
   --paper-100: #EFE9D8;
   --paper-200: #E3DBC2;
   --paper-300: #D2C7A4;
@@ -62,8 +65,8 @@
   --radius-pill: 999px;
 
   /* ---- Typografie ---- */
-  --font-display: 'Archivo', 'Arial Narrow', Arial, sans-serif;
-  --font-body: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body: 'Manrope', 'Segoe UI', Arial, sans-serif;
   --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
 }
 
@@ -94,8 +97,8 @@ img {
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 400;
+  letter-spacing: -0.03em;
   line-height: 1.1;
   margin: 0;
   color: var(--ink-950);
@@ -145,12 +148,12 @@ input[type="radio"] {
   align-items: center;
   gap: 8px;
   margin: 0 0 10px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--amber-500);
+  color: #A8431B;
 }
 
 /* ---- Buttons ---- */
@@ -159,14 +162,16 @@ input[type="radio"] {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 0 18px;
+  min-height: 46px;
+  padding: 0 20px;
   border: 1px solid transparent;
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   background: transparent;
   font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 14.5px;
+  font-weight: 800;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   line-height: 1;
   white-space: nowrap;
   text-decoration: none;
@@ -185,13 +190,12 @@ input[type="radio"] {
 }
 
 .btn-primary {
-  background: var(--amber-500);
-  color: var(--paper-0);
-  box-shadow: var(--shadow-amber);
+  background: #E9A04B;
+  color: #0F0E0C;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--amber-600);
+  background: #F0B060;
   transform: translateY(-1px);
 }
 
@@ -217,7 +221,7 @@ input[type="radio"] {
 }
 
 .btn-dark {
-  background: var(--ink-950);
+  background: #1C1A16;
   color: var(--paper-0);
 }
 
@@ -248,10 +252,10 @@ input[type="radio"] {
 }
 
 .btn-sm {
-  min-height: 36px;
-  padding: 0 13px;
-  font-size: 13px;
-  border-radius: var(--radius-sm);
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 11.5px;
+  border-radius: 12px;
 }
 
 /* ---- Badges / Tags (Mono — wirken wie gemessene Werte) ---- */

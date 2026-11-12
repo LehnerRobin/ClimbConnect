@@ -1,47 +1,46 @@
-.forbidden-page {
-  min-height: calc(100vh - 73px);
+/* Fehlerseite 403 im neuen Design. */
+
+.forbidden-layout {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
-  background:
-    radial-gradient(circle at 84% 18%, rgba(195, 121, 31, 0.07), transparent 38%),
-    var(--paper-50);
+  justify-content: space-between;
+  gap: 40px;
 }
 
-.forbidden-card {
-  max-width: 440px;
-  text-align: center;
-  padding: 44px 36px;
-  border: 1px solid var(--paper-200);
-  border-radius: var(--radius-xl);
-  background: var(--paper-0);
-  box-shadow: var(--shadow-lg);
+.forbidden-copy {
+  flex: 1 1 560px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.forbidden-icon {
+.forbidden-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.forbidden-mark { text-align: right; }
+
+.forbidden-note {
   display: block;
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 18px;
-  color: var(--brick-500);
+  font-size: 34px;
+  color: var(--cc-cream);
+  transform: rotate(-6deg);
 }
 
-.eyebrow {
-  justify-content: center;
-  color: var(--brick-600);
+.forbidden-code {
+  font-family: var(--cc-serif);
+  font-weight: 300;
+  font-size: clamp(140px, 22vw, 300px);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--cc-accent);
 }
 
-.forbidden-page h1 {
-  font-size: 1.9rem;
-}
-
-.error-message {
-  margin: 14px 0 0;
-  color: var(--ink-500);
-  line-height: 1.6;
-}
-
-.home-link {
-  margin-top: 26px;
+@media (max-width: 900px) {
+  .forbidden-mark { text-align: left; }
 }

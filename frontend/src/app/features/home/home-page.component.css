@@ -861,47 +861,6 @@
 }
 
 /* ============================================================
-   ABSPANN
-   ============================================================ */
-.outro {
-  max-width: 1360px;
-  margin: 0 auto;
-  padding: 72px 32px 40px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-}
-
-.outro-wordmark {
-  margin: 0;
-  font-family: var(--home-serif);
-  font-weight: 300;
-  font-size: clamp(48px, 14.5vw, 220px);
-  line-height: 0.85;
-  letter-spacing: -0.06em;
-  color: var(--home-cream);
-  overflow-wrap: anywhere;
-}
-
-.outro-wordmark em {
-  font-weight: 400;
-  color: var(--home-accent);
-}
-
-.outro-meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(245, 241, 232, 0.16);
-  font-size: 13px;
-  font-weight: 600;
-  color: #9A9387;
-}
-
-/* ============================================================
    HANDY
    ============================================================ */
 @media (max-width: 900px) {
@@ -909,7 +868,6 @@
   .route, .route-label { display: none; }
   .ticket { transform: none; }
   .paper-inner { padding: 0 20px; }
-  .outro { padding-left: 20px; padding-right: 20px; }
   .lead-card { margin: -60px 16px 0; max-width: none; padding: 28px 24px; }
   .area-photo, .area-photo-lead { height: 380px; }
   .area-number { font-size: 110px; }

@@ -1,0 +1,60 @@
+:host {
+  display: block;
+}
+
+.band {
+  position: relative;
+  overflow: hidden;
+  background: var(--cc-ink);
+  color: var(--cc-cream);
+}
+
+.band-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+
+.band-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(100deg, rgba(15, 14, 12, 0.9) 0%, rgba(15, 14, 12, 0.55) 45%, rgba(15, 14, 12, 0.15) 80%),
+    linear-gradient(180deg, rgba(15, 14, 12, 0.6) 0%, rgba(15, 14, 12, 0) 22%, rgba(15, 14, 12, 0) 65%, rgba(15, 14, 12, 0.85) 100%);
+}
+
+/* Oben Platz für das Glas-Menü, das über dem Foto liegt */
+.band-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 170px 32px 120px;
+  box-sizing: border-box;
+}
+
+.band-tall .band-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 860px;
+}
+
+.band-tear {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  bottom: -1px;
+  display: block;
+  width: 100%;
+  height: 56px;
+  fill: var(--cc-paper);
+}
+
+@media (max-width: 900px) {
+  .band-inner { padding: 130px 20px 96px; }
+  .band-tall .band-inner { min-height: 0; }
+}

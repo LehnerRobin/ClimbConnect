@@ -5,13 +5,14 @@ import { AdminService } from '../../services/admin.service';
 import { Grade, GradeService, gradeLabel } from '../../services/grade.service';
 import { ActivatedRoute } from '@angular/router';
 import { CaseListComponent } from './moderation/case-list.component';
+import { PageBandComponent } from '../shared/page-band.component';
 
 type AdminTab = 'areas' | 'sectors' | 'routes' | 'reports' | 'moderation';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, CaseListComponent],
+  imports: [CommonModule, FormsModule, CaseListComponent, PageBandComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })

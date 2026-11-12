@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { UserService, PublicProfile } from '../../../services/user.service';
+import { PageBandComponent } from '../../shared/page-band.component';
+import { ascentStatusClass, gradeClass as gradeColorClass } from '../../shared/design-utils';
 
 @Component({
   selector: 'app-public-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, PageBandComponent],
   templateUrl: './public-profile.component.html',
   styleUrl: './public-profile.component.css'
 })
@@ -57,17 +59,13 @@ export class PublicProfileComponent implements OnInit {
     return map[status] ?? status;
   }
 
-  /** Farbklasse passend zur Begehungsart (gesendet / Projekt / Toprope). */
+  /** Farbige Status-Plakette (Rotpunkt, Flash, Onsight, Projekt) aus dem neuen Design. */
   statusClass(status: string): string {
-    switch (status) {
-      case 'Rotpunkt':
-      case 'Flash':
-      case 'Onsight':
-        return 'status-sent';
-      case 'Projekt':
-        return 'status-project';
-      default:
-        return 'status-toprope';
-    }
+    return ascentStatusClass(status);
+  }
+
+  /** Klassen für den farbigen Grad-Kreis. */
+  gradeClass(grade: string | null | undefined): string {
+    return 'cc-grade ' + gradeColorClass(grade);
   }
 }

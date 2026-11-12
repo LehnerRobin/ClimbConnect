@@ -1,90 +1,128 @@
 <section class="progress-form-page">
 
-  <div class="form-header">
-    <p class="eyebrow">{{ isEditMode ? 'Begehung bearbeiten' : 'Begehung eintragen' }}</p>
-    <h1>{{ routeName || 'Route' }}</h1>
-    @if (isEditMode) {
-      <p class="form-subtitle">Passe deine gespeicherte Begehung an.</p>
-    }
-  </div>
-
-  @if (loading) {
-    <div class="form-card loading-card">
-      <div class="spinner"></div>
-      <p class="loading-msg">Begehung wird geladen...</p>
-    </div>
-  } @else {
-    <div class="form-card">
-
-      <div class="form-field">
-        <label for="status">Status</label>
-        <select id="status" [ngModel]="form.status" (ngModelChange)="onStatusChange($event)">
-          @for (s of statuses; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="form-field">
-        <label for="style">Begehungsart</label>
-        <select id="style" [(ngModel)]="form.climbingStyle">
-          @for (s of climbingStyles; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="form-field">
-        <label for="attempts">Anzahl Versuche</label>
-        <input id="attempts" type="number" min="1" [(ngModel)]="form.attempts" [disabled]="isFirstTry">
-        @if (isFirstTry) {
-          <small class="field-hint">Erster Versuch: Bei Flash und Onsight ist es immer 1.</small>
-        }
-      </div>
-
-      <div class="form-field">
-        <label for="date">Datum</label>
-        <input id="date" type="date" [(ngModel)]="form.date">
-      </div>
-
-      <div class="form-field">
-        <label for="notes">Notizen</label>
-        <textarea id="notes" [(ngModel)]="form.notes" placeholder="Eigene Notizen zur Begehung..."></textarea>
-      </div>
-
-      <div class="form-field">
-        <label for="grade">Subjektive Gradeinschätzung (optional)</label>
-        <select id="grade" [(ngModel)]="form.subjectiveGrade">
-          <option value="">— kein Grad —</option>
-          @for (option of gradeOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="form-field">
-        <label for="gradeComment">Kommentar zum Grad (optional)</label>
-        <input id="gradeComment" type="text" [(ngModel)]="form.subjectiveGradeComment" placeholder="z. B. 'Eher leichter als 6b'">
-      </div>
-
-      @if (errorMessage) {
-        <p class="error-msg">{{ errorMessage }}</p>
+  <app-page-band image="/assets/home/gebiet-fels-wald.jpg" position="center 60%">
+    <div class="band-copy">
+      <p class="cc-eyebrow">{{ isEditMode ? 'Begehung bearbeiten' : 'Begehung eintragen' }}</p>
+      <h1 class="cc-h1">{{ routeName || 'Route' }}</h1>
+      @if (isEditMode) {
+        <p class="cc-lead">Passe deine gespeicherte Begehung an.</p>
       }
+    </div>
+  </app-page-band>
 
-      <div class="button-row">
-        <button type="button" class="btn btn-secondary" (click)="cancel()">Abbrechen</button>
-        <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="submitting">
-          @if (submitting) {
-            Wird gespeichert...
-          } @else if (isEditMode) {
-            Änderungen speichern
-          } @else {
-            Begehung speichern
+  <div class="cc-wrap cc-main">
+
+    @if (loading) {
+      <div class="cc-state">
+        <div class="spinner"></div>
+        <p class="cc-small">Begehung wird geladen...</p>
+      </div>
+    } @else {
+
+      <div class="cc-columns">
+
+        <div class="cc-card form-card">
+
+          <div class="cc-field">
+            <span class="cc-field-label" id="status-label">Status</span>
+            <div class="cc-seg" role="group" aria-labelledby="status-label">
+              @for (s of statuses; track s) {
+                <button
+                  type="button"
+                  [class.is-active]="form.status === s"
+                  [attr.aria-pressed]="form.status === s"
+                  (click)="onStatusChange(s)">
+                  {{ s }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="cc-field">
+            <span class="cc-field-label" id="style-label">Begehungsart</span>
+            <div class="cc-seg" role="group" aria-labelledby="style-label">
+              @for (s of climbingStyles; track s) {
+                <button
+                  type="button"
+                  [class.is-active]="form.climbingStyle === s"
+                  [attr.aria-pressed]="form.climbingStyle === s"
+                  (click)="form.climbingStyle = s">
+                  {{ s }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="cc-form">
+            <div class="cc-field">
+              <label for="attempts">Anzahl Versuche</label>
+              <input id="attempts" class="cc-input" type="number" min="1" [(ngModel)]="form.attempts" [disabled]="isFirstTry">
+              @if (isFirstTry) {
+                <small class="field-hint">Erster Versuch: Bei Flash und Onsight ist es immer 1.</small>
+              }
+            </div>
+
+            <div class="cc-field">
+              <label for="date">Datum</label>
+              <input id="date" class="cc-input" type="date" [(ngModel)]="form.date">
+            </div>
+
+            <div class="cc-field cc-full">
+              <label for="notes">Notizen</label>
+              <textarea id="notes" class="cc-input" [(ngModel)]="form.notes" placeholder="Eigene Notizen zur Begehung..."></textarea>
+            </div>
+          </div>
+
+          <div class="cc-form grade-box">
+            <div class="cc-field">
+              <label for="grade">Subjektive Gradeinschätzung (optional)</label>
+              <select id="grade" class="cc-input" [(ngModel)]="form.subjectiveGrade">
+                <option value="">— kein Grad —</option>
+                @for (option of gradeOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="cc-field">
+              <label for="gradeComment">Kommentar zum Grad (optional)</label>
+              <input id="gradeComment" class="cc-input" type="text" [(ngModel)]="form.subjectiveGradeComment" placeholder="z. B. 'Eher leichter als 6b'">
+            </div>
+          </div>
+
+          @if (errorMessage) {
+            <p class="cc-msg cc-msg-error" role="alert">{{ errorMessage }}</p>
           }
-        </button>
+
+          <div class="cc-form-actions">
+            <button type="button" class="cc-btn-outline" (click)="cancel()">Abbrechen</button>
+            <button type="button" class="cc-btn" (click)="submit()" [disabled]="submitting">
+              @if (submitting) {
+                Wird gespeichert...
+              } @else if (isEditMode) {
+                Änderungen speichern
+              } @else {
+                Begehung speichern
+              }
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Spickzettel zu den Status-Begriffen -->
+        <aside class="cheat-sheet" aria-label="Erklärung der Status">
+          <p class="cc-hand cheat-title">kleiner Spickzettel</p>
+          <p class="cc-small"><span class="cc-status cc-status-rotpunkt">Rotpunkt</span><br>Sturzfrei durchgestiegen, nach Versuchen.</p>
+          <p class="cc-small"><span class="cc-status cc-status-flash">Flash</span><br>Im ersten Versuch, mit Infos von anderen.</p>
+          <p class="cc-small"><span class="cc-status cc-status-onsight">Onsight</span><br>Im ersten Versuch, ganz ohne Infos.</p>
+          <p class="cc-small"><span class="cc-status cc-status-projekt">Projekt</span><br>Noch dran – nächstes Mal!</p>
+          <p class="cc-small cheat-foot">Deine Gradeinschätzung fließt in den Community-Grad der Route ein.</p>
+        </aside>
+
       </div>
 
-    </div>
-  }
+    }
+
+  </div>
 
 </section>
