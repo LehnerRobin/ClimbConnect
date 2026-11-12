@@ -543,6 +543,48 @@ textarea.cc-input {
   box-shadow: 0 24px 50px rgba(28, 26, 22, 0.08);
 }
 
+/* ---------- Suchleiste über dem Foto (Gebiete, Routen) ---------- */
+/* Verwendung: <form class="cc-search-toolbar cc-glass"><label class="cc-search-box">…<input></label> Knöpfe …</form> */
+.cc-search-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  max-width: 860px;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 20px;
+}
+
+.cc-search-box {
+  flex: 1 1 320px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 0 14px;
+  color: var(--cc-accent);
+}
+
+.cc-search-box svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.cc-search-box input {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  border: 0;
+  background: transparent;
+  color: var(--cc-cream);
+  font: 500 16px var(--cc-sans);
+}
+
+.cc-search-box input::placeholder { color: rgba(245, 241, 232, 0.6); }
+.cc-search-box input:focus { outline: none; }
+
 /* ---------- Reiter & Tabellen ---------- */
 .cc-tabs {
   display: flex;
