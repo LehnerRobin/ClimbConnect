@@ -24,3 +24,9 @@ Thumbs.db
 **/*.secrets.json
 # Produktions-Secrets niemals in appsettings einchecken!
 # JWT-Key in Produktion per Umgebungsvariable Jwt__Key setzen.
+
+# Archive
+*.zip
+
+# VS Code Local History
+.history/
