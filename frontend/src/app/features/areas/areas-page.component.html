@@ -76,7 +76,7 @@
             <h2 id="map-title" class="cc-h2">Wo geklettert <em>wird</em></h2>
           </div>
         </div>
-        <app-area-map [areas]="displayedAreas"></app-area-map>
+        <app-area-map [areas]="displayedAreas" [favoriteIds]="favoriteIds"></app-area-map>
       </section>
 
       <section class="list-section" aria-labelledby="list-title">
@@ -97,7 +97,7 @@
         @if (showOnlyFavorites && displayedAreas.length === 0) {
           <div class="cc-state">
             <h2 class="cc-h3">Keine Favoriten gespeichert</h2>
-            <p class="cc-small">Klicke auf das Herz-Symbol bei einem Gebiet, um es zu speichern.</p>
+            <p class="cc-small">Tippe auf das Herz („Merken“) bei einem Gebiet oder auf „Zu Favoriten“ auf der Gebietsseite.</p>
             <button type="button" class="cc-btn-dark" (click)="showOnlyFavorites = false">Alle Gebiete anzeigen</button>
           </div>
         } @else {
@@ -120,6 +120,7 @@
                   [title]="favoritesService.isFavorite(area.id) ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'"
                   (click)="toggleFavorite($event, area.id)">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-10-9.3C.5 7.8 2.3 4.5 5.8 4c2-.3 4 .6 6.2 3 2.2-2.4 4.2-3.3 6.2-3 3.5.5 5.3 3.8 3.8 7.2-2.5 4.7-10 9.3-10 9.3Z" [attr.fill]="favoritesService.isFavorite(area.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                  <span class="favorite-label">{{ favoritesService.isFavorite(area.id) ? 'Favorit' : 'Merken' }}</span>
                 </button>
 
                 <p class="cc-eyebrow">{{ area.location || 'Kein Standort angegeben' }}</p>

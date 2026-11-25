@@ -26,9 +26,20 @@
           </div>
         </div>
 
-        @if (isLoggedIn()) {
-          <a class="cc-btn" [routerLink]="['/areas', area.id, 'appointments', 'new']">+ Session planen</a>
-        }
+        <div class="band-actions">
+          <button
+            type="button"
+            class="cc-btn-glass cc-glass favorite-action"
+            [class.is-favorite]="favoritesService.isFavorite(area.id)"
+            [attr.aria-pressed]="favoritesService.isFavorite(area.id)"
+            (click)="favoritesService.toggle(area.id)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-10-9.3C.5 7.8 2.3 4.5 5.8 4c2-.3 4 .6 6.2 3 2.2-2.4 4.2-3.3 6.2-3 3.5.5 5.3 3.8 3.8 7.2-2.5 4.7-10 9.3-10 9.3Z" [attr.fill]="favoritesService.isFavorite(area.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            {{ favoritesService.isFavorite(area.id) ? 'Favorit' : 'Zu Favoriten' }}
+          </button>
+          @if (isLoggedIn()) {
+            <a class="cc-btn" [routerLink]="['/areas', area.id, 'appointments', 'new']">+ Session planen</a>
+          }
+        </div>
       </div>
     }
   </app-page-band>
