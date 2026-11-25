@@ -47,12 +47,9 @@
             <p class="cc-lead">Kein Datum angegeben</p>
           }
           <div class="band-chips">
-            <span class="cc-chip-glass cc-glass"><strong class="tnum">{{ participantLabel }}</strong> Teilnehmer</span>
+            <span class="cc-chip-glass cc-glass"><app-dudes [count]="appointment.participantCount" [max]="appointment.maxParticipants" [subscribed]="isSubscribed" /></span>
             @if (appointment.averageGrade) {
               <span class="cc-chip-glass cc-glass">Ø <strong>{{ appointment.averageGrade }}</strong></span>
-            }
-            @if (isSubscribed) {
-              <span class="cc-chip-glass cc-glass">Du bist dabei</span>
             }
             @if (isPast) {
               <span class="cc-chip-glass cc-glass">Vergangen</span>
@@ -153,9 +150,12 @@
         <aside class="cc-col-side cc-stack">
 
           <section class="cc-ticket join-ticket" aria-labelledby="join-title">
-            <span id="join-title" class="cc-label">Teilnehmer</span>
+            <span id="join-title" class="cc-label">Dudes</span>
             <p class="count tnum">{{ participantLabel }}</p>
-            @if (appointment.minParticipants && appointment.minParticipants > 1) {
+            @if (isFull) {
+              <p class="count-hint">ausgebucht</p>
+            }
+            @if (appointment.minParticipants) {
               <p class="count-hint">mindestens {{ appointment.minParticipants }}</p>
             }
             @if (appointment.maxParticipants) {

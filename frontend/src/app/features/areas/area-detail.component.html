@@ -140,7 +140,7 @@
                 @for (appointment of appointments; track appointment.id) {
                   <article class="cc-ticket appointment-card">
                     <button type="button" class="appointment-topline" (click)="toggleAppointmentDetail(appointment.id)" [attr.aria-expanded]="expandedAppointmentId === appointment.id">
-                      <span class="cc-label ticket-label">Session · {{ appointment.participantCount ?? 0 }} TN</span>
+                      <span class="cc-label ticket-label">Session · <app-dudes [count]="appointment.participantCount" [max]="appointment.maxParticipants" [subscribed]="isSubscribed(appointment.id)" /></span>
                       <h3>{{ appointment.title }}</h3>
                       <span class="appointment-date">
                         @if (appointment.date) {

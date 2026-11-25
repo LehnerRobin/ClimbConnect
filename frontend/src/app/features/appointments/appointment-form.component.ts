@@ -9,6 +9,9 @@ import {
 } from '../../../services/areas.service';
 import { PageBandComponent } from '../../shared/page-band.component';
 
+/** Kleinstes erlaubtes Minimum (wie im Backend): allein klettern braucht keinen Termin. */
+const MIN_DUDES = 2;
+
 @Component({
   selector: 'app-appointment-form',
   standalone: true,
@@ -38,8 +41,9 @@ export class AppointmentFormComponent implements OnInit {
     time: '18:00',
     meetingPoint: '',
     description: '',
-    minParticipants: 1,
-    maxParticipants: 4
+    // Standard (#228): mindestens 2 Dudes, Maximum leer = "Open End"
+    minParticipants: MIN_DUDES as number | null,
+    maxParticipants: null as number | null
   };
 
   get isEditMode(): boolean {
@@ -61,8 +65,8 @@ export class AppointmentFormComponent implements OnInit {
         this.form.title = appointment.title ?? '';
         this.form.meetingPoint = appointment.meetingPoint ?? '';
         this.form.description = appointment.description ?? '';
-        this.form.minParticipants = appointment.minParticipants ?? 1;
-        this.form.maxParticipants = appointment.maxParticipants ?? 4;
+        this.form.minParticipants = appointment.minParticipants ?? MIN_DUDES;
+        this.form.maxParticipants = appointment.maxParticipants ?? null;
 
         if (appointment.date) {
           // Das Backend liefert UTC ("...Z"); das Formular zeigt Ortszeit
@@ -110,11 +114,15 @@ export class AppointmentFormComponent implements OnInit {
       return;
     }
 
-    if (this.form.minParticipants && this.form.maxParticipants) {
-      if (this.form.minParticipants > this.form.maxParticipants) {
-        this.errorMessage = 'Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein.';
-        return;
-      }
+    const min = this.form.minParticipants || MIN_DUDES;
+    const max = this.form.maxParticipants || null;
+    if (min < MIN_DUDES) {
+      this.errorMessage = `Mindestens ${MIN_DUDES} Dudes – allein klettern braucht keinen Termin.`;
+      return;
+    }
+    if (max !== null && max < min) {
+      this.errorMessage = 'Das Maximum darf nicht kleiner als das Minimum sein. Für kein Limit das Feld leer lassen.';
+      return;
     }
 
     const appointment: AppointmentCreateRequest | AppointmentUpdateRequest = {
@@ -123,8 +131,8 @@ export class AppointmentFormComponent implements OnInit {
       date: start.toISOString(),
       meetingPoint: this.form.meetingPoint.trim() || null,
       description: this.form.description.trim() || null,
-      minParticipants: this.form.minParticipants || null,
-      maxParticipants: this.form.maxParticipants || null
+      minParticipants: min,
+      maxParticipants: max
     };
 
     this.submitting = true;

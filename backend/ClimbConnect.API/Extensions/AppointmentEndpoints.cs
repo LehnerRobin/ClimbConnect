@@ -180,7 +180,7 @@ public static class AppointmentEndpoints
                 Date            = date,
                 MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint) ? null : dto.MeetingPoint.Trim(),
                 Description     = string.IsNullOrWhiteSpace(dto.Description)  ? null : dto.Description.Trim(),
-                MinParticipants = dto.MinParticipants,
+                MinParticipants = dto.MinParticipants ?? Appointment.DefaultMinParticipants,
                 MaxParticipants = dto.MaxParticipants
             };
 
@@ -222,7 +222,7 @@ public static class AppointmentEndpoints
             appointment.Date            = date;
             appointment.MeetingPoint    = string.IsNullOrWhiteSpace(dto.MeetingPoint)  ? null : dto.MeetingPoint.Trim();
             appointment.Description     = string.IsNullOrWhiteSpace(dto.Description)   ? null : dto.Description.Trim();
-            appointment.MinParticipants = dto.MinParticipants;
+            appointment.MinParticipants = dto.MinParticipants ?? Appointment.DefaultMinParticipants;
             appointment.MaxParticipants = dto.MaxParticipants;
 
             await db.SaveChangesAsync();
@@ -307,7 +307,7 @@ public static class AppointmentEndpoints
     {
         if (string.IsNullOrWhiteSpace(title))
             return "Titel ist erforderlich";
-        if (min.HasValue && max.HasValue && min.Value > max.Value)
+        if (max.HasValue && (min ?? Appointment.DefaultMinParticipants) > max.Value)
             return "Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein";
         if (checkFuture && dateUtc < DateTime.UtcNow)
             return "Der Termin darf nicht in der Vergangenheit liegen";
