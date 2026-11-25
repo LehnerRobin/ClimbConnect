@@ -1,3 +1,6 @@
+using ClimbConnect.API.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace ClimbConnect.API.Services;
 
 /// <summary>
@@ -33,15 +36,63 @@ public class UploadStorage
     /// <returns>true, wenn der Link auf eine existierende eigene Datei zeigt.</returns>
     public bool IsOwnUpload(string url)
     {
+        var fileName = ToFileName(url);
+        return fileName is not null && File.Exists(Path.Combine(UploadsPath, fileName));
+    }
+
+    /// <summary>
+    /// Löscht die Bilddateien zu den angegebenen Foto-Links – aber nur, wenn kein Kommentar,
+    /// kein Report und kein Gebiet mehr darauf zeigt (ein Link kann mehrfach verwendet werden).
+    /// Muss NACH dem Speichern der Löschung in der Datenbank aufgerufen werden.
+    /// Ein Fehler beim Löschen einer Datei wird nur geloggt: Der Eintrag ist dann trotzdem weg,
+    /// es bleibt höchstens eine verwaiste Datei übrig.
+    /// </summary>
+    /// <param name="db">Datenbank, um zu prüfen, ob der Link noch verwendet wird.</param>
+    /// <param name="urls">Foto-Links der gelöschten Einträge; null und fremde Links werden ignoriert.</param>
+    /// <param name="logger">Für Fehlermeldungen beim Löschen.</param>
+    /// <returns>Anzahl der gelöschten Dateien.</returns>
+    public async Task<int> DeleteUnusedAsync(AppDbContext db, IEnumerable<string?> urls, ILogger logger)
+    {
+        var deleted = 0;
+        foreach (var url in urls.OfType<string>().Distinct())
+        {
+            var fileName = ToFileName(url);
+            if (fileName is null) continue;
+
+            var stillUsed = await db.Comments.AnyAsync(c => c.PhotoUrl == url)
+                         || await db.Reports.AnyAsync(r => r.PhotoUrl == url)
+                         || await db.Areas.AnyAsync(a => a.ImageUrl == url);
+            if (stillUsed) continue;
+
+            try
+            {
+                var path = Path.Combine(UploadsPath, fileName);
+                if (!File.Exists(path)) continue;
+                File.Delete(path);
+                deleted++;
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                logger.LogWarning(ex, "Bild {File} konnte nicht gelöscht werden.", fileName);
+            }
+        }
+        return deleted;
+    }
+
+    /// <summary>
+    /// Macht aus "/uploads/{dateiname}" den reinen Dateinamen – oder null, wenn der Link nicht
+    /// auf den Upload-Ordner zeigt. Keine Unterordner und kein "..", damit niemand über einen
+    /// präparierten Link Dateien außerhalb des Ordners erreicht.
+    /// </summary>
+    private static string? ToFileName(string url)
+    {
         const string prefix = "/uploads/";
-        if (!url.StartsWith(prefix, StringComparison.Ordinal)) return false;
+        if (!url.StartsWith(prefix, StringComparison.Ordinal)) return null;
 
         var fileName = url[prefix.Length..];
-        // Keine Unterordner und kein "..": nur ein einfacher Dateiname ist gültig
         if (fileName.Length == 0 || fileName != Path.GetFileName(fileName) || fileName.Contains(".."))
-            return false;
-        if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) return false;
-
-        return File.Exists(Path.Combine(UploadsPath, fileName));
+            return null;
+        if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0) return null;
+        return fileName;
     }
 }
