@@ -2,6 +2,7 @@ using System.Security.Claims;
 using ClimbConnect.API.Data;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClimbConnect.API.Extensions;
@@ -182,6 +183,31 @@ public static class UserEndpoints
         .WithTags("Users")
         .RequireAuthorization("User");
 
+        // Eigenes Konto löschen (#232, Recht auf Löschung nach DSGVO). Body: { "password": "..." }
+        app.MapDelete("/api/users/me", async ([FromBody] DeleteAccountDto dto, ClaimsPrincipal user,
+            AppDbContext db, UploadStorage storage, ILogger<Program> logger) =>
+        {
+            if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+                return Results.Unauthorized();
+
+            var u = await db.Users.FindAsync(userId);
+            if (u is null) return Results.NotFound();
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, u.PasswordHash))
+                return Results.BadRequest(new { error = "Das Passwort ist falsch." });
+
+            // Ohne Admin könnte niemand mehr Gebiete und Routen pflegen
+            if (u.Role == "admin" && await db.Users.CountAsync(x => x.Role == "admin") <= 1)
+                return Results.Conflict(new { error = "Du bist der letzte Admin und kannst dein Konto nicht löschen." });
+
+            var photoUrls = await DeleteUserDataAsync(db, userId);
+            await storage.DeleteUnusedAsync(db, photoUrls, logger);
+            return Results.NoContent();
+        })
+        .WithName("DeleteOwnAccount")
+        .WithTags("Users")
+        .RequireAuthorization("User");
+
         // Benutzerliste (öffentlich)
         app.MapGet("/api/users", async (AppDbContext db) =>
         {
@@ -193,5 +219,36 @@ public static class UserEndpoints
         })
         .WithName("GetUsers")
         .WithTags("Users");
+    }
+
+    /// <summary>
+    /// Löscht ein Konto mit allen zugehörigen Daten in einer Transaktion: Begehungen, Teilnahmen,
+    /// eigene Termine (samt deren Teilnehmern und Pinnwand), eigene Pinnwand-Beiträge, Kommentare
+    /// und Reports. Gibt die Foto-Links der gelöschten Kommentare und Reports zurück – die
+    /// Dateien löscht der Aufrufer danach.
+    /// Kopien in gemeldeten Fällen (#264) bleiben absichtlich bis zum Ablauf der 30 Tage erhalten
+    /// (Schutz vor Missbrauch, sonst könnte man sich durch Löschen des Kontos der Meldung entziehen).
+    /// </summary>
+    internal static async Task<List<string?>> DeleteUserDataAsync(AppDbContext db, int userId)
+    {
+        var comments = await db.Comments.Where(c => c.UserId == userId).ToListAsync();
+        var reports  = await db.Reports.Where(r => r.UserId == userId).ToListAsync();
+        var photoUrls = comments.Select(c => c.PhotoUrl).Concat(reports.Select(r => r.PhotoUrl)).ToList();
+
+        // Eigene Termine verschwinden mit allem, was daran hängt
+        var ownAppointmentIds = await db.Appointments
+            .Where(a => a.CreatedByUserId == userId).Select(a => a.Id).ToListAsync();
+
+        // Ausdrücklich löschen statt auf Cascade zu vertrauen – gilt so für jede Datenbank
+        db.PinnwandPosts.RemoveRange(db.PinnwandPosts.Where(p => p.UserId == userId || ownAppointmentIds.Contains(p.AppointmentId)));
+        db.AppointmentUsers.RemoveRange(db.AppointmentUsers.Where(au => au.UserId == userId || ownAppointmentIds.Contains(au.AppointmentId)));
+        db.Appointments.RemoveRange(db.Appointments.Where(a => a.CreatedByUserId == userId));
+        db.Progresses.RemoveRange(db.Progresses.Where(p => p.UserId == userId));
+        db.Comments.RemoveRange(comments);
+        db.Reports.RemoveRange(reports);
+        db.Users.Remove(await db.Users.FirstAsync(u => u.Id == userId));
+
+        await db.SaveChangesAsync();
+        return photoUrls;
     }
 }

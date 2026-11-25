@@ -353,6 +353,41 @@
   gap: 18px;
 }
 
+/* ---------- Konto löschen (#232) ---------- */
+.danger-zone {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #E3B7A3;
+}
+
+.danger-text {
+  margin: 0;
+  font-family: var(--cc-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--cc-soft);
+}
+
+.danger-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--cc-sans);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.danger-check input { margin-top: 3px; }
+
+.danger-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 @media (max-width: 900px) {
   .band-avatar { width: 120px; height: 120px; font-size: 76px; }
   .stat + .stat { padding-left: 0; border-left: 0; }

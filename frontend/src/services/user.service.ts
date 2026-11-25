@@ -120,6 +120,11 @@ export class UserService {
     return this.http.put(`${this.apiUrl}/api/users/me/password`, { currentPassword, newPassword });
   }
 
+  /// Eigenes Konto mit allen Daten löschen (DELETE /api/users/me, #232) – Passwort als Bestätigung
+  deleteAccount(password: string) {
+    return this.http.delete<void>(`${this.apiUrl}/api/users/me`, { body: { password } });
+  }
+
   /// Öffentliche User-Liste abrufen (GET /api/users)
   getUsers() {
     return this.http.get<UserListItem[]>(`${this.apiUrl}/api/users`);

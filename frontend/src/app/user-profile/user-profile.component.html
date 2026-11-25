@@ -336,6 +336,45 @@
           </div>
         </section>
       </div>
+
+      <!-- Konto löschen (#232) – absichtlich abgesetzt und erst nach Aufklappen bedienbar -->
+      <section class="cc-card danger-zone" aria-labelledby="delete-title">
+        <h3 id="delete-title" class="cc-h3">Konto löschen</h3>
+        <p class="danger-text">
+          Dein Konto wird <strong>endgültig</strong> gelöscht – zusammen mit deinen Begehungen,
+          Terminen, Teilnahmen, Pinnwand-Beiträgen, Kommentaren, Safety-Reports und hochgeladenen
+          Fotos. Das lässt sich nicht rückgängig machen.
+        </p>
+
+        @if (!deleteOpen) {
+          <div>
+            <button type="button" class="cc-btn-danger" (click)="deleteOpen = true">Konto löschen …</button>
+          </div>
+        } @else {
+          <div class="cc-field">
+            <label for="delete-password">Zur Bestätigung dein Passwort</label>
+            <input id="delete-password" class="cc-input" type="password"
+                   [(ngModel)]="deleteForm.password" autocomplete="current-password">
+          </div>
+          <label class="danger-check">
+            <input type="checkbox" [(ngModel)]="deleteForm.confirmed">
+            Ich verstehe, dass alle meine Daten endgültig gelöscht werden.
+          </label>
+
+          @if (deleteError) {
+            <p class="cc-msg cc-msg-error">{{ deleteError }}</p>
+          }
+
+          <div class="danger-actions">
+            <button type="button" class="cc-btn-danger"
+                    [disabled]="!deleteForm.password || !deleteForm.confirmed || deleting"
+                    (click)="deleteAccount()">
+              {{ deleting ? 'Wird gelöscht …' : 'Konto endgültig löschen' }}
+            </button>
+            <button type="button" class="cc-btn-dark" (click)="cancelDelete()" [disabled]="deleting">Abbrechen</button>
+          </div>
+        }
+      </section>
     </section>
 
   </div>

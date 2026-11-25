@@ -74,7 +74,7 @@ andere Robin Lehner.
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
 | #231 | Impressum und Datenschutzerklärung | 2 | Robin, Mohamed |
-| #232 | Eigenes Konto löschen | 3 | Robin, Faru |
+| ✅ #232 | Eigenes Konto löschen | 3 | Robin, Faru |
 | ✅ #233 | Schutz gegen Passwort-Raten beim Login | 2 | Robin |
 | ✅ #234 | Foto-Links nur auf eigene Uploads | 1 | Robin |
 | ✅ #222 | Klare Meldungen bei Login und Registrierung | 2 | Robin, Mohamed |

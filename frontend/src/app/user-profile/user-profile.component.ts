@@ -1,8 +1,9 @@
 import { Component, OnInit, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AreaVisit, UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 import { Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 import { PageBandComponent } from '../shared/page-band.component';
@@ -68,9 +69,17 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
   passwordSuccess = false;
   passwordError = '';
 
+  /** Konto löschen (#232): erst aufklappen, dann Passwort + Haken als doppelte Bestätigung. */
+  deleteOpen = false;
+  deleteForm = { password: '', confirmed: false };
+  deleteError = '';
+  deleting = false;
+
   constructor(
     private userService: UserService,
-    private areasService: AreasService
+    private areasService: AreasService,
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -306,6 +315,34 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         this.passwordError = err?.error?.error ?? 'Passwort konnte nicht geändert werden.';
+      }
+    });
+  }
+
+  /** Bricht das Löschen ab und leert das Formular (das Passwort soll nicht stehen bleiben). */
+  cancelDelete(): void {
+    this.deleteOpen  = false;
+    this.deleteForm  = { password: '', confirmed: false };
+    this.deleteError = '';
+  }
+
+  /**
+   * Löscht das Konto endgültig. Danach ausloggen und zur Startseite – der Token gehört zu
+   * einem Konto, das es nicht mehr gibt.
+   */
+  deleteAccount(): void {
+    if (!this.deleteForm.password || !this.deleteForm.confirmed || this.deleting) return;
+    this.deleting    = true;
+    this.deleteError = '';
+
+    this.userService.deleteAccount(this.deleteForm.password).subscribe({
+      next: () => {
+        this.authService.logout();
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.deleting    = false;
+        this.deleteError = err?.error?.error ?? 'Das Konto konnte nicht gelöscht werden.';
       }
     });
   }
