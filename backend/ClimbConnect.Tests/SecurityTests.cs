@@ -116,6 +116,50 @@ public class SecurityTests : IClassFixture<ClimbConnectFactory>
         Assert.EndsWith(".png", body.GetProperty("url").GetString());
     }
 
+    [Theory]
+    [InlineData("https://tracker.example.com/pixel.png")]
+    [InlineData("/uploads/gibt-es-nicht.png")]
+    [InlineData("/uploads/../appsettings.json")]
+    public async Task Kommentar_FremderFotoLink_Gibt400(string photoUrl)
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var response = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", token,
+            JsonContent.Create(new { text = "Mit fremdem Foto", photoUrl }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Report_FremderFotoLink_Gibt400()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var response = await SendAsync(HttpMethod.Post, "/api/reports", token,
+            JsonContent.Create(new { areaId, text = "Lockerer Haken", severity = "High",
+                                     photoUrl = "https://tracker.example.com/pixel.png" }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Kommentar_EigenesHochgeladenesFoto_WirdAngenommen()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        byte[] png = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0, 0, 0, 0, 0];
+        var upload = await SendAsync(HttpMethod.Post, "/api/upload", token, FileContent(png, "foto.png", "image/png"));
+        var url    = (await upload.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("url").GetString();
+
+        var response = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", token,
+            JsonContent.Create(new { text = "Mit eigenem Foto", photoUrl = url }));
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    }
+
     // Hilfsmethoden
 
     /// <summary>Schickt eine Anfrage mit Bearer-Token, ohne den gemeinsamen Client zu verändern.</summary>

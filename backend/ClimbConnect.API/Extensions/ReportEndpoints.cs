@@ -2,6 +2,7 @@ using System.Security.Claims;
 using ClimbConnect.API.Data;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Models;
+using ClimbConnect.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClimbConnect.API.Extensions;
@@ -11,7 +12,7 @@ public static class ReportEndpoints
 {
     public static void MapReportEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/reports", async (ReportCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
+        app.MapPost("/api/reports", async (ReportCreateDto dto, ClaimsPrincipal user, AppDbContext db, UploadStorage storage) =>
         {
             if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
                 return Results.Unauthorized();
@@ -21,6 +22,8 @@ public static class ReportEndpoints
                 return Results.BadRequest(new { error = "Severity muss Low, Medium oder High sein" });
             if (string.IsNullOrWhiteSpace(dto.Text))
                 return Results.BadRequest(new { error = "Text ist erforderlich" });
+            if (!string.IsNullOrWhiteSpace(dto.PhotoUrl) && !storage.IsOwnUpload(dto.PhotoUrl.Trim()))
+                return Results.BadRequest(new { error = CommentEndpoints.PhotoUrlError });
             if (dto.AreaId is null && dto.RouteId is null)
                 return Results.BadRequest(new { error = "AreaId oder RouteId muss angegeben werden" });
             if (dto.AreaId is not null && !await db.Areas.AnyAsync(a => a.Id == dto.AreaId))
