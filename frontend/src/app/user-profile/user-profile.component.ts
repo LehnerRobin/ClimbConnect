@@ -127,6 +127,11 @@ export class UserProfileComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /** Vergangene Termine zeigen kein "Send Dudes!" mehr (#254). */
+  isPastAppointment(appointment: MyAppointment): boolean {
+    return !!appointment.date && new Date(appointment.date).getTime() < Date.now();
+  }
+
   /** Lädt eigene Termine (erstellt + beigetreten) mit einer einzigen Anfrage. */
   private loadMyAppointments(): void {
     this.loadingAppointments = true;

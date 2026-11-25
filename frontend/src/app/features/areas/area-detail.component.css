@@ -404,3 +404,11 @@
 
 /* Sprung von der Termin-Seite: Abstand zur fixen Navigation lassen */
 #sektoren { scroll-margin-top: 100px; }
+
+/* Ersteller sieht statt "Beitreten"/"Austreten" diesen Hinweis (#254) */
+.creator-hint {
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #CFC9BD;
+}

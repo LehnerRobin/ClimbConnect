@@ -47,7 +47,7 @@
             <p class="cc-lead">Kein Datum angegeben</p>
           }
           <div class="band-chips">
-            <span class="cc-chip-glass cc-glass"><app-dudes [count]="appointment.participantCount" [max]="appointment.maxParticipants" [subscribed]="isSubscribed" /></span>
+            <span class="cc-chip-glass cc-glass"><app-dudes [count]="appointment.participantCount" [min]="appointment.minParticipants" [max]="appointment.maxParticipants" [subscribed]="isSubscribed" [past]="isPast" /></span>
             @if (appointment.averageGrade) {
               <span class="cc-chip-glass cc-glass">Ø <strong>{{ appointment.averageGrade }}</strong></span>
             }
@@ -171,6 +171,8 @@
 
             @if (!isLoggedIn) {
               <a routerLink="/login" class="cc-btn join-btn">Anmelden, um beizutreten</a>
+            } @else if (isCreator) {
+              <p class="join-hint">Du hast diesen Termin erstellt.</p>
             } @else if (isSubscribed) {
               <button type="button" class="cc-btn-glass join-btn" (click)="leave()" [disabled]="actionRunning">
                 {{ actionRunning ? 'Bitte warten...' : 'Austreten' }}

@@ -18,26 +18,55 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
     [Fact]
     public async Task GetAppointments_NachBeitritt_ZeigtTeilnehmerzahlUndStatus()
     {
+        var areaId  = await GetFirstAreaIdAsync();
+        var creator = await LoginAsync("user@climbconnect.at", "User1234!");
+        var other   = await RegisterAsync("beitritt-test", "beitritt-test@example.com", "Test1234!");
+
+        var appointmentId = await CreateAsync(areaId, creator, "Teilnehmer-Test", "2030-06-01T18:00:00");
+
+        var join = await SendAsync(HttpMethod.Post, $"/api/appointments/{appointmentId}/subscribe", other,
+            JsonContent.Create(new { comment = (string?)null }));
+        Assert.Equal(HttpStatusCode.OK, join.StatusCode);
+
+        // Eingeloggt: Ersteller + Beigetretener = 2, als beigetreten markiert
+        var own = await FindAppointmentAsync(areaId, appointmentId, other);
+        Assert.Equal(2, own.GetProperty("participantCount").GetInt32());
+        Assert.True(own.GetProperty("isSubscribed").GetBoolean());
+        Assert.False(own.GetProperty("isCreator").GetBoolean());
+
+        // Ohne Login: gleiche Teilnehmerzahl, aber nicht beigetreten
+        var anonymous = await FindAppointmentAsync(areaId, appointmentId, token: null);
+        Assert.Equal(2, anonymous.GetProperty("participantCount").GetInt32());
+        Assert.False(anonymous.GetProperty("isSubscribed").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Create_ErstellerIstAutomatischDabei()
+    {
         var areaId = await GetFirstAreaIdAsync();
         var token  = await LoginAsync("user@climbconnect.at", "User1234!");
 
         var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
-            JsonContent.Create(new { title = "Teilnehmer-Test", date = "2030-06-01T18:00:00" }));
-        var appointmentId = (await create.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+            JsonContent.Create(new { title = "Send-Dudes-Test", date = "2030-06-07T18:00:00Z" }));
+        var body = await create.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(1, body.GetProperty("participantCount").GetInt32());
 
-        var join = await SendAsync(HttpMethod.Post, $"/api/appointments/{appointmentId}/subscribe", token,
-            JsonContent.Create(new { comment = (string?)null }));
-        Assert.Equal(HttpStatusCode.OK, join.StatusCode);
+        var listed = await FindAppointmentAsync(areaId, body.GetProperty("id").GetInt32(), token);
+        Assert.Equal(1, listed.GetProperty("participantCount").GetInt32());
+        Assert.True(listed.GetProperty("isSubscribed").GetBoolean());
+        Assert.True(listed.GetProperty("isCreator").GetBoolean());
+    }
 
-        // Eingeloggt: Teilnehmerzahl 1 und als beigetreten markiert
-        var own = await FindAppointmentAsync(areaId, appointmentId, token);
-        Assert.Equal(1, own.GetProperty("participantCount").GetInt32());
-        Assert.True(own.GetProperty("isSubscribed").GetBoolean());
+    [Fact]
+    public async Task Unsubscribe_AlsErsteller_Gibt400()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+        var id     = await CreateAsync(areaId, token, "Nicht austreten", "2030-06-08T18:00:00Z");
 
-        // Ohne Login: gleiche Teilnehmerzahl, aber nicht beigetreten
-        var anonymous = await FindAppointmentAsync(areaId, appointmentId, token: null);
-        Assert.Equal(1, anonymous.GetProperty("participantCount").GetInt32());
-        Assert.False(anonymous.GetProperty("isSubscribed").GetBoolean());
+        var response = await SendAsync(HttpMethod.Delete, $"/api/appointments/{id}/subscribe", token, null);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
@@ -93,13 +122,12 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
         var areaId = await GetFirstAreaIdAsync();
         var token  = await LoginAsync("user@climbconnect.at", "User1234!");
 
-        var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
-            JsonContent.Create(new { title = "Doppelt-Test", date = "2030-06-02T18:00:00" }));
-        var appointmentId = (await create.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+        var other  = await RegisterAsync("doppelt-test", "doppelt-test@example.com", "Test1234!");
+        var appointmentId = await CreateAsync(areaId, token, "Doppelt-Test", "2030-06-02T18:00:00");
 
         var body = new { comment = (string?)null };
-        await SendAsync(HttpMethod.Post, $"/api/appointments/{appointmentId}/subscribe", token, JsonContent.Create(body));
-        var second = await SendAsync(HttpMethod.Post, $"/api/appointments/{appointmentId}/subscribe", token, JsonContent.Create(body));
+        await SendAsync(HttpMethod.Post, $"/api/appointments/{appointmentId}/subscribe", other, JsonContent.Create(body));
+        var second = await SendAsync(HttpMethod.Post, $"/api/appointments/{appointmentId}/subscribe", other, JsonContent.Create(body));
 
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
     }
@@ -185,6 +213,13 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
     {
         var areas = await _client.GetFromJsonAsync<JsonElement>("/api/areas");
         return areas.GetProperty("items")[0].GetProperty("id").GetInt32();
+    }
+
+    private async Task<string> RegisterAsync(string username, string email, string password)
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new { username, email, password });
+        var body     = await response.Content.ReadFromJsonAsync<JsonElement>();
+        return body.GetProperty("token").GetString()!;
     }
 
     private async Task<string> LoginAsync(string email, string password)
