@@ -137,11 +137,15 @@
             </span>
           </a>
 
-          @if (isLoggedIn) {
+          @if (canSeePinnwand) {
             <section class="cc-card pinnwand-card">
               <app-pinnwand
                 [appointmentId]="appointment.id"
                 [isParticipant]="isSubscribed || isCreator" />
+            </section>
+          } @else if (isLoggedIn) {
+            <section class="cc-card pinnwand-card">
+              <p class="pinnwand-locked">Tritt bei, um die Pinnwand zu sehen und mitzureden.</p>
             </section>
           }
         </div>

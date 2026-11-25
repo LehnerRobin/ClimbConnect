@@ -111,7 +111,7 @@ GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP.
 | #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
 | #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
-| #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
+| ✅ #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
 
 > **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
 > - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf

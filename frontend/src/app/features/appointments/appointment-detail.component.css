@@ -137,6 +137,15 @@
 /* Pinnwand bringt eigenen oberen Rand mit – in der Karte nicht nötig */
 .pinnwand-card { padding: 22px 28px; }
 
+/* Hinweis für Nicht-Teilnehmer statt der Pinnwand (#245) */
+.pinnwand-locked {
+  margin: 0;
+  font-family: var(--cc-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cc-soft);
+}
+
 .pinnwand-card ::ng-deep .pinnwand {
   margin-top: 0;
   padding-top: 0;

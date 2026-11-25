@@ -429,3 +429,12 @@
   font-weight: 700;
   color: #CFC9BD;
 }
+
+/* Hinweis für Nicht-Teilnehmer statt der Pinnwand (#245) */
+.pinnwand-locked {
+  margin: 12px 0 0;
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #CFC9BD;
+}

@@ -153,6 +153,34 @@ namespace ClimbConnect.API.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("ClimbConnect.API.Models.PinnwandPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PinnwandPosts");
+                });
+
             modelBuilder.Entity("ClimbConnect.API.Models.Progress", b =>
                 {
                     b.Property<int>("Id")
@@ -400,6 +428,25 @@ namespace ClimbConnect.API.Migrations
                     b.Navigation("Area");
 
                     b.Navigation("Route");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClimbConnect.API.Models.PinnwandPost", b =>
+                {
+                    b.HasOne("ClimbConnect.API.Models.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClimbConnect.API.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
 
                     b.Navigation("User");
                 });

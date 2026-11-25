@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -8,9 +8,10 @@ import { PinnwandPost } from '../../../models/pinnwand.model';
 import { ReportDialogComponent } from './report-dialog.component';
 
 /**
- * Pinnwand eines Termins.
- * - Lesen: alle eingeloggten User
- * - Schreiben und Melden: nur Teilnehmer (bzw. Ersteller) des Termins
+ * Pinnwand eines Termins (#245).
+ * - Lesen, Schreiben und Melden: nur Teilnehmer (bzw. Ersteller) des Termins, Lesen auch Admin
+ * - Aktualisiert sich alle 15 Sekunden selbst – aber nur, solange die Seite sichtbar ist
+ *   (kein Live-Chat, keine Zusatztechnik wie WebSockets)
  * - Melden-Knopf nur bei Beiträgen anderer, und nur einmal pro Beitrag
  */
 @Component({
@@ -20,7 +21,7 @@ import { ReportDialogComponent } from './report-dialog.component';
   templateUrl: './pinnwand.component.html',
   styleUrl: './pinnwand.component.css'
 })
-export class PinnwandComponent implements OnChanges {
+export class PinnwandComponent implements OnInit, OnChanges, OnDestroy {
 
   private pinnwandService = inject(PinnwandService);
   private authService     = inject(AuthService);
@@ -31,6 +32,14 @@ export class PinnwandComponent implements OnChanges {
   @Input() isParticipant = false;
 
   readonly maxLength = 1000;
+
+  /** So oft wird nach neuen Beiträgen gefragt (Millisekunden). */
+  static readonly REFRESH_MS = 15_000;
+  private refreshTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly onVisibilityChange = () => {
+    // Beim Zurückkommen auf den Tab sofort aktualisieren
+    if (document.visibilityState === 'visible') this.refresh();
+  };
 
   posts: PinnwandPost[] = [];
   loading = false;
@@ -52,10 +61,35 @@ export class PinnwandComponent implements OnChanges {
     return this.authService.getUserId();
   }
 
+  ngOnInit(): void {
+    this.refreshTimer = setInterval(() => {
+      if (document.visibilityState === 'visible') this.refresh();
+    }, PinnwandComponent.REFRESH_MS);
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['appointmentId'] || changes['isParticipant']) {
       this.load();
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshTimer) clearInterval(this.refreshTimer);
+    if (this.reportInfoTimer) clearTimeout(this.reportInfoTimer);
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
+  }
+
+  /**
+   * Stilles Nachladen im Hintergrund: keine Lade-Anzeige, und ein kurzer Netzwerkfehler
+   * überschreibt die schon angezeigten Beiträge nicht.
+   */
+  refresh(): void {
+    if (this.loading || this.loadError) return;
+    this.pinnwandService.getPosts(this.appointmentId).subscribe({
+      next: posts => this.posts = posts,
+      error: () => { /* beim nächsten Durchlauf erneut versuchen */ }
+    });
   }
 
   load(): void {

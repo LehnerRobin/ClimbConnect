@@ -197,11 +197,13 @@
                         <p class="loading-detail">Lädt...</p>
                       }
 
-                      <!-- Pinnwand: lesen für alle Eingeloggten, schreiben/melden nur für Teilnehmer -->
-                      @if (isLoggedIn()) {
+                      <!-- Pinnwand nur für Teilnehmer und Ersteller (#245) -->
+                      @if (isSubscribed(appointment.id) || isOwnAppointment(appointment)) {
                         <app-pinnwand
                           [appointmentId]="appointment.id"
-                          [isParticipant]="isSubscribed(appointment.id) || isOwnAppointment(appointment)" />
+                          [isParticipant]="true" />
+                      } @else if (isLoggedIn()) {
+                        <p class="pinnwand-locked">Tritt bei, um die Pinnwand zu sehen.</p>
                       }
                     }
 
