@@ -1,9 +1,8 @@
 # Pinnwand & Melden – API-Vertrag (Frontend ↔ Backend)
 
-Das Frontend ist fertig und erwartet die folgenden Endpoints. Bis sie im Backend existieren,
-simuliert `pinnwand-mock.interceptor.ts` sie im Browser.
-**Wenn das Backend fertig ist:** in `frontend/src/environments/environment.development.ts`
-`mockPinnwand: false` setzen.
+Frontend und Backend sind fertig (#245 Pinnwand, #264 Melden). Der Mock
+`pinnwand-mock.interceptor.ts` ist nur noch aktiv, wenn in `frontend/src/environments/environment.development.ts`
+`mockPinnwand: true` gesetzt wird (z. B. um das Frontend ohne Backend zu zeigen).
 
 Alle Zeitangaben in UTC als ISO-String (z. B. `2026-11-05T10:15:00Z`), JSON in camelCase.
 Fehler bitte wie im restlichen Projekt als `{ "error": "Text" }` zurückgeben – der Text wird angezeigt.
@@ -45,7 +44,7 @@ Body: `{ "text": "..." }` (1–1000 Zeichen) → **201** mit dem neuen Beitrag (
 | 403 | kein Teilnehmer |
 
 ### `DELETE /api/posts/{postId}`  · Verfasser oder Admin
-→ **204**. Kopien in einem Fall bleiben erhalten und bekommen `deletedByAuthor = true`.
+→ **204**. Kopien in einem Fall bleiben erhalten. Löscht der Verfasser selbst, bekommen sie `deletedByAuthor = true`.
 
 ---
 
@@ -62,7 +61,9 @@ Body: `{ "text": "..." }` (1–1000 Zeichen) → **201** mit dem neuen Beitrag (
 
 **Ablauf im Backend:**
 1. Gibt es zu diesem Termin noch **keinen** Fall → Fall anlegen und **alle** aktuellen Pinnwand-Beiträge des Termins als Kopie in den Fall übernehmen.
-2. Gibt es den Fall schon → **nichts** erneut kopieren. Nur wenn der gemeldete Beitrag nach dem Anlegen des Falls geschrieben wurde (also noch keine Kopie hat), diesen einen Beitrag nachtragen.
+2. Gibt es den Fall schon → bereits kopierte Beiträge **nicht** erneut kopieren. Beiträge, die nach dem
+   Anlegen des Falls geschrieben wurden (also noch keine Kopie haben), werden nachgetragen – so sieht der
+   Admin auch den neuen Kontext (laut #264: „Weitere Meldungen ergänzen nur fehlende Beiträge“).
 3. Meldung (wer, Grund, Kommentar, Zeit) an die Kopie des gemeldeten Beitrags hängen.
 4. `LastReportAtUtc` des Falls auf jetzt setzen.
 
@@ -136,8 +137,8 @@ merkt sich „schon gemeldet“ getrennt vom Fall.
 ---
 
 ## 4. Automatisches Löschen
-Fälle mit `LastReportAtUtc` älter als 30 Tage löschen – z. B. per `BackgroundService` einmal täglich,
-oder einfach beim Aufruf von `GET /api/moderation/cases` vorher aufräumen.
+Fälle mit `LastReportAtUtc` älter als 30 Tage werden gelöscht – einmal täglich durch
+`ModerationCleanupService` und zusätzlich vor jedem Aufruf von `GET /api/moderation/cases`.
 
 ## Vorschlag Datenmodell
 - `PinnwandPost` (Id, AppointmentId → Cascade, UserId, Text, CreatedAtUtc)

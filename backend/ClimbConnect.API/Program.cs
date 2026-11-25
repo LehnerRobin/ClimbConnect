@@ -90,6 +90,8 @@ if (!builder.Environment.IsDevelopment() && !builder.Environment.IsEnvironment("
 
 builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<UploadStorage>();
+// Löscht gemeldete Pinnwand-Verläufe 30 Tage nach der letzten Meldung (#264)
+builder.Services.AddHostedService<ModerationCleanupService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -267,6 +269,7 @@ api.MapUploadEndpoints();
 api.MapGradeEndpoints();
 api.MapBackupEndpoints();
 api.MapPinnwandEndpoints();
+api.MapModerationEndpoints();
 
 app.Run();
 

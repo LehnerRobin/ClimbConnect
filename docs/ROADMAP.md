@@ -147,7 +147,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | ✅ #200 | Refactoring: doppelten Code, CSS und toten Code im Frontend aufräumen (kein `any` mehr im Frontend-Code) | 5 |
 | #181 | Favoriten im Backend speichern statt im Browser | 5 |
 | #242 | Laufende Termine hervorheben, auschecken, am Tagesende löschen – besuchte Sessions bleiben im Profil | 8 |
-| #264 | Pinnwand-Beiträge melden, Verlauf 30 Tage für den Admin aufbewahren (nach #245) | 5 |
+| ✅ #264 | Pinnwand-Beiträge melden, Verlauf 30 Tage für den Admin aufbewahren (nach #245) | 5 |
 | #243 | E-Mail-Adresse bei der Registrierung überprüfen (Bestätigungs-Link) | 5 |
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
 | #237 | Mehrere Admins verwalten | 3 |

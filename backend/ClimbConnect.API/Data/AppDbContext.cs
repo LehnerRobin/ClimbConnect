@@ -19,6 +19,9 @@ public class AppDbContext : DbContext
     public DbSet<Comment>         Comments         => Set<Comment>();
     public DbSet<Report>          Reports          => Set<Report>();
     public DbSet<PinnwandPost>    PinnwandPosts    => Set<PinnwandPost>();
+    public DbSet<ModerationCase>  ModerationCases  => Set<ModerationCase>();
+    public DbSet<CasePost>        CasePosts        => Set<CasePost>();
+    public DbSet<PostReport>      PostReports      => Set<PostReport>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -55,5 +58,32 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<PinnwandPost>()
             .Property(p => p.CreatedAtUtc)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+
+        // Meldungen (#264): ein Fall pro Termin, ohne Fremdschlüssel auf Termin oder Beitrag –
+        // die Kopien müssen das Löschen überleben. Innerhalb des Falls wird alles mitgelöscht.
+        modelBuilder.Entity<ModerationCase>()
+            .HasIndex(c => c.AppointmentId).IsUnique();
+        modelBuilder.Entity<CasePost>()
+            .HasOne(cp => cp.Case).WithMany(c => c.Posts)
+            .HasForeignKey(cp => cp.CaseId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<CasePost>()
+            .HasIndex(cp => new { cp.CaseId, cp.OriginalPostId }).IsUnique();
+        modelBuilder.Entity<CasePost>()
+            .HasIndex(cp => cp.OriginalPostId);
+        modelBuilder.Entity<PostReport>()
+            .HasOne(r => r.CasePost).WithMany(cp => cp.Reports)
+            .HasForeignKey(r => r.CasePostId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<PostReport>()
+            .HasIndex(r => new { r.CasePostId, r.ReporterId }).IsUnique();
+
+        // Alle Zeitpunkte der Fälle in UTC (SQLite speichert ohne Zeitzone)
+        modelBuilder.Entity<ModerationCase>().Property(c => c.AppointmentDate).HasConversion(v => v, v => AsUtc(v));
+        modelBuilder.Entity<ModerationCase>().Property(c => c.CreatedAtUtc).HasConversion(v => v, v => AsUtc(v));
+        modelBuilder.Entity<ModerationCase>().Property(c => c.LastReportAtUtc).HasConversion(v => v, v => AsUtc(v));
+        modelBuilder.Entity<CasePost>().Property(cp => cp.CreatedAtUtc).HasConversion(v => v, v => AsUtc(v));
+        modelBuilder.Entity<PostReport>().Property(r => r.CreatedAtUtc).HasConversion(v => v, v => AsUtc(v));
     }
+
+    /// <summary>Markiert eine aus SQLite gelesene Zeit wieder als UTC (JSON dann mit "Z").</summary>
+    private static DateTime AsUtc(DateTime value) => DateTime.SpecifyKind(value, DateTimeKind.Utc);
 }
