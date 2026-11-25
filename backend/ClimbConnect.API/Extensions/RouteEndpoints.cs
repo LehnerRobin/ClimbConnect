@@ -140,12 +140,18 @@ public static class RouteEndpoints
         .WithTags("Routes")
         .RequireAuthorization("Admin");
 
-        app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db) =>
+        app.MapDelete("/api/routes/{id:int}", async (int id, AppDbContext db,
+            UploadStorage storage, ILogger<Program> logger) =>
         {
             var route = await db.Routes.FindAsync(id);
             if (route is null) return Results.NotFound();
+
+            // Fotos der Kommentare/Reports an dieser Route – #238
+            var photoUrls = await UploadStorage.PhotoUrlsAsync(db, c => c.RouteId == id, r => r.RouteId == id);
+
             db.Routes.Remove(route);
             await db.SaveChangesAsync();
+            await storage.DeleteUnusedAsync(db, photoUrls, logger);
             return Results.NoContent();
         })
         .WithName("DeleteRoute")
