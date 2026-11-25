@@ -75,6 +75,13 @@ Einen zufälligen Key erzeugt man z. B. in PowerShell:
 Issuer, Audience, Token-Laufzeit und Datenbankpfad kommen aus `appsettings.json` und
 müssen nicht gesetzt werden. Die Umgebung ist automatisch `Production`.
 
+Optional (Standardwerte passen für Railway):
+
+| Variable | Standard | Wofür |
+|---|---|---|
+| `RateLimit__AuthPermitLimit` | `10` | Login- und Registrierungsversuche pro Minute und IP, danach 429 (Schutz gegen Passwort-Raten). |
+| `Proxy__ForwardLimit` | `2` | Wie viele Proxys vor dem Backend hängen (Railway-Proxy + nginx im Frontend). Daraus liest das Backend die echte Client-IP aus `X-Forwarded-For`. |
+
 ### frontend
 
 | Variable | Wert | Wofür |

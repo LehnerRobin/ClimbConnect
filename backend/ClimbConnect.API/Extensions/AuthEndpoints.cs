@@ -39,7 +39,8 @@ public static class AuthEndpoints
             return Results.Ok(new { token = jwt.GenerateToken(user), user.Id, user.Username, user.Email, user.Role });
         })
         .WithName("Register")
-        .WithTags("Auth");
+        .WithTags("Auth")
+        .RequireRateLimiting(RateLimitPolicies.Auth);
 
         app.MapPost("/api/auth/login", async (LoginDto dto, AppDbContext db, JwtService jwt) =>
         {
@@ -53,6 +54,7 @@ public static class AuthEndpoints
             return Results.Ok(new { token = jwt.GenerateToken(user), user.Id, user.Username, user.Email, user.Role });
         })
         .WithName("Login")
-        .WithTags("Auth");
+        .WithTags("Auth")
+        .RequireRateLimiting(RateLimitPolicies.Auth);
     }
 }

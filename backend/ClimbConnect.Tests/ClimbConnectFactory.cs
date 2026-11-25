@@ -16,8 +16,16 @@ public class ClimbConnectFactory : WebApplicationFactory<Program>
     // Einmal pro Instanz evaluiert → stabiler DB-Name für alle Tests in der Klasse
     private readonly string _dbName = $"TestDb_{Guid.NewGuid()}";
 
+    /// <summary>
+    /// Erlaubte Login-/Registrierungsversuche pro Minute. Alle Tests laufen von derselben
+    /// "IP", deshalb standardmäßig hoch – RateLimitTests setzt einen kleinen Wert.
+    /// </summary>
+    protected virtual int AuthPermitLimit => 10_000;
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseSetting("RateLimit:AuthPermitLimit", AuthPermitLimit.ToString());
+
         builder.ConfigureServices(services =>
         {
             // Alle DbContext-Options-Registrierungen entfernen

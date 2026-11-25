@@ -57,6 +57,9 @@ export class LoginComponent {
           // sonst könnte man ausprobieren, welche E-Mails registriert sind (User Enumeration)
           this.errorMessage = 'E-Mail oder Passwort ist falsch.';
           this.showRegisterHint = true;
+        } else if (error.status === 429) {
+          // Schutz gegen Passwort-Raten im Backend (#233)
+          this.errorMessage = 'Zu viele Versuche. Bitte warte eine Minute und versuche es dann noch einmal.';
         } else if (error.status === 0) {
           // Status 0 = keine Antwort vom Server (Server aus oder kein Internet)
           this.errorMessage = 'Der Server ist gerade nicht erreichbar. Bitte versuche es gleich noch einmal.';

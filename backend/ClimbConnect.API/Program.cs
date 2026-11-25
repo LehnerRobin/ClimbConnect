@@ -3,7 +3,11 @@ using Microsoft.Data.Sqlite;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Net;
 using System.Text;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using ClimbConnect.API.Data;
 using ClimbConnect.API.Extensions;
 using ClimbConnect.API.Services;
@@ -109,6 +113,51 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("User",  policy => policy.RequireRole("user", "admin"));
 });
 
+// --------------------
+// ECHTE CLIENT-IP HINTER PROXYS
+// --------------------
+// Auf Railway läuft jede Anfrage über den Railway-Proxy und danach über das nginx im
+// Frontend-Container. Das Backend sieht deshalb nur die IP von nginx. Die echte IP steht
+// im Header X-Forwarded-For. Es werden nur die letzten ForwardLimit Einträge ausgewertet –
+// die hängen die Proxys selbst an. Einträge weiter vorne könnte der Client fälschen.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.ForwardLimit     = builder.Configuration.GetValue("Proxy:ForwardLimit", 2);
+    // Die IPs der Railway-Proxys sind nicht fix, deshalb wird jedem Proxy vertraut.
+    // Das Backend ist auf Railway nur über das private Netzwerk erreichbar.
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
+// --------------------
+// RATE LIMITING (Schutz gegen Passwort-Raten)
+// --------------------
+// Login und Registrierung: höchstens AuthPermitLimit Anfragen pro Minute und IP.
+// Danach 429 – das macht Durchprobieren von Passwörtern praktisch unmöglich.
+var authPermitLimit = builder.Configuration.GetValue("RateLimit:AuthPermitLimit", 10);
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy(RateLimitPolicies.Auth, ctx =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            ctx.Connection.RemoteIpAddress?.ToString() ?? "unbekannt",
+            _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = authPermitLimit,
+                Window      = TimeSpan.FromMinutes(1),
+                QueueLimit  = 0
+            }));
+
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
+            context.HttpContext.Response.Headers.RetryAfter = ((int)retryAfter.TotalSeconds).ToString();
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            new { error = "Zu viele Versuche. Bitte warte kurz und versuche es dann noch einmal." }, token);
+    };
+});
+
 // Zirkuläre Referenzen bei JSON-Serialisierung ignorieren
 builder.Services.ConfigureHttpJsonOptions(opts =>
     opts.SerializerOptions.ReferenceHandler =
@@ -131,6 +180,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connectionString));
 
 var app = builder.Build();
+
+// Muss als Erstes laufen, damit alles danach die echte Client-IP sieht
+app.UseForwardedHeaders();
 
 // --------------------
 // GLOBALES ERROR-HANDLING
@@ -162,6 +214,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpLogging();
