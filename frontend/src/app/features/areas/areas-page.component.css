@@ -85,23 +85,34 @@
   position: absolute;
   right: 16px;
   top: 16px;
-  display: grid;
-  place-items: center;
-  width: 46px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   height: 46px;
-  border-radius: 50%;
+  padding: 0 16px 0 13px;
+  border-radius: 999px;
   color: var(--cc-cream);
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
+  transition: transform .2s ease, background-color .2s ease;
 }
+
+.favorite-btn:hover { transform: scale(1.06); }
 
 .area-card-offset .favorite-btn { top: 106px; }
 
 .favorite-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
 }
 
-.favorite-btn.is-favorite { color: var(--cc-accent); }
+/* Favorit: gefüllte, helle Fläche statt nur einem farbigen Umriss – auf jedem Foto gut sichtbar */
+.favorite-btn.is-favorite {
+  background: var(--cc-accent);
+  color: var(--cc-ink);
+}
 
 .area-name {
   margin: 0;

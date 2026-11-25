@@ -17,6 +17,23 @@
   margin-top: 64px;
 }
 
+/* Favorit + Session planen nebeneinander, am Handy untereinander */
+.band-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.favorite-action svg {
+  width: 20px;
+  height: 20px;
+}
+
+.favorite-action.is-favorite {
+  background: var(--cc-accent);
+  color: var(--cc-ink);
+}
+
 .band-copy {
   flex: 1 1 640px;
   min-width: 0;

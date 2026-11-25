@@ -103,9 +103,17 @@ export class AreasPageComponent implements OnInit {
     return this.areas.filter(a => this.favoritesService.isFavorite(a.id));
   }
 
+  /**
+   * Favoriten für die Karte. Eigenes Feld statt direkt favoritesService.favoriteIds im
+   * Template: der Getter liefert jedes Mal ein neues Array, und die Karte würde bei jeder
+   * Änderungserkennung alle Marker neu zeichnen.
+   */
+  favoriteIds: number[] = this.favoritesService.favoriteIds;
+
   toggleFavorite(event: Event, areaId: number): void {
     event.preventDefault();
     event.stopPropagation();
     this.favoritesService.toggle(areaId);
+    this.favoriteIds = this.favoritesService.favoriteIds;
   }
 }

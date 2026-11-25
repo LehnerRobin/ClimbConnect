@@ -1,3 +1,4 @@
+import { FavoritesService } from '../../../services/favorites.service';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -29,6 +30,8 @@ export class AreaDetailComponent implements OnInit {
   private areasService = inject(AreasService);
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  /** Favoriten liegen im Browser (localStorage) – funktioniert auch ohne Login (#248). */
+  favoritesService = inject(FavoritesService);
 
   /** Gemeinsamer Bild-Helfer aus design-utils, damit das Template ihn aufrufen kann. */
   readonly areaImage = areaImage;
