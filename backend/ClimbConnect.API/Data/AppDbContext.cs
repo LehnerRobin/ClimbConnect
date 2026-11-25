@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<AppointmentUser> AppointmentUsers => Set<AppointmentUser>();
     public DbSet<Comment>         Comments         => Set<Comment>();
     public DbSet<Report>          Reports          => Set<Report>();
+    public DbSet<PinnwandPost>    PinnwandPosts    => Set<PinnwandPost>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,5 +47,13 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Report>()
             .HasOne(r => r.Route).WithMany(rt => rt.Reports)
             .HasForeignKey(r => r.RouteId).OnDelete(DeleteBehavior.Cascade);
+
+        // Pinnwand-Beiträge verschwinden mit dem Termin (#245, keine Kopie)
+        modelBuilder.Entity<PinnwandPost>()
+            .HasOne(p => p.Appointment).WithMany()
+            .HasForeignKey(p => p.AppointmentId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<PinnwandPost>()
+            .Property(p => p.CreatedAtUtc)
+            .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
     }
 }

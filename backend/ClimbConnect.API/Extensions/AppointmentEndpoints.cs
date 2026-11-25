@@ -250,6 +250,9 @@ public static class AppointmentEndpoints
             if (appointment.CreatedByUserId != userId && !user.IsInRole("admin"))
                 return Results.Forbid();
 
+            // Pinnwand-Beiträge ausdrücklich mitlöschen (#245). In SQLite erledigt das auch der
+            // Fremdschlüssel; so gilt es aber unabhängig von der Datenbank.
+            db.PinnwandPosts.RemoveRange(db.PinnwandPosts.Where(p => p.AppointmentId == id));
             db.Appointments.Remove(appointment);
             await db.SaveChangesAsync();
             return Results.NoContent();

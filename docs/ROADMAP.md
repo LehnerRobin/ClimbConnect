@@ -75,8 +75,8 @@ andere Robin Lehner.
 |---|---|---|---|
 | #231 | Impressum und Datenschutzerklärung | 2 | Robin, Mohamed |
 | #232 | Eigenes Konto löschen | 3 | Robin, Faru |
-| #233 | Schutz gegen Passwort-Raten beim Login | 2 | Robin |
-| #234 | Foto-Links nur auf eigene Uploads | 1 | Robin |
+| ✅ #233 | Schutz gegen Passwort-Raten beim Login | 2 | Robin |
+| ✅ #234 | Foto-Links nur auf eigene Uploads | 1 | Robin |
 | ✅ #222 | Klare Meldungen bei Login und Registrierung | 2 | Robin, Mohamed |
 
 **Bedienung**
@@ -87,14 +87,14 @@ andere Robin Lehner.
 | ✅ #250 | Subjektive Gradeinschätzung nur in der eigenen Skala (doppelte Werte mit franz. Grad) | 2 | Mohamed |
 | ✅ #227 | Routensuche im Frontend (Lücke Meilenstein 2) | 3 | Mohamed |
 | ✅ #247 | Gebietsname auf der Karte (am Handy dauerhaft sichtbar) | 1 | Mohamed |
-| #248 | Favoriten auch auf der Gebietsseite und deutlicher erkennbar | 1 | Faru |
+| ✅ #248 | Favoriten auch auf der Gebietsseite und deutlicher erkennbar | 1 | Faru |
 
 **Termine** (Reihenfolge: #228 → #254, #229)
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
-| #228 | Teilnehmer-Anzeige „2/4 Dudes“ überall, Standard Min. 2 und Open End | 3 | Robin, Faru |
-| #254 | „Send Dudes!“-Hinweis, solange ein Termin unter dem Minimum ist; Ersteller tritt automatisch bei | 2 | Robin, Faru |
+| ✅ #228 | Teilnehmer-Anzeige „2/4 Dudes“ überall, Standard Min. 2 und Open End | 3 | Robin, Faru |
+| ✅ #254 | „Send Dudes!“-Hinweis, solange ein Termin unter dem Minimum ist; Ersteller tritt automatisch bei | 2 | Robin, Faru |
 | #229 | Eigene Detailseite für Termine mit Link zum Gebiet | 3 | Faru |
 
 ---
@@ -111,7 +111,7 @@ GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP.
 | #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
 | #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
-| #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
+| ✅ #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
 
 > **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
 > - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf
@@ -152,7 +152,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
 | #237 | Mehrere Admins verwalten | 3 |
 | #240 | Routen nach Grad, Stil und Länge filtern | 3 |
-| #236 | Backups der Datenbank auf Railway | 2 |
+| #236 | Backups der Datenbank auf Railway (Download-Knopf im Admin ✅, Test auf Railway offen) | 2 |
 | #238 | Bilder löschen, wenn Inhalte gelöscht werden | 2 |
 | #239 | Gebietsliste zeigt, wie viele in den nächsten Tagen kommen | 2 |
 | #241 | Ideen-Sammlung (Gebietsinfos, Wetter, .ics-Export, Grad-Pyramide, …) | 1 |

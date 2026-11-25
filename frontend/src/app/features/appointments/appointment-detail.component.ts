@@ -101,6 +101,11 @@ export class AppointmentDetailComponent implements OnInit {
     return this.currentUserId !== null && this.appointment?.createdByUserId === this.currentUserId;
   }
 
+  /** Pinnwand sehen nur Teilnehmer, Ersteller und Admin (#245). */
+  get canSeePinnwand(): boolean {
+    return this.isSubscribed || this.isCreator || this.authService.hasRole('admin');
+  }
+
   /** Ersteller und Admin dürfen bearbeiten und löschen. */
   get canManage(): boolean {
     return this.isCreator || this.authService.hasRole('admin');

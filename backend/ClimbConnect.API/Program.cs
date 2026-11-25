@@ -266,6 +266,7 @@ api.MapUserEndpoints();
 api.MapUploadEndpoints();
 api.MapGradeEndpoints();
 api.MapBackupEndpoints();
+api.MapPinnwandEndpoints();
 
 app.Run();
 
