@@ -85,12 +85,16 @@ public static class AreaEndpoints
         .WithTags("Areas")
         .RequireAuthorization("Admin");
 
-        app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext db) =>
+        app.MapPut("/api/areas/{id:int}", async (int id, AreaUpdateDto dto, AppDbContext db,
+            UploadStorage storage, ILogger<Program> logger) =>
         {
             var area = await db.Areas.FindAsync(id);
             if (area is null) return Results.NotFound();
             if (string.IsNullOrWhiteSpace(dto.Name))
                 return Results.BadRequest(new { error = "Name ist erforderlich" });
+
+            // Altes Titelbild merken – wird es ersetzt, kann die Datei weg (#238)
+            var oldImageUrl = area.ImageUrl;
 
             area.Name        = dto.Name.Trim();
             area.Location    = string.IsNullOrWhiteSpace(dto.Location)    ? null : dto.Location.Trim();
@@ -100,18 +104,29 @@ public static class AreaEndpoints
             area.Longitude   = dto.Longitude;
 
             await db.SaveChangesAsync();
+            if (oldImageUrl != area.ImageUrl)
+                await storage.DeleteUnusedAsync(db, [oldImageUrl], logger);
             return Results.Ok(area);
         })
         .WithName("UpdateArea")
         .WithTags("Areas")
         .RequireAuthorization("Admin");
 
-        app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db) =>
+        app.MapDelete("/api/areas/{id:int}", async (int id, AppDbContext db,
+            UploadStorage storage, ILogger<Program> logger) =>
         {
             var area = await db.Areas.FindAsync(id);
             if (area is null) return Results.NotFound();
+
+            // Titelbild und Fotos aller Kommentare/Reports im Gebiet (auch an dessen Routen) – #238
+            var photoUrls = await UploadStorage.PhotoUrlsAsync(db,
+                c => c.AreaId == id || (c.Route != null && c.Route.Sector.AreaId == id),
+                r => r.AreaId == id || (r.Route != null && r.Route.Sector.AreaId == id));
+            photoUrls.Add(area.ImageUrl);
+
             db.Areas.Remove(area);
             await db.SaveChangesAsync();
+            await storage.DeleteUnusedAsync(db, photoUrls, logger);
             return Results.NoContent();
         })
         .WithName("DeleteArea")

@@ -153,7 +153,7 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | #237 | Mehrere Admins verwalten | 3 |
 | #240 | Routen nach Grad, Stil und Länge filtern | 3 |
 | #236 | Backups der Datenbank auf Railway (Download-Knopf im Admin ✅, Test auf Railway offen) | 2 |
-| #238 | Bilder löschen, wenn Inhalte gelöscht werden | 2 |
+| ✅ #238 | Bilder löschen, wenn Inhalte gelöscht werden | 2 |
 | #239 | Gebietsliste zeigt, wie viele in den nächsten Tagen kommen | 2 |
 | #241 | Ideen-Sammlung (Gebietsinfos, Wetter, .ics-Export, Grad-Pyramide, …) | 1 |
 

@@ -1,3 +1,4 @@
+using ClimbConnect.API.Services;
 using ClimbConnect.API.Data;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Models;
@@ -71,12 +72,20 @@ public static class SectorEndpoints
         .WithTags("Sectors")
         .RequireAuthorization("Admin");
 
-        app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db) =>
+        app.MapDelete("/api/sectors/{id:int}", async (int id, AppDbContext db,
+            UploadStorage storage, ILogger<Program> logger) =>
         {
             var sector = await db.Sectors.FindAsync(id);
             if (sector is null) return Results.NotFound();
+
+            // Fotos der Kommentare/Reports an den Routen des Sektors – #238
+            var photoUrls = await UploadStorage.PhotoUrlsAsync(db,
+                c => c.Route != null && c.Route.SectorId == id,
+                r => r.Route != null && r.Route.SectorId == id);
+
             db.Sectors.Remove(sector);
             await db.SaveChangesAsync();
+            await storage.DeleteUnusedAsync(db, photoUrls, logger);
             return Results.NoContent();
         })
         .WithName("DeleteSector")

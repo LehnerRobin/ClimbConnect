@@ -104,7 +104,8 @@ public static class CommentEndpoints
         .WithTags("Comments")
         .RequireAuthorization("User");
 
-        app.MapDelete("/api/comments/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
+        app.MapDelete("/api/comments/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db,
+            UploadStorage storage, ILogger<Program> logger) =>
         {
             if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
                 return Results.Unauthorized();
@@ -115,6 +116,7 @@ public static class CommentEndpoints
 
             db.Comments.Remove(comment);
             await db.SaveChangesAsync();
+            await storage.DeleteUnusedAsync(db, [comment.PhotoUrl], logger);   // #238
             return Results.NoContent();
         })
         .WithName("DeleteComment")

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using ClimbConnect.API.Models;
 using ClimbConnect.API.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +79,21 @@ public class UploadStorage
             }
         }
         return deleted;
+    }
+
+    /// <summary>
+    /// Sammelt die Foto-Links aller Kommentare und Reports, die gleich gelöscht werden –
+    /// VOR dem Löschen aufrufen, danach sind die Einträge weg.
+    /// </summary>
+    /// <param name="db">Datenbank.</param>
+    /// <param name="comments">Welche Kommentare betroffen sind.</param>
+    /// <param name="reports">Welche Reports betroffen sind.</param>
+    public static async Task<List<string?>> PhotoUrlsAsync(AppDbContext db,
+        Expression<Func<Comment, bool>> comments, Expression<Func<Report, bool>> reports)
+    {
+        var urls = await db.Comments.Where(comments).Where(c => c.PhotoUrl != null).Select(c => c.PhotoUrl).ToListAsync();
+        urls.AddRange(await db.Reports.Where(reports).Where(r => r.PhotoUrl != null).Select(r => r.PhotoUrl).ToListAsync());
+        return urls;
     }
 
     /// <summary>
