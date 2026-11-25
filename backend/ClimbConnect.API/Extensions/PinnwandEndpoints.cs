@@ -33,8 +33,8 @@ public static class PinnwandEndpoints
                 .OrderBy(p => p.CreatedAtUtc).ThenBy(p => p.Id)
                 .Select(p => new PinnwandPostDto(
                     p.Id, p.AppointmentId, p.UserId, p.User.Username, p.Text, p.CreatedAtUtc,
-                    // Melden kommt mit #264
-                    false))
+                    // Hat der eingeloggte User diesen Beitrag schon gemeldet? (#264)
+                    db.PostReports.Any(r => r.ReporterId == userId && r.CasePost.OriginalPostId == p.Id)))
                 .ToListAsync();
             return Results.Ok(posts);
         })
@@ -70,7 +70,7 @@ public static class PinnwandEndpoints
         .WithTags("Pinnwand")
         .RequireAuthorization("User");
 
-        // Beitrag löschen – Verfasser oder Admin. Der Beitrag ist danach wirklich weg.
+        // Beitrag löschen – Verfasser oder Admin. Auf der Pinnwand ist der Beitrag danach wirklich weg.
         app.MapDelete("/api/posts/{id:int}", async (int id, ClaimsPrincipal user, AppDbContext db) =>
         {
             if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
@@ -80,6 +80,14 @@ public static class PinnwandEndpoints
             if (post is null) return Results.NotFound();
             if (post.UserId != userId && !user.IsInRole("admin"))
                 return Forbidden("Du kannst nur eigene Beiträge löschen.");
+
+            // Kopien in einem Fall bleiben erhalten (#264). Löscht der Verfasser selbst,
+            // sieht der Admin das als Hinweis im Fall.
+            if (post.UserId == userId)
+            {
+                var copies = await db.CasePosts.Where(cp => cp.OriginalPostId == id).ToListAsync();
+                foreach (var copy in copies) copy.DeletedByAuthor = true;
+            }
 
             db.PinnwandPosts.Remove(post);
             await db.SaveChangesAsync();

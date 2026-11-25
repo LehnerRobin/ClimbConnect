@@ -117,6 +117,45 @@ namespace ClimbConnect.API.Migrations
                     b.ToTable("Areas");
                 });
 
+            modelBuilder.Entity("ClimbConnect.API.Models.CasePost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AuthorUsername")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("CaseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("DeletedByAuthor")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OriginalPostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OriginalPostId");
+
+                    b.HasIndex("CaseId", "OriginalPostId")
+                        .IsUnique();
+
+                    b.ToTable("CasePosts");
+                });
+
             modelBuilder.Entity("ClimbConnect.API.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -153,6 +192,39 @@ namespace ClimbConnect.API.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("ClimbConnect.API.Models.ModerationCase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("AppointmentDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("AppointmentTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AreaName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("LastReportAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("ModerationCases");
+                });
+
             modelBuilder.Entity("ClimbConnect.API.Models.PinnwandPost", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +251,40 @@ namespace ClimbConnect.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PinnwandPosts");
+                });
+
+            modelBuilder.Entity("ClimbConnect.API.Models.PostReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CasePostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ReporterId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ReporterUsername")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CasePostId", "ReporterId")
+                        .IsUnique();
+
+                    b.ToTable("PostReports");
                 });
 
             modelBuilder.Entity("ClimbConnect.API.Models.Progress", b =>
@@ -407,6 +513,17 @@ namespace ClimbConnect.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ClimbConnect.API.Models.CasePost", b =>
+                {
+                    b.HasOne("ClimbConnect.API.Models.ModerationCase", "Case")
+                        .WithMany("Posts")
+                        .HasForeignKey("CaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Case");
+                });
+
             modelBuilder.Entity("ClimbConnect.API.Models.Comment", b =>
                 {
                     b.HasOne("ClimbConnect.API.Models.Area", "Area")
@@ -449,6 +566,17 @@ namespace ClimbConnect.API.Migrations
                     b.Navigation("Appointment");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClimbConnect.API.Models.PostReport", b =>
+                {
+                    b.HasOne("ClimbConnect.API.Models.CasePost", "CasePost")
+                        .WithMany("Reports")
+                        .HasForeignKey("CasePostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CasePost");
                 });
 
             modelBuilder.Entity("ClimbConnect.API.Models.Progress", b =>
@@ -531,6 +659,16 @@ namespace ClimbConnect.API.Migrations
                     b.Navigation("Reports");
 
                     b.Navigation("Sectors");
+                });
+
+            modelBuilder.Entity("ClimbConnect.API.Models.CasePost", b =>
+                {
+                    b.Navigation("Reports");
+                });
+
+            modelBuilder.Entity("ClimbConnect.API.Models.ModerationCase", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("ClimbConnect.API.Models.Route", b =>
