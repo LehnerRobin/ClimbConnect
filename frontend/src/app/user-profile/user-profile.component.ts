@@ -6,6 +6,7 @@ import { AreaVisit, UserService } from '../../services/user.service';
 import { Appointment, AreasService, ProgressEntry } from '../../services/areas.service';
 import { Chart, registerables } from 'chart.js';
 import { PageBandComponent } from '../shared/page-band.component';
+import { DudesComponent } from '../shared/dudes.component';
 import { ascentStatusClass, gradeClass as gradeColorClass } from '../shared/design-utils';
 
 Chart.register(...registerables);
@@ -19,7 +20,7 @@ interface MyAppointment extends Appointment {
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink, PageBandComponent],
+  imports: [FormsModule, CommonModule, RouterLink, PageBandComponent, DudesComponent],
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css']
 })

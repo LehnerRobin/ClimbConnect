@@ -41,6 +41,53 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
     }
 
     [Fact]
+    public async Task Create_OhneMinimum_SetztStandard2UndOpenEnd()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
+            JsonContent.Create(new { title = "Standard-Test", date = "2030-06-05T18:00:00Z" }));
+        Assert.Equal(HttpStatusCode.Created, create.StatusCode);
+
+        var body = await create.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(2, body.GetProperty("minParticipants").GetInt32());
+        Assert.Equal(JsonValueKind.Null, body.GetProperty("maxParticipants").ValueKind);
+    }
+
+    [Theory]
+    [InlineData(1, null)]   // Minimum unter 2
+    [InlineData(null, 1)]   // Maximum unter 2
+    [InlineData(null, 0)]
+    public async Task Create_MinimumOderMaximumUnter2_Gibt400(int? min, int? max)
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var response = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
+            JsonContent.Create(new { title = "Zu klein", date = "2030-06-05T18:00:00Z",
+                                     minParticipants = min, maxParticipants = max }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_MinimumUnter2_Gibt400()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/appointments", token,
+            JsonContent.Create(new { title = "Update-Min", date = "2030-06-06T18:00:00Z" }));
+        var id = (await create.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
+
+        var response = await SendAsync(HttpMethod.Put, $"/api/appointments/{id}", token,
+            JsonContent.Create(new { title = "Update-Min", date = "2030-06-06T18:00:00Z", minParticipants = 1 }));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Subscribe_ZweimalBeitreten_Gibt409()
     {
         var areaId = await GetFirstAreaIdAsync();

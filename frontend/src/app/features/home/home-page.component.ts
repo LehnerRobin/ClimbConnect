@@ -8,6 +8,7 @@ import { UserService } from '../../../services/user.service';
 import { EveningLightComponent } from './evening-light.component';
 import { HomeCommunityComponent } from './home-community.component';
 import { areaImage, showAreaFallbackPhoto } from '../../shared/design-utils';
+import { DudesComponent } from '../../shared/dudes.component';
 
 interface HomeAppointment extends Appointment {
   areaId: number;
@@ -18,7 +19,7 @@ interface HomeAppointment extends Appointment {
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [CommonModule, RouterLink, EveningLightComponent, HomeCommunityComponent],
+  imports: [CommonModule, RouterLink, EveningLightComponent, HomeCommunityComponent, DudesComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })

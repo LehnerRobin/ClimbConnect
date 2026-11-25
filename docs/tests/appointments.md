@@ -8,7 +8,7 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 |---|---|
 | Voraussetzung | Area existiert. Es gibt mindestens einen Termin oder keine Termine. |
 | Schritte | 1. `/areas/{id}` öffnen. 2. Abschnitt „Kommende Termine“ prüfen. |
-| Erwartetes Ergebnis | Vorhandene Termine werden mit Titel, Datum und Teilnehmeranzahl angezeigt. Wenn keine Termine vorhanden sind, steht „Keine Termine“. |
+| Erwartetes Ergebnis | Vorhandene Termine werden mit Titel, Datum und Teilnehmeranzeige im Format „1/4 Dudes“ (ohne Maximum „1/∞ Dudes“) angezeigt. Wenn keine Termine vorhanden sind, steht „Keine Termine“. |
 | Status | Offen |
 
 ## AP-002 – Button „+ Session“ nur mit Login
@@ -35,7 +35,7 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 |---|---|
 | Voraussetzung | User ist eingeloggt. Area existiert. |
 | Schritte | 1. Area-Detailseite öffnen. 2. „+ Session“ klicken. |
-| Erwartetes Ergebnis | Formular öffnet sich. Datum ist heute, Uhrzeit ist `18:00`, minimale Teilnehmer ist `1`, maximale Teilnehmer ist `4`. |
+| Erwartetes Ergebnis | Formular öffnet sich. Datum ist heute, Uhrzeit ist `18:00`, „Min. Dudes“ ist `2`, „Max. Dudes“ ist leer mit dem Hinweis „Open End“. |
 | Status | Offen |
 
 ## AP-005 – Titel ist Pflichtfeld
@@ -56,13 +56,13 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Erwartetes Ergebnis | Es erscheint „Bitte gib Datum und Uhrzeit ein.“ Es wird kein Termin erstellt. |
 | Status | Offen |
 
-## AP-007 – Min. Teilnehmer größer als Max. Teilnehmer
+## AP-007 – Min. Dudes größer als Max. Dudes
 
 | Feld | Beschreibung |
 |---|---|
 | Voraussetzung | Appointment-Formular ist geöffnet. |
-| Schritte | 1. Titel eintragen. 2. Min. Teilnehmer auf `5` setzen. 3. Max. Teilnehmer auf `2` setzen. 4. Speichern klicken. |
-| Erwartetes Ergebnis | Es erscheint „Minimale Teilnehmerzahl darf nicht größer als maximale Teilnehmerzahl sein.“ |
+| Schritte | 1. Titel eintragen. 2. Min. Dudes auf `5` setzen. 3. Max. Dudes auf `2` setzen. 4. Speichern klicken. |
+| Erwartetes Ergebnis | Es erscheint „Das Maximum darf nicht kleiner als das Minimum sein. Für kein Limit das Feld leer lassen.“ |
 | Status | Offen |
 
 ## AP-008 – Termin erfolgreich erstellen
@@ -128,4 +128,22 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Voraussetzung | Eingeloggt. Ein Termin für heute in einigen Stunden in Gebiet X, dem man beigetreten ist. |
 | Schritte | 1. `/areas` öffnen. 2. Karte von Gebiet X ansehen. |
 | Erwartetes Ergebnis | Bei Gebiet X zählen „Besucher heute“ und „Termine heute“ den Termin mit. |
+| Status | Offen |
+
+## AP-015 – Einheitliche Dudes-Anzeige (#228)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Eingeloggt. Ein Termin mit Max. `2`, dem man beigetreten ist, und ein Termin ohne Maximum. |
+| Schritte | 1. Startseite ansehen. 2. Gebietsseite ansehen. 3. Profil → Meine Termine ansehen. 4. Termin-Seite öffnen. |
+| Erwartetes Ergebnis | Überall steht dieselbe Anzeige, z. B. „1/2 Dudes“ bzw. „1/∞ Dudes“. Beim beigetretenen Termin steht „Du bist dabei“. Ist ein Termin voll (z. B. „2/2“), steht „ausgebucht“. |
+| Status | Offen |
+
+## AP-016 – Minimum unter 2 nicht möglich (#228)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Appointment-Formular ist geöffnet. |
+| Schritte | 1. Titel eintragen. 2. Min. Dudes auf `1` setzen. 3. Speichern klicken. |
+| Erwartetes Ergebnis | Es erscheint „Mindestens 2 Dudes – allein klettern braucht keinen Termin.“ Es wird kein Termin erstellt. |
 | Status | Offen |

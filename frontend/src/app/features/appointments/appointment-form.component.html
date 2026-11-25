@@ -82,25 +82,27 @@
           </div>
 
           <div class="cc-field">
-            <label for="minParticipants">Min. Teilnehmer</label>
+            <label for="minParticipants">Min. Dudes</label>
             <input
               id="minParticipants"
               class="cc-input"
               type="number"
               name="minParticipants"
-              min="1"
+              min="2"
               [(ngModel)]="form.minParticipants">
           </div>
 
           <div class="cc-field">
-            <label for="maxParticipants">Max. Teilnehmer</label>
+            <label for="maxParticipants">Max. Dudes</label>
             <input
               id="maxParticipants"
               class="cc-input"
               type="number"
               name="maxParticipants"
-              min="1"
+              min="2"
+              placeholder="Open End"
               [(ngModel)]="form.maxParticipants">
+            <small class="cc-small">Leer lassen = Open End (kein Limit)</small>
           </div>
 
           @if (errorMessage) {
@@ -148,7 +150,7 @@
               </div>
               <div>
                 <span class="cc-label">Leute</span>
-                <span class="stub-value">{{ form.minParticipants || '–' }}–{{ form.maxParticipants || '–' }}</span>
+                <span class="stub-value">{{ form.minParticipants || 2 }}–{{ form.maxParticipants || '∞' }}</span>
               </div>
             </div>
           </article>

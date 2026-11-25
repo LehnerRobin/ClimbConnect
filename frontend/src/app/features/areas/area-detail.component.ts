@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
 import { PageBandComponent } from '../../shared/page-band.component';
+import { DudesComponent } from '../../shared/dudes.component';
 import { areaImage, gradeClass } from '../../shared/design-utils';
 
 interface SectorWithRoutes extends Sector {
@@ -18,7 +19,7 @@ interface SectorWithRoutes extends Sector {
 @Component({
   selector: 'app-area-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, PinnwandComponent, PageBandComponent],
+  imports: [CommonModule, RouterLink, FormsModule, PinnwandComponent, PageBandComponent, DudesComponent],
   templateUrl: './area-detail.component.html',
   styleUrl: './area-detail.component.css'
 })

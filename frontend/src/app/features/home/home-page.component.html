@@ -246,7 +246,7 @@
                     </span>
                   </span>
                   <span class="session-time">{{ appointment.date | date:'HH:mm' }}</span>
-                  <span class="session-count">{{ appointment.participantCount ?? 0 }} Teilnehmer</span>
+                  <span class="session-count"><app-dudes [count]="appointment.participantCount" [max]="appointment.maxParticipants" [subscribed]="appointment.isSubscribed" /></span>
                 </a>
               </li>
             }

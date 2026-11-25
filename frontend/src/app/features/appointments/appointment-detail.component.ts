@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
 import { PageBandComponent } from '../../shared/page-band.component';
+import { DudesComponent, dudesLabel, isFullyBooked } from '../../shared/dudes.component';
 import { areaFallbackPhoto, gradeClass } from '../../shared/design-utils';
 
 /**
@@ -17,7 +18,7 @@ import { areaFallbackPhoto, gradeClass } from '../../shared/design-utils';
 @Component({
   selector: 'app-appointment-detail',
   standalone: true,
-  imports: [DatePipe, RouterLink, PinnwandComponent, PageBandComponent],
+  imports: [DatePipe, RouterLink, PinnwandComponent, PageBandComponent, DudesComponent],
   templateUrl: './appointment-detail.component.html',
   styleUrl: './appointment-detail.component.css'
 })
@@ -106,19 +107,16 @@ export class AppointmentDetailComponent implements OnInit {
   }
 
   get isFull(): boolean {
-    const max = this.appointment?.maxParticipants;
-    return !!max && (this.appointment?.participantCount ?? 0) >= max;
+    return isFullyBooked(this.appointment?.participantCount, this.appointment?.maxParticipants);
   }
 
   get isPast(): boolean {
     return !!this.appointment?.date && new Date(this.appointment.date).getTime() < Date.now();
   }
 
-  /** z. B. "3 / 5" – ohne Maximum nur die Anzahl. */
+  /** z. B. "3/5" – ohne Maximum "3/∞" (gleiche Schreibweise wie überall, #228). */
   get participantLabel(): string {
-    const count = this.appointment?.participantCount ?? 0;
-    const max   = this.appointment?.maxParticipants;
-    return max ? `${count} / ${max}` : `${count}`;
+    return dudesLabel(this.appointment?.participantCount, this.appointment?.maxParticipants);
   }
 
   /** Füllstand für den Balken (0–100). */
