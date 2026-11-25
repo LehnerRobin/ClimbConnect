@@ -1,4 +1,4 @@
-import { dudesLabel, isFullyBooked } from './dudes.component';
+import { dudesLabel, isFullyBooked, needsDudes } from './dudes.component';
 
 describe('dudesLabel', () => {
   it('zeigt angemeldet / Maximum', () => {
@@ -23,5 +23,22 @@ describe('isFullyBooked', () => {
   it('ist nicht ausgebucht darunter oder ohne Maximum', () => {
     expect(isFullyBooked(3, 4)).toBeFalse();
     expect(isFullyBooked(10, null)).toBeFalse();
+  });
+});
+
+describe('needsDudes', () => {
+  it('braucht Leute, solange das Minimum nicht erreicht ist', () => {
+    expect(needsDudes(1, 2)).toBeTrue();
+    expect(needsDudes(2, 3)).toBeTrue();
+  });
+
+  it('braucht keine Leute mehr ab dem Minimum', () => {
+    expect(needsDudes(2, 2)).toBeFalse();
+    expect(needsDudes(5, 3)).toBeFalse();
+  });
+
+  it('nimmt ohne Minimum den Standard 2', () => {
+    expect(needsDudes(1, null)).toBeTrue();
+    expect(needsDudes(2, undefined)).toBeFalse();
   });
 });

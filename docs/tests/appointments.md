@@ -147,3 +147,12 @@ Bereich: **Klettersessions / Termine erstellen, anzeigen, beitreten und austrete
 | Schritte | 1. Titel eintragen. 2. Min. Dudes auf `1` setzen. 3. Speichern klicken. |
 | Erwartetes Ergebnis | Es erscheint „Mindestens 2 Dudes – allein klettern braucht keinen Termin.“ Es wird kein Termin erstellt. |
 | Status | Offen |
+
+## AP-017 – „Send Dudes!“ und Ersteller automatisch dabei (#254)
+
+| Feld | Beschreibung |
+|---|---|
+| Voraussetzung | Eingeloggt als User A. Ein zweiter User B existiert. |
+| Schritte | 1. Als A einen Termin mit Min. `2` erstellen. 2. Termin auf Startseite, Gebietsseite, Profil und Termin-Seite ansehen. 3. Als B anmelden und dem Termin beitreten. 4. Anzeige erneut ansehen. |
+| Erwartetes Ergebnis | Nach Schritt 1 steht überall „1/∞ Dudes“ und groß „Send Dudes!“. A sieht statt „Beitreten“/„Austreten“ den Hinweis „Du hast diesen Termin erstellt“. Nach Schritt 3 steht „2/∞ Dudes“ und „Send Dudes!“ ist verschwunden. |
+| Status | Offen |

@@ -140,7 +140,7 @@
                 @for (appointment of appointments; track appointment.id) {
                   <article class="cc-ticket appointment-card">
                     <button type="button" class="appointment-topline" (click)="toggleAppointmentDetail(appointment.id)" [attr.aria-expanded]="expandedAppointmentId === appointment.id">
-                      <span class="cc-label ticket-label">Session · <app-dudes [count]="appointment.participantCount" [max]="appointment.maxParticipants" [subscribed]="isSubscribed(appointment.id)" /></span>
+                      <span class="cc-label ticket-label">Session · <app-dudes [count]="appointment.participantCount" [min]="appointment.minParticipants" [max]="appointment.maxParticipants" [subscribed]="isSubscribed(appointment.id)" /></span>
                       <h3>{{ appointment.title }}</h3>
                       <span class="appointment-date">
                         @if (appointment.date) {
@@ -196,7 +196,9 @@
 
                     <div class="ticket-actions">
                       @if (isLoggedIn()) {
-                        @if (isSubscribed(appointment.id)) {
+                        @if (isOwnAppointment(appointment)) {
+                          <span class="creator-hint">Du hast diesen Termin erstellt</span>
+                        } @else if (isSubscribed(appointment.id)) {
                           <button type="button" class="cc-btn-glass cc-btn-sm" (click)="unsubscribe(appointment)">Austreten</button>
                         } @else {
                           <button type="button" class="cc-btn cc-btn-sm" (click)="subscribe(appointment)">Beitreten</button>

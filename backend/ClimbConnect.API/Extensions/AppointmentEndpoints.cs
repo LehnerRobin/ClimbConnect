@@ -30,6 +30,7 @@ public static class AppointmentEndpoints
                     a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
                     a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
                     ParticipantCount = a.AppointmentUsers.Count,
+                    IsCreator        = currentUserId != null && a.CreatedByUserId == currentUserId,
                     IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
                 })
                 .ToListAsync();
@@ -58,6 +59,7 @@ public static class AppointmentEndpoints
                     AreaName         = a.Area.Name,
                     AreaLocation     = a.Area.Location,
                     ParticipantCount = a.AppointmentUsers.Count,
+                    IsCreator        = currentUserId != null && a.CreatedByUserId == currentUserId,
                     IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
                 })
                 .ToListAsync();
@@ -184,6 +186,9 @@ public static class AppointmentEndpoints
                 MaxParticipants = dto.MaxParticipants
             };
 
+            // Wer einen Termin erstellt, ist automatisch dabei und zählt als erster Dude (#254)
+            appointment.AppointmentUsers.Add(new AppointmentUser { UserId = userId, User = currentUser });
+
             db.Appointments.Add(appointment);
             await db.SaveChangesAsync();
 
@@ -192,7 +197,8 @@ public static class AppointmentEndpoints
             {
                 appointment.Id, appointment.AreaId, appointment.CreatedByUserId,
                 appointment.Title, appointment.Date, appointment.MeetingPoint, appointment.Description,
-                appointment.MinParticipants, appointment.MaxParticipants, appointment.CreatedAtUtc
+                appointment.MinParticipants, appointment.MaxParticipants, appointment.CreatedAtUtc,
+                ParticipantCount = appointment.AppointmentUsers.Count
             });
         })
         .WithName("CreateAppointment")
@@ -288,8 +294,13 @@ public static class AppointmentEndpoints
                 return Results.Unauthorized();
 
             var subscription = await db.AppointmentUsers
+                .Include(au => au.Appointment)
                 .FirstOrDefaultAsync(au => au.AppointmentId == id && au.UserId == userId);
             if (subscription is null) return Results.NotFound();
+
+            // Der Ersteller bleibt dabei – statt auszutreten löscht er den Termin (#254)
+            if (subscription.Appointment.CreatedByUserId == userId)
+                return Results.BadRequest(new { error = "Du hast diesen Termin erstellt. Statt auszutreten kannst du ihn löschen." });
             db.AppointmentUsers.Remove(subscription);
             await db.SaveChangesAsync();
             return Results.NoContent();
