@@ -2,6 +2,7 @@ using System.Security.Claims;
 using ClimbConnect.API.Data;
 using ClimbConnect.API.Dtos;
 using ClimbConnect.API.Models;
+using ClimbConnect.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClimbConnect.API.Extensions;
@@ -9,6 +10,9 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Kommentare zu Gebieten und Routen.</summary>
 public static class CommentEndpoints
 {
+    /// <summary>Fehlermeldung, wenn der Foto-Link nicht auf ein eigenes hochgeladenes Bild zeigt.</summary>
+    internal const string PhotoUrlError = "Foto muss über /api/upload hochgeladen werden.";
+
     /// <summary>
     /// Wandelt Kommentare in das Ausgabeformat um. Vom Autor werden nur Id und Username
     /// übernommen, damit weder E-Mail noch Passwort-Hash die API verlassen.
@@ -33,13 +37,15 @@ public static class CommentEndpoints
         .WithName("GetCommentsByArea")
         .WithTags("Comments");
 
-        app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
+        app.MapPost("/api/areas/{id:int}/comments", async (int id, CommentCreateDto dto, ClaimsPrincipal user, AppDbContext db, UploadStorage storage) =>
         {
             if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
                 return Results.Unauthorized();
             if (!await db.Areas.AnyAsync(a => a.Id == id)) return Results.NotFound();
             if (string.IsNullOrWhiteSpace(dto.Text))
                 return Results.BadRequest(new { error = "Text ist erforderlich" });
+            if (!string.IsNullOrWhiteSpace(dto.PhotoUrl) && !storage.IsOwnUpload(dto.PhotoUrl.Trim()))
+                return Results.BadRequest(new { error = PhotoUrlError });
 
             var comment = new Comment
             {
@@ -71,13 +77,15 @@ public static class CommentEndpoints
         .WithName("GetCommentsByRoute")
         .WithTags("Comments");
 
-        app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto, ClaimsPrincipal user, AppDbContext db) =>
+        app.MapPost("/api/routes/{id:int}/comments", async (int id, CommentCreateDto dto, ClaimsPrincipal user, AppDbContext db, UploadStorage storage) =>
         {
             if (!int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
                 return Results.Unauthorized();
             if (!await db.Routes.AnyAsync(r => r.Id == id)) return Results.NotFound();
             if (string.IsNullOrWhiteSpace(dto.Text))
                 return Results.BadRequest(new { error = "Text ist erforderlich" });
+            if (!string.IsNullOrWhiteSpace(dto.PhotoUrl) && !storage.IsOwnUpload(dto.PhotoUrl.Trim()))
+                return Results.BadRequest(new { error = PhotoUrlError });
 
             var comment = new Comment
             {
