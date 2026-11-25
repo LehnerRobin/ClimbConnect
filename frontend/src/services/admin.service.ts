@@ -109,4 +109,11 @@ export class AdminService {
   resolveReport(id: number): Observable<void> {
     return this.http.put<void>(`${this.api}/reports/${id}/status`, { status: 'Resolved' });
   }
+
+  // ── Backup ─────────────────────────────────────────────────────────────────
+
+  /** Lädt Datenbank und Bilder als ZIP (nur Admin, #236). Als Blob, weil es eine Datei ist. */
+  downloadBackup(): Observable<Blob> {
+    return this.http.get(`${this.api}/admin/backup`, { responseType: 'blob' });
+  }
 }

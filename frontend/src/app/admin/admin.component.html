@@ -13,6 +13,12 @@
   @if (successMsg) { <p class="msg-success">{{ successMsg }}</p> }
   @if (errorMsg)   { <p class="msg-error">{{ errorMsg }}</p> }
 
+  <div class="admin-toolbar">
+    <button class="btn btn-secondary btn-sm" (click)="downloadBackup()" [disabled]="backupLoading">
+      {{ backupLoading ? 'Backup wird erstellt…' : 'Backup herunterladen' }}
+    </button>
+  </div>
+
   <!-- Tabs -->
   <div class="tabs cc-tabs" role="tablist">
     <button [class.active]="activeTab === 'areas'"   (click)="setTab('areas')">

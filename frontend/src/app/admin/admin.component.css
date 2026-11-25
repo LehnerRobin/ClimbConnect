@@ -387,3 +387,10 @@
   .inline-form { padding: 22px; }
   .picker-row select { min-width: 0; width: 100%; }
 }
+
+/* Backup-Knopf rechts über den Tabs */
+.admin-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
