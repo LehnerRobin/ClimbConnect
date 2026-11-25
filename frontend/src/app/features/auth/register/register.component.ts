@@ -77,6 +77,9 @@ export class RegisterComponent {
           this.fieldErrors = { username: message ?? 'Dieser Benutzername ist bereits vergeben.' };
         } else if (error.status === 400 || error.status === 409) {
           this.errorMessage = message ?? 'Bitte überprüfe deine Eingaben.';
+        } else if (error.status === 429) {
+          // Schutz gegen Passwort-Raten im Backend (#233)
+          this.errorMessage = 'Zu viele Versuche. Bitte warte eine Minute und versuche es dann noch einmal.';
         } else if (error.status === 0) {
           this.errorMessage = 'Der Server ist gerade nicht erreichbar. Bitte versuche es gleich noch einmal.';
         } else {
