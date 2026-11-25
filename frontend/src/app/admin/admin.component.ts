@@ -54,6 +54,7 @@ export class AdminComponent implements OnInit {
 
   errorMsg = '';
   successMsg = '';
+  backupLoading = false;
 
   readonly styles = ['Sport', 'Trad', 'Boulder', 'Multi-Pitch', 'Klettersteig'];
 
@@ -75,6 +76,33 @@ export class AdminComponent implements OnInit {
     this.clearMessages();
     this.resetForms();
     if (tab === 'reports') this.loadReports();
+  }
+
+  // ── Backup ─────────────────────────────────────────────────────────────────
+
+  /**
+   * Lädt das Backup (Datenbank + Bilder als ZIP) und speichert es über einen
+   * temporären Link. Ein normaler Link ginge nicht, weil der Download den Login-Token braucht.
+   */
+  downloadBackup(): void {
+    this.clearMessages();
+    this.backupLoading = true;
+    this.adminService.downloadBackup().subscribe({
+      next: blob => {
+        const url  = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `climbconnect-backup-${new Date().toISOString().slice(0, 10)}.zip`;
+        link.click();
+        URL.revokeObjectURL(url);
+        this.backupLoading = false;
+        this.successMsg = 'Backup heruntergeladen. Bitte sicher aufbewahren – es enthält alle Benutzerdaten.';
+      },
+      error: () => {
+        this.backupLoading = false;
+        this.errorMsg = 'Backup konnte nicht erstellt werden.';
+      }
+    });
   }
 
   // ── Gebiete ────────────────────────────────────────────────────────────────

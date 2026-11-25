@@ -112,7 +112,57 @@ In Production gibt es **keinen** `testuser`. Die öffentlich bekannten Test-Pass
 
 ---
 
-## 6. Fehlersuche
+## 6. Backups
+
+Alles Wichtige liegt im Volume `/app/Data`: die Datenbank `ClimbConnect.db` und die Bilder
+in `uploads/`. Geht das Volume kaputt oder löscht ein Fehler Daten, ist ohne Backup alles weg.
+
+### Backup herunterladen
+
+**Admin-Bereich → „Backup herunterladen“** (oben rechts über den Tabs).
+Das lädt `climbconnect-backup-JJJJ-MM-TT.zip` mit:
+
+```
+ClimbConnect.db      konsistente Kopie der Datenbank (SQLite-Backup-API)
+uploads/…            alle hochgeladenen Bilder
+```
+
+Technisch: `GET /api/admin/backup`, nur mit Admin-Token.
+
+> Das ZIP enthält **alle Benutzerdaten** (E-Mails, Passwort-Hashes). Nicht ins Repo, in
+> Issues oder Chats legen, sondern z. B. in einem privaten, geteilten Cloud-Ordner des Teams.
+
+**Wann:** mindestens einmal pro Woche und immer **vor** einem Merge, der eine neue
+Datenbank-Migration enthält (neue Datei in `backend/ClimbConnect.API/Migrations/`).
+
+Zusätzlich lohnt sich ein Blick in Railway unter **api → Volume → Backups**: Falls euer
+Railway-Plan automatische Volume-Backups anbietet, dort einen täglichen Zeitplan einstellen.
+Das ersetzt den manuellen Download nicht, weil diese Backups im selben Konto liegen.
+
+### Wiederherstellen – lokal (zum Ausprobieren)
+
+1. Backend stoppen
+2. ZIP entpacken
+3. `ClimbConnect.db` nach `backend/ClimbConnect.API/bin/Debug/net8.0/Data/` kopieren
+   (vorhandene Datei überschreiben)
+4. Inhalt von `uploads/` nach `backend/ClimbConnect.API/bin/Debug/net8.0/uploads/` kopieren
+5. Backend starten → alle Konten, Begehungen und Bilder aus dem Backup sind da
+
+Mit Docker Compose liegen die Dateien stattdessen in den Volumes des `api`-Containers
+(Pfade siehe `docker-compose.yml`), z. B. mit `docker cp` hineinkopieren.
+
+### Wiederherstellen – Railway
+
+1. **api → Settings → Deploy**: Service stoppen bzw. auf 0 Replicas setzen
+2. Bei einem Railway-Volume-Backup: **api → Volume → Backups → Restore**
+3. Bei einem heruntergeladenen ZIP: die Dateien müssen über die Railway-CLI ins Volume
+   (`ClimbConnect.db` nach `/app/Data/`, Bilder nach `/app/Data/uploads/`).
+   ⚠️ Noch nicht ausprobiert – beim ersten Test den genauen Ablauf hier nachtragen.
+4. Service wieder starten und `/api/health` sowie einen Login prüfen
+
+---
+
+## 7. Fehlersuche
 
 Logs: **Service → Deployments → aktuelles Deployment → Deploy Logs** (nicht Build Logs).
 
@@ -133,6 +183,6 @@ keinen Neustart des Frontends.
 
 ---
 
-## 7. Lokal mit Docker
+## 8. Lokal mit Docker
 
 Dasselbe Setup läuft lokal mit Docker Compose, siehe [SETUP.md](SETUP.md#5-mit-docker-starten-alternativ).
