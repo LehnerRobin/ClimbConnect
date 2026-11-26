@@ -1,0 +1,106 @@
+/* Admin: Feedback-Liste (#244) */
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.section-header h2 { margin: 0; }
+
+.count {
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cc-soft);
+}
+
+.empty-hint {
+  font-family: var(--cc-sans);
+  color: var(--cc-soft);
+}
+
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.feedback-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px;
+  border: 1px solid var(--cc-line);
+  border-radius: 10px;
+  background: #FFFFFF;
+  font-family: var(--cc-sans);
+}
+
+/* Ungelesene deutlich hervorheben */
+.feedback-item.unread {
+  border-left: 4px solid var(--cc-accent);
+}
+
+.feedback-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--cc-accent);
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.author {
+  font-weight: 800;
+  color: var(--cc-text);
+  text-decoration: none;
+}
+
+.author:hover,
+.context:hover { color: var(--cc-rust); }
+
+.feedback-meta small { color: var(--cc-soft); font-weight: 600; }
+
+.context {
+  margin-left: auto;
+  font-weight: 700;
+  color: var(--cc-muted);
+}
+
+.context-general { color: var(--cc-soft); }
+
+.feedback-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--cc-text);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.feedback-photo {
+  max-width: 240px;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

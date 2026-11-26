@@ -6,14 +6,15 @@ import { Area, AreasService, ClimbingRoute, Sector } from '../../services/areas.
 import { Grade, GradeService, gradeLabel } from '../../services/grade.service';
 import { ActivatedRoute } from '@angular/router';
 import { CaseListComponent } from './moderation/case-list.component';
+import { FeedbackListComponent } from './feedback/feedback-list.component';
 import { PageBandComponent } from '../shared/page-band.component';
 
-type AdminTab = 'areas' | 'sectors' | 'routes' | 'reports' | 'moderation';
+type AdminTab = 'areas' | 'sectors' | 'routes' | 'reports' | 'moderation' | 'feedback';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, CaseListComponent, PageBandComponent],
+  imports: [CommonModule, FormsModule, CaseListComponent, FeedbackListComponent, PageBandComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
@@ -61,7 +62,7 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     // ?tab=moderation öffnet direkt einen Tab (z. B. nach "Fall erledigen")
     const tab = this.route.snapshot.queryParamMap.get('tab') as AdminTab | null;
-    if (tab && ['areas', 'sectors', 'routes', 'reports', 'moderation'].includes(tab)) {
+    if (tab && ['areas', 'sectors', 'routes', 'reports', 'moderation', 'feedback'].includes(tab)) {
       this.setTab(tab);
     }
     this.loadAreas();

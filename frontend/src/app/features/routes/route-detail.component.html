@@ -113,67 +113,22 @@
           }
         </section>
 
-        <!-- Kommentare -->
-        <section class="cc-card cc-stack card" aria-labelledby="comments-title">
-          <div class="cc-section-head">
-            <div>
-              <p class="cc-eyebrow">Community</p>
-              <h2 id="comments-title" class="cc-h3 card-title">Kommentare</h2>
-            </div>
+        <!-- Öffentliche Kommentare gibt es nicht mehr (#244) – Hinweise gehen als Feedback ans Team -->
+        <section class="cc-card cc-stack card" aria-labelledby="feedback-title">
+          <div>
+            <p class="cc-eyebrow">Hinweis zur Route?</p>
+            <h2 id="feedback-title" class="cc-h3 card-title">Sag's dem Team</h2>
           </div>
-
+          <p class="cc-small">
+            Grad passt nicht, Route umbenannt, Beschreibung falsch? Dein Feedback geht direkt an uns
+            und ist nicht öffentlich. Sicherheitsprobleme bitte oben als Safety-Report melden.
+          </p>
           @if (isLoggedIn) {
-            <div class="inline-form">
-              <label class="sr-only" for="route-comment">Kommentar</label>
-              <textarea id="route-comment" class="cc-input" [(ngModel)]="newCommentText" placeholder="Kommentar schreiben..."></textarea>
-              <label class="file-field">
-                <span>Foto anhängen (optional)</span>
-                <input type="file" accept="image/*" (change)="onCommentPhotoSelected($event)">
-              </label>
-              @if (commentPhotoPreview) {
-                <img [src]="commentPhotoPreview" alt="Vorschau" class="polaroid-photo">
-              }
-              @if (commentError) { <p class="cc-msg cc-msg-error">{{ commentError }}</p> }
-              @if (commentSuccess) { <p class="cc-msg cc-msg-success">Kommentar gespeichert!</p> }
-              <button type="button" class="cc-btn-dark form-submit" (click)="submitComment()" [disabled]="commentSending || !newCommentText.trim()">
-                {{ commentSending ? 'Wird gesendet...' : 'Kommentar abschicken' }}
-              </button>
+            <div>
+              <button type="button" class="cc-btn-outline cc-btn-sm" (click)="openFeedback()">Feedback geben</button>
             </div>
-          }
-
-          @if (commentsLoadError) {
-            <p class="cc-msg cc-msg-error" role="alert">{{ commentsLoadError }}</p>
-          } @else if (comments.length === 0) {
-            <p class="cc-small">Noch keine Kommentare.</p>
-          }
-
-          @for (comment of comments; track comment.id) {
-            <article class="comment-item">
-              <span class="cc-avatar">{{ (comment.user?.username || comment.authorName || 'U').charAt(0).toUpperCase() }}</span>
-              <div class="comment-body">
-                <div class="comment-meta">
-                  @if (comment.user?.id) {
-                    <a [routerLink]="['/users', comment.user!.id]" class="author-link">{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</a>
-                  } @else {
-                    <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
-                  }
-                  <small>· {{ comment.createdAtUtc | date:'dd.MM.yyyy' }}</small>
-                </div>
-                <p class="comment-text">{{ comment.text }}</p>
-                @if (comment.photoUrl) {
-                  <img [src]="comment.photoUrl" alt="Foto zum Kommentar" class="polaroid-photo">
-                }
-                @if (isOwnComment(comment)) {
-                  <button
-                    type="button"
-                    class="delete-link"
-                    [disabled]="deletingCommentId === comment.id"
-                    (click)="deleteComment(comment.id)">
-                    {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
-                  </button>
-                }
-              </div>
-            </article>
+          } @else {
+            <p class="cc-small"><a routerLink="/login">Melde dich an</a>, um Feedback zu geben.</p>
           }
         </section>
 

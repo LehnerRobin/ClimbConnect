@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AreasService, ClimbingRoute, RouteComment, SafetyReport } from '../../../services/areas.service';
+import { AreasService, ClimbingRoute, SafetyReport } from '../../../services/areas.service';
+import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PageBandComponent } from '../../shared/page-band.component';
@@ -18,19 +19,10 @@ export class RouteDetailComponent implements OnInit {
 
   route?: ClimbingRoute;
   communityGrade: string | null = null;
-  comments: RouteComment[] = [];
   reports: SafetyReport[] = [];
 
   loading = true;
   errorMessage = '';
-
-  // Kommentar-Formular
-  newCommentText = '';
-  commentPhotoFile: File | null = null;
-  commentPhotoPreview: string | null = null;
-  commentSending = false;
-  commentError = '';
-  commentSuccess = false;
 
   // Report-Formular
   showReportForm = false;
@@ -40,21 +32,20 @@ export class RouteDetailComponent implements OnInit {
   reportSending = false;
   reportError = '';
 
-  // Meldungen, wenn Kommentare oder Reports nicht geladen werden konnten
-  commentsLoadError = '';
+  // Meldung, wenn die Reports nicht geladen werden konnten
   reportsLoadError = '';
   reportSuccess = false;
 
   gradeScale = 'french';
   currentUserId: number | null = null;
-  deletingCommentId: number | null = null;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private areasService: AreasService,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private feedbackService: FeedbackService
   ) {}
 
   ngOnInit(): void {
@@ -70,11 +61,6 @@ export class RouteDetailComponent implements OnInit {
     this.userService.getPreferredScale().subscribe(scale => {
       this.gradeScale = scale;
       this.loadRoute(id);
-    });
-
-    this.areasService.getRouteComments(id).subscribe({
-      next: (c) => { this.comments = c; },
-      error: () => { this.commentsLoadError = 'Kommentare konnten nicht geladen werden.'; }
     });
 
     this.areasService.getRouteReports(id).subscribe({
@@ -110,20 +96,9 @@ export class RouteDetailComponent implements OnInit {
     return Number(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
-  isOwnComment(comment: { userId?: number }): boolean {
-    return !!this.currentUserId && comment.userId === this.currentUserId;
-  }
-
-  deleteComment(commentId: number): void {
-    if (!window.confirm('Kommentar wirklich löschen?')) return;
-    this.deletingCommentId = commentId;
-    this.areasService.deleteComment(commentId).subscribe({
-      next: () => {
-        this.comments = this.comments.filter(c => c.id !== commentId);
-        this.deletingCommentId = null;
-      },
-      error: () => { this.deletingCommentId = null; }
-    });
+  /** Feedback an das Team mit Bezug zu dieser Route (#244, ersetzt die Kommentare). */
+  openFeedback(): void {
+    this.feedbackService.show({ routeId: this.routeId, label: this.route?.name });
   }
 
   severityClass(severity: string): string {
@@ -131,57 +106,6 @@ export class RouteDetailComponent implements OnInit {
       case 'high':   return 'severity-high';
       case 'medium': return 'severity-medium';
       default:       return 'severity-low';
-    }
-  }
-
-  // ── Foto-Upload für Kommentar ───────────────────────────────────────────────
-
-  onCommentPhotoSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      this.commentError = 'Bild darf maximal 5 MB groß sein.';
-      return;
-    }
-    this.commentPhotoFile = file;
-    const reader = new FileReader();
-    reader.onload = () => { this.commentPhotoPreview = reader.result as string; };
-    reader.readAsDataURL(file);
-  }
-
-  submitComment(): void {
-    if (!this.newCommentText.trim()) return;
-    this.commentSending = true;
-    this.commentError = '';
-    this.commentSuccess = false;
-
-    const doPost = (photoUrl: string | null) => {
-      this.areasService.addRouteComment(this.routeId, this.newCommentText.trim(), photoUrl).subscribe({
-        next: (comment) => {
-          this.comments = [comment, ...this.comments];
-          this.newCommentText = '';
-          this.commentPhotoFile = null;
-          this.commentPhotoPreview = null;
-          this.commentSending = false;
-          this.commentSuccess = true;
-        },
-        error: () => {
-          this.commentError = 'Kommentar konnte nicht gespeichert werden.';
-          this.commentSending = false;
-        }
-      });
-    };
-
-    if (this.commentPhotoFile) {
-      this.areasService.uploadImage(this.commentPhotoFile).subscribe({
-        next: (res) => doPost(res.url),
-        error: () => {
-          this.commentError = 'Foto-Upload fehlgeschlagen.';
-          this.commentSending = false;
-        }
-      });
-    } else {
-      doPost(null);
     }
   }
 

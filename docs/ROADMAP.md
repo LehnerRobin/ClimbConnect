@@ -107,7 +107,7 @@ GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP.
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
 | #224 | Safety-Reports für Gebiet, Sektor und Route mit Freigabe durch den Admin | 5 | Robin, Faru |
-| #244 | Feedback-Knopf statt öffentlicher Kommentare | 3 | Robin, Mohamed |
+| ✅ #244 | Feedback-Knopf statt öffentlicher Kommentare | 3 | Robin, Mohamed |
 | #223 | Admin verwaltet alle Termine | 3 | Robin, Mohamed |
 | #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |

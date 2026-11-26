@@ -3,7 +3,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Appointment, AppointmentDetail, Area, AreaComment, AreasService, ClimbingRoute, Sector } from '../../../services/areas.service';
+import { Appointment, AppointmentDetail, Area, AreasService, ClimbingRoute, Sector } from '../../../services/areas.service';
+import { FeedbackService } from '../../../services/feedback.service';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 import { PinnwandComponent } from '../pinnwand/pinnwand.component';
@@ -30,6 +31,7 @@ export class AreaDetailComponent implements OnInit {
   private areasService = inject(AreasService);
   private authService = inject(AuthService);
   private userService = inject(UserService);
+  private feedbackService = inject(FeedbackService);
   /** Favoriten liegen im Browser (localStorage) – funktioniert auch ohne Login (#248). */
   favoritesService = inject(FavoritesService);
 
@@ -39,7 +41,6 @@ export class AreaDetailComponent implements OnInit {
   area?: Area;
   sectors: SectorWithRoutes[] = [];
   appointments: Appointment[] = [];
-  comments: AreaComment[] = [];
 
   // IDs der Termine, bei denen der User schon angemeldet ist
   subscribedIds = new Set<number>();
@@ -55,17 +56,10 @@ export class AreaDetailComponent implements OnInit {
   loading = true;
   errorMessage = '';
 
-  showCommentForm = false;
-  commentText = '';
-  commentSending = false;
-  commentError = '';
-
   // Meldungen, wenn ein Teil der Seite nicht geladen werden konnte
   sectorsError = '';
   appointmentsError = '';
-  commentsError = '';
   appointmentDetailError: Record<number, string> = {};
-  deletingCommentId: number | null = null;
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getUserId();
@@ -120,11 +114,6 @@ export class AreaDetailComponent implements OnInit {
         this.subscribedIds = new Set(appointments.filter(a => a.isSubscribed).map(a => a.id));
       },
       error: () => { this.appointmentsError = 'Termine konnten nicht geladen werden.'; }
-    });
-
-    this.areasService.getCommentsByArea(areaId).subscribe({
-      next: (comments) => { this.comments = comments; },
-      error: () => { this.commentsError = 'Kommentare konnten nicht geladen werden.'; }
     });
   }
 
@@ -250,39 +239,10 @@ export class AreaDetailComponent implements OnInit {
     }
   }
 
-  isOwnComment(comment: { userId?: number }): boolean {
-    return !!this.currentUserId && comment.userId === this.currentUserId;
-  }
-
-  deleteComment(commentId: number): void {
-    if (!window.confirm('Kommentar wirklich löschen?')) return;
-    this.deletingCommentId = commentId;
-    this.areasService.deleteComment(commentId).subscribe({
-      next: () => {
-        this.comments = this.comments.filter(c => c.id !== commentId);
-        this.deletingCommentId = null;
-      },
-      error: () => { this.deletingCommentId = null; }
-    });
-  }
-
-  submitComment(): void {
-    if (!this.commentText.trim() || !this.area) return;
-    this.commentSending = true;
-    this.commentError = '';
-
-    this.areasService.addAreaComment(this.area.id, this.commentText.trim()).subscribe({
-      next: (comment: AreaComment) => {
-        this.comments = [comment, ...this.comments];
-        this.commentText = '';
-        this.commentSending = false;
-        this.showCommentForm = false;
-      },
-      error: () => {
-        this.commentError = 'Kommentar konnte nicht gespeichert werden.';
-        this.commentSending = false;
-      }
-    });
+  /** Feedback an das Team mit Bezug zu diesem Gebiet (#244, ersetzt die Kommentare). */
+  openFeedback(): void {
+    if (!this.area) return;
+    this.feedbackService.show({ areaId: this.area.id, label: this.area.name });
   }
 
   /** Farbe des Grad-Kreises (siehe design-utils). */

@@ -1,0 +1,71 @@
+@if (feedback.open()) {
+  <div class="backdrop" (click)="close()"></div>
+
+  <div class="dialog cc-card" role="dialog" aria-modal="true" aria-labelledby="feedback-dialog-title">
+    <header class="dialog-header">
+      <div>
+        <p class="cc-eyebrow">Nur für das Team</p>
+        <h2 id="feedback-dialog-title" class="cc-h3">Feedback geben</h2>
+      </div>
+      <button type="button" class="close" (click)="close()" [disabled]="sending" aria-label="Dialog schließen">×</button>
+    </header>
+
+    @if (sent) {
+      <p class="cc-msg cc-msg-success" role="status">Danke! Dein Feedback ist beim Team angekommen.</p>
+      <div class="dialog-actions">
+        <button type="button" class="cc-btn-dark cc-btn-sm" (click)="close()">Schließen</button>
+      </div>
+    } @else {
+      <form class="cc-form" (ngSubmit)="submit()">
+        <div class="cc-field">
+          <label for="feedback-text">Was möchtest du uns sagen?</label>
+          <textarea
+            #textField
+            id="feedback-text"
+            name="text"
+            class="cc-input"
+            rows="5"
+            [(ngModel)]="text"
+            [attr.maxlength]="maxLength"
+            placeholder="Fehler, Hinweise, Wünsche …"></textarea>
+          <small class="count">{{ text.length }} / {{ maxLength }}</small>
+        </div>
+
+        @if (hasContext) {
+          <label class="context-check">
+            <input type="checkbox" name="withContext" [(ngModel)]="withContext">
+            Bezieht sich auf {{ contextLabel }}
+          </label>
+        }
+
+        <div class="cc-field">
+          <label for="feedback-photo">Foto (optional)</label>
+          @if (photoPreview) {
+            <div class="photo-preview">
+              <img [src]="photoPreview" alt="Vorschau des Fotos">
+              <button type="button" class="link-btn" (click)="removePhoto()" [disabled]="sending">Foto entfernen</button>
+            </div>
+          } @else {
+            <input id="feedback-photo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" (change)="onPhotoSelected($event)">
+          }
+        </div>
+
+        <p class="note">
+          Dein Feedback ist nicht öffentlich – nur das Team sieht es mit deinem Benutzernamen.
+          Sicherheitsprobleme an Routen bitte als Safety-Report melden.
+        </p>
+
+        @if (error) {
+          <p class="cc-msg cc-msg-error" role="alert">{{ error }}</p>
+        }
+
+        <div class="dialog-actions">
+          <button type="button" class="cc-btn-outline cc-btn-sm" (click)="close()" [disabled]="sending">Abbrechen</button>
+          <button type="submit" class="cc-btn-dark cc-btn-sm" [disabled]="!canSubmit">
+            {{ sending ? 'Wird gesendet …' : 'Senden' }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+}

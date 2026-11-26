@@ -22,7 +22,6 @@
           <div class="band-chips">
             <span class="cc-chip-glass cc-glass">{{ sectors.length }} Sektoren</span>
             <span class="cc-chip-glass cc-glass">{{ appointments.length }} Termine</span>
-            <span class="cc-chip-glass cc-glass">{{ comments.length }} Kommentare</span>
           </div>
         </div>
 
@@ -123,7 +122,7 @@
           }
         </section>
 
-        <!-- ================= Termine & Kommentare ================= -->
+        <!-- ================= Termine & Feedback ================= -->
         <aside class="cc-col-side side-column">
 
           <section class="cc-stack" aria-labelledby="sessions-title">
@@ -240,87 +239,20 @@
             }
           </section>
 
-          <section class="cc-stack" aria-labelledby="comments-title">
-            <div class="cc-section-head">
+          <!-- Öffentliche Kommentare gibt es nicht mehr (#244) – Hinweise gehen als Feedback ans Team -->
+          <section class="cc-card feedback-hint" aria-labelledby="feedback-title">
+            <p class="cc-eyebrow">Hinweis zum Gebiet?</p>
+            <h2 id="feedback-title" class="cc-h3">Sag's dem Team</h2>
+            <p class="cc-small">
+              Neue Haken, geänderter Zustieg, falsche Angaben? Dein Feedback geht direkt an uns
+              und ist nicht öffentlich. Sicherheitsprobleme bitte als Safety-Report melden.
+            </p>
+            @if (isLoggedIn()) {
               <div>
-                <p class="cc-eyebrow">Community</p>
-                <h2 id="comments-title" class="cc-h2 side-title">Kommentare</h2>
+                <button type="button" class="cc-btn-outline cc-btn-sm" (click)="openFeedback()">Feedback geben</button>
               </div>
-              @if (isLoggedIn()) {
-                <button type="button" class="cc-btn-outline cc-btn-sm" (click)="showCommentForm = !showCommentForm">
-                  {{ showCommentForm ? 'Abbrechen' : 'Schreiben' }}
-                </button>
-              }
-            </div>
-
-            @if (showCommentForm) {
-              <div class="comment-form">
-                <label class="sr-only" for="area-comment">Kommentar</label>
-                <textarea
-                  id="area-comment"
-                  class="cc-input"
-                  [(ngModel)]="commentText"
-                  placeholder="Dein Kommentar zu diesem Gebiet..."
-                  rows="3">
-                </textarea>
-                @if (commentError) {
-                  <p class="cc-msg cc-msg-error">{{ commentError }}</p>
-                }
-                <button
-                  type="button"
-                  class="cc-btn-dark cc-btn-sm comment-submit"
-                  [disabled]="commentSending || !commentText.trim()"
-                  (click)="submitComment()">
-                  {{ commentSending ? 'Wird gespeichert...' : 'Absenden' }}
-                </button>
-              </div>
-            }
-
-            @if (commentsError) {
-              <p class="cc-msg cc-msg-error" role="alert">{{ commentsError }}</p>
-            } @else if (comments.length === 0) {
-              <p class="cc-small">Noch keine Kommentare. Hier gibt es noch keine Hinweise von anderen Usern.</p>
             } @else {
-              <div class="comment-list">
-                @for (comment of comments; track comment.id) {
-                  <article class="comment-card">
-                    <span class="cc-avatar">
-                      @if (comment.authorPhotoUrl) {
-                        <img [src]="comment.authorPhotoUrl" [alt]="comment.authorName || 'User'">
-                      } @else {
-                        {{ (comment.user?.username || comment.authorName || 'U').charAt(0).toUpperCase() }}
-                      }
-                    </span>
-
-                    <div class="comment-body">
-                      <div class="comment-meta">
-                        @if (comment.user?.id) {
-                          <a [routerLink]="['/users', comment.user!.id]" class="author-link">
-                            {{ comment.user?.username || comment.authorName || 'Unbekannter User' }}
-                          </a>
-                        } @else {
-                          <strong>{{ comment.user?.username || comment.authorName || 'Unbekannter User' }}</strong>
-                        }
-                        @if (comment.createdAtUtc || comment.createdAt) {
-                          <small>· {{ (comment.createdAtUtc || comment.createdAt) | date:'dd.MM.yyyy' }}</small>
-                        }
-                      </div>
-
-                      <p class="comment-text">{{ comment.text }}</p>
-
-                      @if (isOwnComment(comment)) {
-                        <button
-                          type="button"
-                          class="owner-link owner-delete"
-                          [disabled]="deletingCommentId === comment.id"
-                          (click)="deleteComment(comment.id)">
-                          {{ deletingCommentId === comment.id ? 'Löscht...' : 'Löschen' }}
-                        </button>
-                      }
-                    </div>
-                  </article>
-                }
-              </div>
+              <p class="cc-small"><a routerLink="/login">Melde dich an</a>, um Feedback zu geben.</p>
             }
           </section>
 
