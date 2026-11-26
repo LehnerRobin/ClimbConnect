@@ -111,6 +111,32 @@ public static class AppointmentEndpoints
         .WithName("GetAppointmentsInRange")
         .WithTags("Appointments");
 
+        // Alle Termine für den Admin-Bereich (#223): ohne Obergrenze und mit Ersteller,
+        // damit der Admin nach User filtern und unpassende Termine finden kann.
+        // Standardmäßig nur kommende Termine; mit ?all=true auch vergangene.
+        app.MapGet("/api/admin/appointments", async (bool? all, AppDbContext db) =>
+        {
+            var cutoff = (all == true) ? DateTime.MinValue : DateTime.UtcNow;
+
+            var appointments = await db.Appointments
+                .Where(a => a.Date >= cutoff)
+                .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    AreaName          = a.Area.Name,
+                    AreaLocation      = a.Area.Location,
+                    CreatedByUsername = a.CreatedBy.Username,
+                    ParticipantCount  = a.AppointmentUsers.Count
+                })
+                .ToListAsync();
+            return Results.Ok(appointments);
+        })
+        .WithName("GetAdminAppointments")
+        .WithTags("Appointments")
+        .RequireAuthorization("Admin");
+
         // Eigene Termine: selbst erstellte UND beigetretene (für das Profil)
         app.MapGet("/api/appointments/me", async (bool? all, ClaimsPrincipal user, AppDbContext db) =>
         {
