@@ -102,7 +102,7 @@ andere Robin Lehner.
 
 ## Sprint 3 – läuft
 
-GitHub-Meilenstein **„Sprint 3"** – 8 Issues, 28 SP, davon 5 erledigt (✅).
+GitHub-Meilenstein **„Sprint 3"** – 10 Issues, 34 SP, davon 7 erledigt (✅).
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
@@ -114,6 +114,12 @@ GitHub-Meilenstein **„Sprint 3"** – 8 Issues, 28 SP, davon 5 erledigt (✅).
 | #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
 | ✅ #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
 | ✅ #239 | Gebietsliste zeigt Leute der nächsten 7 Tage (ab morgen) – aus dem Backlog nachgezogen | 2 | Robin, Mohamed |
+| ✅ #240 | Routen nach Grad (von–bis), Stil und Länge filtern, Filter bleiben beim Zurücknavigieren – aus dem Backlog nachgezogen | 3 | Robin, Mohamed |
+| ✅ #237 | Mehrere Admins: Reiter „Benutzer“, Admin-Rechte vergeben und entziehen, letzter Admin bleibt – aus dem Backlog nachgezogen | 3 | Robin, Mohamed |
+
+> **Sicherheit (#237):** Die Rolle wird bei jeder Anfrage aus der Datenbank gelesen, nicht
+> nur aus dem 24 Stunden gültigen Token. Entzogene Admin-Rechte wirken dadurch sofort, und
+> Tokens gelöschter Konten werden abgelehnt.
 
 **Nachträge aus der Code-Prüfung des Terminkalenders (26.11.2026)** – alle erledigt:
 Zeitraum-Endpoint `GET /api/appointments?from=&to=` (#298), schnelles Blättern zeigt
@@ -157,11 +163,8 @@ GitHub-Meilenstein **„Backlog"** – wird bei der nächsten Sprintplanung prio
 | ✅ #264 | Pinnwand-Beiträge melden, Verlauf 30 Tage für den Admin aufbewahren (nach #245) | 5 |
 | #243 | E-Mail-Adresse bei der Registrierung überprüfen (Bestätigungs-Link) | 5 |
 | #235 | GPS-Daten aus Fotos entfernen und Bilder verkleinern | 3 |
-| #237 | Mehrere Admins verwalten | 3 |
-| #240 | Routen nach Grad, Stil und Länge filtern | 3 |
 | #236 | Backups der Datenbank auf Railway (Download-Knopf im Admin ✅, Test auf Railway offen) | 2 |
 | ✅ #238 | Bilder löschen, wenn Inhalte gelöscht werden | 2 |
-| #239 | Gebietsliste zeigt, wie viele in den nächsten Tagen kommen | 2 |
 | #241 | Ideen-Sammlung (Gebietsinfos, Wetter, .ics-Export, Grad-Pyramide, …) | 1 |
 
 Neue Features bringen ihre eigenen Tests mit; #203 schließt die Lücken bei bestehenden
