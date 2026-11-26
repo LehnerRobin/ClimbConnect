@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { Appointment, Area, AreasService } from '../../../services/areas.service';
 import { PageBandComponent } from '../../shared/page-band.component';
 import { DudesComponent } from '../../shared/dudes.component';
@@ -26,7 +27,7 @@ interface DayGroup {
   templateUrl: './appointments-page.component.html',
   styleUrl: './appointments-page.component.css'
 })
-export class AppointmentsPageComponent implements OnInit {
+export class AppointmentsPageComponent implements OnInit, OnDestroy {
 
   private areasService = inject(AreasService);
 
@@ -50,6 +51,12 @@ export class AppointmentsPageComponent implements OnInit {
 
   readonly viennaTime = viennaTime;
 
+  /**
+   * Die gerade laufende Monats-Anfrage. Wird beim nächsten Laden abgebrochen,
+   * damit eine verspätete Antwort für einen alten Monat nichts überschreibt (#295).
+   */
+  private loadSub?: Subscription;
+
   ngOnInit(): void {
     this.areasService.getAreas().subscribe({
       next: areas => this.areas = [...areas].sort((a, b) => a.name.localeCompare(b.name, 'de')),
@@ -58,9 +65,19 @@ export class AppointmentsPageComponent implements OnInit {
     this.loadMonth();
   }
 
+  /** Beim Verlassen der Seite eine noch laufende Anfrage abbrechen. */
+  ngOnDestroy(): void {
+    this.loadSub?.unsubscribe();
+  }
+
   // ── Laden ─────────────────────────────────────────────────────────────────
 
+  /**
+   * Lädt die Termine des angezeigten Monats. Eine noch laufende Anfrage für einen
+   * anderen Monat wird vorher abgebrochen – so gewinnt immer der zuletzt gewählte Monat.
+   */
   loadMonth(): void {
+    this.loadSub?.unsubscribe();
     this.loading = true;
     this.errorMessage = '';
 
@@ -71,7 +88,7 @@ export class AppointmentsPageComponent implements OnInit {
     const to   = this.utcFromKey(grid[grid.length - 1].key, 2);
     const visibleKeys = new Set(grid.map(d => d.key));
 
-    this.areasService.getAppointmentsInRange(from, to).subscribe({
+    this.loadSub = this.areasService.getAppointmentsInRange(from, to).subscribe({
       next: ({ appointments, fallback }) => {
         this.appointments = appointments
           .filter(a => a.date && visibleKeys.has(viennaDayKey(a.date)))
