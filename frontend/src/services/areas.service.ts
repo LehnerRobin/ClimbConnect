@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { fetchAllPages, PagedResponse } from './paging';
 
@@ -202,6 +202,34 @@ export class AreasService {
   /** Nächste Termine über alle Gebiete in einer einzigen Anfrage. */
   getUpcomingAppointments(limit = 10): Observable<Appointment[]> {
     return this.http.get<Appointment[]>(`${this.apiUrl}/appointments/upcoming?limit=${limit}`);
+  }
+
+  /**
+   * Alle Termine in einem Zeitraum (für den Kalender, #230), inkl. Teilnehmerzahl.
+   * from/to werden als UTC-Zeitpunkte gesendet, weil Termine in UTC gespeichert sind (#198).
+   *
+   * Übergangslösung: Solange das Backend GET /api/appointments?from=…&to=… noch nicht hat
+   * (Antwort 404/405), werden ersatzweise die nächsten 50 kommenden Termine geladen und
+   * auf den Zeitraum gefiltert. `fallback` sagt der Seite, dass sie einen Hinweis zeigen soll.
+   */
+  getAppointmentsInRange(from: Date, to: Date): Observable<{ appointments: Appointment[]; fallback: boolean }> {
+    const url = `${this.apiUrl}/appointments?from=${encodeURIComponent(from.toISOString())}&to=${encodeURIComponent(to.toISOString())}`;
+    return this.http.get<Appointment[]>(url).pipe(
+      map(appointments => ({ appointments, fallback: false })),
+      catchError((err: HttpErrorResponse) => {
+        if (err.status !== 404 && err.status !== 405) return throwError(() => err);
+        return this.getUpcomingAppointments(50).pipe(
+          map(all => ({
+            appointments: all.filter(a => {
+              if (!a.date) return false;
+              const t = new Date(a.date).getTime();
+              return t >= from.getTime() && t < to.getTime();
+            }),
+            fallback: true
+          }))
+        );
+      })
+    );
   }
 
   /** Eigene Termine (erstellt oder beigetreten). Mit all=true auch vergangene. */
