@@ -1,0 +1,43 @@
+<div class="calendar">
+
+  <div class="calendar-head">
+    <button type="button" class="nav-btn" (click)="previousMonth.emit()" aria-label="Vorheriger Monat">‹</button>
+    <h2 class="cc-h3 month-label" aria-live="polite">{{ monthLabel }}</h2>
+    <button type="button" class="nav-btn" (click)="nextMonth.emit()" aria-label="Nächster Monat">›</button>
+  </div>
+
+  <div class="grid" role="grid">
+    @for (w of weekdays; track w) {
+      <span class="weekday" role="columnheader">{{ w }}</span>
+    }
+
+    @for (day of days; track day.key) {
+      @let s = statsFor(day.key);
+      <button
+        type="button"
+        role="gridcell"
+        class="day level-{{ level(day.key) }}"
+        [class.other-month]="!day.inMonth"
+        [class.today]="day.key === todayKey"
+        [class.selected]="day.key === selectedKey"
+        [attr.aria-label]="ariaLabel(day)"
+        [attr.aria-pressed]="day.key === selectedKey"
+        (click)="select(day)">
+        <span class="day-number">{{ day.day }}</span>
+        @if (s && s.appointments > 0) {
+          <span class="day-stats">
+            <strong>{{ s.people }} {{ s.people === 1 ? 'Person' : 'Leute' }}</strong>
+            <span>{{ s.appointments }} {{ s.appointments === 1 ? 'Termin' : 'Termine' }}</span>
+          </span>
+        }
+      </button>
+    }
+  </div>
+
+  <div class="legend" aria-hidden="true">
+    <span><i class="swatch level-1"></i>1–3 Leute</span>
+    <span><i class="swatch level-2"></i>4–7 Leute</span>
+    <span><i class="swatch level-3"></i>8+ Leute</span>
+    <span><i class="swatch today-swatch"></i>Heute</span>
+  </div>
+</div>
