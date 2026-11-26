@@ -1,6 +1,6 @@
 # Roadmap – ClimbConnect
 
-Stand: 12.11.2026 (Sprint 1 abgeschlossen, Sprint 2 läuft, neues Design live) · Live: https://frontend-production-47f4.up.railway.app/
+Stand: 26.11.2026 (Sprint 3 läuft, neues Design live) · Live: https://frontend-production-47f4.up.railway.app/
 
 Diese Datei beschreibt, was bereits umgesetzt ist und was als Nächstes kommt.
 Die Meilensteine aus Benutzersicht stehen in [meilensteine.md](meilensteine.md),
@@ -100,19 +100,24 @@ andere Robin Lehner.
 
 ---
 
-## Sprint 3 – geplant
+## Sprint 3 – läuft
 
-GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP.
+GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP, davon 4 erledigt (✅).
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
 | #224 | Safety-Reports für Gebiet, Sektor und Route mit Freigabe durch den Admin | 5 | Robin, Faru |
 | ✅ #244 | Feedback-Knopf statt öffentlicher Kommentare | 3 | Robin, Mohamed |
-| #223 | Admin verwaltet alle Termine | 3 | Robin, Mohamed |
-| #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229) | 5 | Robin, Faru |
+| ✅ #223 | Admin verwaltet alle Termine: Reiter „Termine“ mit Filter nach Gebiet und Ersteller, Admin löscht Pinnwand-Beiträge | 3 | Robin, Mohamed |
+| ✅ #230 | Termin-Kalender mit Anzahl der Leute pro Tag (nach #229), Seite „Termine“ | 5 | Robin, Faru |
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
 | #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
 | ✅ #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
+
+**Nachträge aus der Code-Prüfung des Terminkalenders (26.11.2026)** – alle erledigt:
+Zeitraum-Endpoint `GET /api/appointments?from=&to=` (#298), schnelles Blättern zeigt
+richtigen Monat (#295), Screenreader-Text der Rand-Tage (#296), Tests für den Kalender
+(#297), CSS-Budget der Startseite (#299), `rootDir` in `tsconfig.spec.json` (#301).
 
 > **Konzept für Rückmeldungen (entschieden am 11.10.2026):**
 > - **Safety-Reports** zu Gebiet, Sektor oder Route werden vom Team geprüft, bei Bedarf

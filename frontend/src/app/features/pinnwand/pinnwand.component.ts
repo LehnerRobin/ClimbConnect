@@ -113,6 +113,11 @@ export class PinnwandComponent implements OnInit, OnChanges, OnDestroy {
     return this.currentUserId !== null && post.authorId === this.currentUserId;
   }
 
+  /** Löschen-Knopf: eigene Beiträge, der Admin zusätzlich alle (#223 – unpassende Beiträge entfernen). */
+  canDelete(post: PinnwandPost): boolean {
+    return this.isOwn(post) || this.authService.hasRole('admin');
+  }
+
   /** Melden-Knopf: nur Teilnehmer, nur fremde Beiträge. */
   canReport(post: PinnwandPost): boolean {
     return this.isParticipant && !this.isOwn(post);
@@ -148,7 +153,10 @@ export class PinnwandComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   deletePost(post: PinnwandPost): void {
-    if (!window.confirm('Beitrag wirklich löschen?')) return;
+    const question = this.isOwn(post)
+      ? 'Beitrag wirklich löschen?'
+      : `Beitrag von ${post.authorUsername} als Admin löschen?`;
+    if (!window.confirm(question)) return;
     this.deletingId = post.id;
     this.pinnwandService.deletePost(post.id).subscribe({
       next: () => {

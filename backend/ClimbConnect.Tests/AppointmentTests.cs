@@ -227,15 +227,7 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
         var areaId = await GetFirstAreaIdAsync();
         var token  = await LoginAsync("user@climbconnect.at", "User1234!");
         var id     = await CreateAsync(areaId, token, "Vergangen", "2030-09-01T10:00:00Z");
-
-        // Über die API kann man keinen Termin in der Vergangenheit anlegen → direkt in der DB zurückdatieren
-        using (var scope = _factory.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var appointment = await db.Appointments.SingleAsync(a => a.Id == id);
-            appointment.Date = new DateTime(2020, 5, 15, 10, 0, 0, DateTimeKind.Utc);
-            await db.SaveChangesAsync();
-        }
+        await BackdateAsync(id, new DateTime(2020, 5, 15, 10, 0, 0, DateTimeKind.Utc));
 
         var response = await SendAsync(HttpMethod.Get,
             "/api/appointments?from=2020-05-01T00:00:00Z&to=2020-06-01T00:00:00Z", token: null, content: null);
@@ -259,7 +251,119 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    // Admin verwaltet alle Termine (#223)
+
+    [Fact]
+    public async Task AdminList_OhneLogin_Gibt401()
+    {
+        var response = await SendAsync(HttpMethod.Get, "/api/admin/appointments", token: null, content: null);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AdminList_AlsUser_Gibt403()
+    {
+        var token    = await LoginAsync("user@climbconnect.at", "User1234!");
+        var response = await SendAsync(HttpMethod.Get, "/api/admin/appointments", token, content: null);
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AdminList_AlsAdmin_LiefertKommendeTermineMitErsteller_UndMitAllAuchVergangene()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var user   = await LoginAsync("user@climbconnect.at", "User1234!");
+        var admin  = await LoginAsync("admin@climbconnect.at", "Admin1234!");
+
+        var upcoming = await CreateAsync(areaId, user, "Admin-Liste kommend",   "2030-08-01T10:00:00Z");
+        var past     = await CreateAsync(areaId, user, "Admin-Liste vergangen", "2030-08-02T10:00:00Z");
+        await BackdateAsync(past, new DateTime(2020, 1, 10, 10, 0, 0, DateTimeKind.Utc));
+
+        // Standard: nur kommende Termine, mit Ersteller und Gebiet
+        var list = await GetAdminListAsync("/api/admin/appointments", admin);
+        var item = list.Single(a => a.GetProperty("id").GetInt32() == upcoming);
+        Assert.Equal("testuser", item.GetProperty("createdByUsername").GetString());
+        Assert.False(string.IsNullOrEmpty(item.GetProperty("areaName").GetString()));
+        Assert.Equal(1, item.GetProperty("participantCount").GetInt32());
+        Assert.DoesNotContain(list, a => a.GetProperty("id").GetInt32() == past);
+
+        // Mit ?all=true auch vergangene
+        var all = await GetAdminListAsync("/api/admin/appointments?all=true", admin);
+        Assert.Contains(all, a => a.GetProperty("id").GetInt32() == past);
+    }
+
+    [Fact]
+    public async Task AdminList_HatKeineObergrenzeVon50()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var user   = await LoginAsync("user@climbconnect.at", "User1234!");
+        var admin  = await LoginAsync("admin@climbconnect.at", "Admin1234!");
+
+        // 51 Termine – /upcoming würde höchstens 50 liefern
+        for (var i = 0; i < 51; i++)
+            await CreateAsync(areaId, user, $"Viele {i}", $"2032-01-01T10:{i:00}:00Z");
+
+        var list = await GetAdminListAsync("/api/admin/appointments", admin);
+        Assert.Equal(51, list.Count(a => a.GetProperty("title").GetString()!.StartsWith("Viele ")));
+    }
+
+    [Fact]
+    public async Task FremderTermin_AlsUser_BearbeitenUndLoeschenGibt403()
+    {
+        var areaId  = await GetFirstAreaIdAsync();
+        var creator = await LoginAsync("user@climbconnect.at", "User1234!");
+        var other   = await RegisterAsync("fremd-test", "fremd-test@example.com", "Test1234!");
+        var id      = await CreateAsync(areaId, creator, "Fremder Termin", "2030-08-10T10:00:00Z");
+
+        var update = await SendAsync(HttpMethod.Put, $"/api/appointments/{id}", other,
+            JsonContent.Create(new { title = "Gekapert", date = "2030-08-10T10:00:00Z" }));
+        Assert.Equal(HttpStatusCode.Forbidden, update.StatusCode);
+
+        var delete = await SendAsync(HttpMethod.Delete, $"/api/appointments/{id}", other, content: null);
+        Assert.Equal(HttpStatusCode.Forbidden, delete.StatusCode);
+
+        // Termin ist unverändert da
+        var saved = await FindAppointmentAsync(areaId, id, token: null);
+        Assert.Equal("Fremder Termin", saved.GetProperty("title").GetString());
+    }
+
+    [Fact]
+    public async Task FremderTermin_AlsAdmin_BearbeitenUndLoeschenErlaubt()
+    {
+        var areaId  = await GetFirstAreaIdAsync();
+        var creator = await LoginAsync("user@climbconnect.at", "User1234!");
+        var admin   = await LoginAsync("admin@climbconnect.at", "Admin1234!");
+        var id      = await CreateAsync(areaId, creator, "Unpassender Titel", "2030-08-11T10:00:00Z");
+
+        var update = await SendAsync(HttpMethod.Put, $"/api/appointments/{id}", admin,
+            JsonContent.Create(new { title = "Korrigiert", date = "2030-08-11T10:00:00Z" }));
+        Assert.Equal(HttpStatusCode.OK, update.StatusCode);
+        Assert.Equal("Korrigiert", (await FindAppointmentAsync(areaId, id, token: null)).GetProperty("title").GetString());
+
+        var delete = await SendAsync(HttpMethod.Delete, $"/api/appointments/{id}", admin, content: null);
+        Assert.Equal(HttpStatusCode.NoContent, delete.StatusCode);
+        var after = await SendAsync(HttpMethod.Get, $"/api/appointments/{id}", admin, content: null);
+        Assert.Equal(HttpStatusCode.NotFound, after.StatusCode);
+    }
+
     // Hilfsmethoden
+
+    private async Task<List<JsonElement>> GetAdminListAsync(string url, string adminToken)
+    {
+        var response = await SendAsync(HttpMethod.Get, url, adminToken, content: null);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return (await response.Content.ReadFromJsonAsync<JsonElement>()).EnumerateArray().ToList();
+    }
+
+    /// <summary>Über die API kann man keinen Termin in der Vergangenheit anlegen → direkt in der DB zurückdatieren.</summary>
+    private async Task BackdateAsync(int appointmentId, DateTime dateUtc)
+    {
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var appointment = await db.Appointments.SingleAsync(a => a.Id == appointmentId);
+        appointment.Date = dateUtc;
+        await db.SaveChangesAsync();
+    }
 
     private async Task<int> CreateAsync(int areaId, string token, string title, string date)
     {

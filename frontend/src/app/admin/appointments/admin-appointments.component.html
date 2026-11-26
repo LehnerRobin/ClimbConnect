@@ -1,0 +1,95 @@
+<div class="section-header">
+  <h2>Termine</h2>
+  <span class="count">
+    @if (hasFilter) { {{ filtered.length }} von }
+    {{ appointments.length }} {{ showPast ? 'gesamt' : 'kommend' }}
+  </span>
+</div>
+
+<div class="filters">
+  <label class="cc-field">
+    <span class="cc-field-label">Gebiet</span>
+    <select class="cc-input" [(ngModel)]="areaFilter" name="areaFilter">
+      <option [ngValue]="null">Alle Gebiete</option>
+      @for (area of areaOptions; track area.id) {
+        <option [ngValue]="area.id">{{ area.name }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="cc-field">
+    <span class="cc-field-label">Erstellt von</span>
+    <select class="cc-input" [(ngModel)]="creatorFilter" name="creatorFilter">
+      <option [ngValue]="null">Alle User</option>
+      @for (creator of creatorOptions; track creator.id) {
+        <option [ngValue]="creator.id">{{ creator.name }}</option>
+      }
+    </select>
+  </label>
+
+  <label class="past-toggle">
+    <input type="checkbox" [(ngModel)]="showPast" (ngModelChange)="load()" name="showPast">
+    Auch vergangene Termine
+  </label>
+
+  @if (hasFilter) {
+    <button type="button" class="cc-btn-outline cc-btn-sm" (click)="resetFilters()">Filter zurücksetzen</button>
+  }
+</div>
+
+@if (error) {
+  <p class="cc-msg cc-msg-error" role="alert">{{ error }}</p>
+}
+
+@if (loading) {
+  <p class="empty-hint">Lädt …</p>
+} @else if (appointments.length === 0) {
+  <p class="empty-hint">{{ showPast ? 'Es gibt keine Termine.' : 'Es gibt keine kommenden Termine.' }}</p>
+} @else if (filtered.length === 0) {
+  <p class="empty-hint">Keine Termine für diesen Filter.</p>
+} @else {
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Datum</th>
+          <th>Termin</th>
+          <th>Erstellt von</th>
+          <th>Teilnehmer</th>
+          <th class="actions-col">Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (a of filtered; track a.id) {
+          <tr [class.past]="isPast(a)">
+            <td class="date tnum">{{ formatDate(a.date) }}</td>
+            <td>
+              <strong class="title">{{ a.title }}</strong>
+              <span class="area">{{ a.areaName ?? 'Klettergebiet' }}</span>
+            </td>
+            <td data-label="Erstellt von"><a [routerLink]="['/users', a.createdByUserId]" class="creator">{{ a.createdByUsername }}</a></td>
+            <td data-label="Teilnehmer">
+              <app-dudes
+                [count]="a.participantCount"
+                [min]="a.minParticipants"
+                [max]="a.maxParticipants"
+                [past]="isPast(a)" />
+            </td>
+            <td class="actions-col">
+              <div class="actions">
+                <a class="cc-btn-outline cc-btn-sm" [routerLink]="['/appointments', a.id]"
+                   [attr.aria-label]="'Termin ' + a.title + ' öffnen (mit Pinnwand)'">Öffnen</a>
+                <a class="cc-btn-outline cc-btn-sm" [routerLink]="['/areas', a.areaId, 'appointments', a.id, 'edit']"
+                   [attr.aria-label]="'Termin ' + a.title + ' bearbeiten'">Bearbeiten</a>
+                <button type="button" class="cc-btn-danger cc-btn-sm" (click)="remove(a)" [disabled]="busyId === a.id"
+                        [attr.aria-label]="'Termin ' + a.title + ' löschen'">
+                  {{ busyId === a.id ? '…' : 'Löschen' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
