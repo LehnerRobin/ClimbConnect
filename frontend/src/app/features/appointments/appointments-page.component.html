@@ -1,0 +1,122 @@
+<section class="appointments-page">
+
+  <app-page-band image="/assets/home/gebiet-fels-wald.jpg" position="center 55%">
+    <div class="band-content">
+      <p class="cc-eyebrow">ClimbConnect · Sessions</p>
+      <h1 class="cc-h1">Alle <em>Termine</em></h1>
+      <p class="cc-lead">Finde Tage, an denen viele Leute klettern gehen, und plane deinen Ausflug danach.</p>
+    </div>
+  </app-page-band>
+
+  <div class="cc-wrap cc-main">
+
+    @if (usingFallback) {
+      <p class="cc-msg cc-msg-info fallback-note">
+        Hinweis: Der Kalender zeigt vorerst nur die nächsten kommenden Termine.
+        Vergangene Termine erscheinen, sobald das Backend den Zeitraum-Endpoint hat.
+      </p>
+    }
+
+    <div class="layout">
+
+      <!-- ================= Terminliste ================= -->
+      <section class="list-col" aria-labelledby="list-title">
+        <div class="cc-section-head cc-section-head-ruled list-head">
+          <div>
+            <p class="cc-eyebrow">{{ selectedKey ? 'Ausgewählter Tag' : 'Im ' + monthName }}</p>
+            <h2 id="list-title" class="cc-h2">
+              @if (selectedKey) {
+                {{ selectedLabel }}
+              } @else {
+                Termine im <em>{{ monthName }}</em>
+              }
+            </h2>
+          </div>
+          @if (selectedKey) {
+            <button type="button" class="cc-btn-outline cc-btn-sm" (click)="showWholeMonth()">Ganzer Monat</button>
+          }
+        </div>
+
+        <div class="filters">
+          <label class="cc-field area-filter">
+            <span class="cc-field-label">Gebiet</span>
+            <select class="cc-input" [(ngModel)]="areaFilter" name="areaFilter">
+              <option [ngValue]="null">Alle Gebiete</option>
+              @for (area of areas; track area.id) {
+                <option [ngValue]="area.id">{{ area.name }}</option>
+              }
+            </select>
+          </label>
+          <button type="button" class="cc-btn-outline cc-btn-sm today-btn" (click)="goToToday()">Heute</button>
+        </div>
+
+        @if (loading) {
+          <div class="cc-state">
+            <div class="spinner"></div>
+            <p class="cc-small">Termine werden geladen...</p>
+          </div>
+        } @else if (errorMessage) {
+          <p class="cc-msg cc-msg-error" role="alert">
+            {{ errorMessage }}
+            <button type="button" class="cc-link retry" (click)="loadMonth()">Nochmal laden</button>
+          </p>
+        } @else if (groups.length === 0) {
+          <div class="cc-state">
+            <p class="cc-small">
+              {{ selectedKey ? 'An diesem Tag gibt es keine Termine.' : 'In diesem Monat gibt es keine Termine.' }}
+            </p>
+            <a routerLink="/areas" class="cc-btn cc-btn-sm">Gebiet wählen und Session planen</a>
+          </div>
+        } @else {
+          <div class="day-groups">
+            @for (group of groups; track group.key) {
+              <div class="day-group">
+                <h3 class="day-title" [class.is-today]="group.key === todayKey">
+                  {{ group.label }}
+                  @if (group.key === todayKey) { <span class="cc-chip today-chip">Heute</span> }
+                </h3>
+
+                <ul class="appointment-list">
+                  @for (a of group.appointments; track a.id) {
+                    <li>
+                      <a class="appointment-row" [class.past]="isPast(a)" [routerLink]="['/appointments', a.id]">
+                        <span class="time tnum">{{ viennaTime(a.date!) }}</span>
+                        <span class="info">
+                          <strong class="title">{{ a.title }}</strong>
+                          <span class="area">{{ a.areaName ?? 'Klettergebiet' }}</span>
+                        </span>
+                        <!-- Einheitliche Teilnehmer-Anzeige "2/4 Dudes" (#228) -->
+                        <app-dudes
+                          class="people"
+                          [count]="a.participantCount"
+                          [min]="a.minParticipants"
+                          [max]="a.maxParticipants"
+                          [subscribed]="a.isSubscribed"
+                          [past]="isPast(a)" />
+                        <span class="arrow" aria-hidden="true">→</span>
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- ================= Kalender ================= -->
+      <aside class="calendar-col" aria-label="Monatskalender">
+        <app-month-calendar
+          [year]="year"
+          [month]="month"
+          [stats]="dayStats"
+          [todayKey]="todayKey"
+          [selectedKey]="selectedKey"
+          (previousMonth)="previousMonth()"
+          (nextMonth)="nextMonth()"
+          (daySelected)="selectDay($event)" />
+      </aside>
+
+    </div>
+  </div>
+</section>
