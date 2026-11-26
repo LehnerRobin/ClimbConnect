@@ -219,6 +219,42 @@ public static class UserEndpoints
         })
         .WithName("GetUsers")
         .WithTags("Users");
+
+        // Admin: alle Benutzer mit Rolle (#237) – ohne E-Mail, die braucht man zum Verwalten nicht
+        app.MapGet("/api/admin/users", async (AppDbContext db) =>
+        {
+            var users = await db.Users
+                .OrderBy(u => u.Username)
+                .Select(u => new { u.Id, u.Username, u.Role, MemberSince = u.CreatedAtUtc.ToString("yyyy-MM-dd") })
+                .ToListAsync();
+            return Results.Ok(users);
+        })
+        .WithName("GetUsersWithRoles")
+        .WithTags("Users")
+        .RequireAuthorization("Admin");
+
+        // Admin: Admin-Rechte vergeben oder entziehen (#237). Body: { "role": "admin" | "user" }
+        // Wirkt sofort – die Rolle wird bei jeder Anfrage aus der Datenbank gelesen (CurrentRoleCheck).
+        app.MapPut("/api/admin/users/{id:int}/role", async (int id, AdminRoleUpdateDto dto, AppDbContext db) =>
+        {
+            var role = dto.Role.Trim().ToLowerInvariant();
+            if (role is not ("admin" or "user"))
+                return Results.BadRequest(new { error = "Die Rolle muss \"admin\" oder \"user\" sein." });
+
+            var target = await db.Users.FindAsync(id);
+            if (target is null) return Results.NotFound();
+
+            // Ohne Admin könnte niemand mehr Gebiete und Routen pflegen (gleiche Regel wie beim Konto löschen)
+            if (target.Role == "admin" && role == "user" && await db.Users.CountAsync(u => u.Role == "admin") <= 1)
+                return Results.Conflict(new { error = "Das ist der letzte Admin – die Rechte können nicht entzogen werden." });
+
+            target.Role = role;
+            await db.SaveChangesAsync();
+            return Results.Ok(new { target.Id, target.Username, target.Role });
+        })
+        .WithName("SetUserRole")
+        .WithTags("Users")
+        .RequireAuthorization("Admin");
     }
 
     /// <summary>

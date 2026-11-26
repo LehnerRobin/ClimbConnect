@@ -107,6 +107,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey         = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
         };
+        // Rolle bei jeder Anfrage aus der Datenbank – entzogene Admin-Rechte wirken sofort (#237)
+        options.Events = new JwtBearerEvents { OnTokenValidated = CurrentRoleCheck.ApplyAsync };
     });
 
 builder.Services.AddAuthorization(options =>

@@ -1,0 +1,82 @@
+<div class="section-header">
+  <h2>Benutzer</h2>
+  <span class="count">{{ adminCount }} {{ adminCount === 1 ? 'Admin' : 'Admins' }} · {{ users.length }} Benutzer</span>
+</div>
+
+<p class="hint">
+  Jedes Teammitglied sollte ein eigenes Admin-Konto haben, damit nachvollziehbar ist, wer was geändert hat.
+  Der letzte Admin kann nicht zurückgestuft werden.
+</p>
+
+<div class="filters">
+  <label class="cc-field">
+    <span class="cc-field-label">Benutzername</span>
+    <input class="cc-input" type="search" name="userSearch" [(ngModel)]="search" placeholder="z. B. anna" autocomplete="off">
+  </label>
+  <label class="cc-field">
+    <span class="cc-field-label">Rolle</span>
+    <select class="cc-input" name="roleFilter" [(ngModel)]="roleFilter">
+      <option [ngValue]="null">Alle</option>
+      <option ngValue="admin">Admins</option>
+      <option ngValue="user">User</option>
+    </select>
+  </label>
+</div>
+
+@if (error) {
+  <p class="cc-msg cc-msg-error" role="alert">{{ error }}</p>
+}
+@if (info) {
+  <p class="cc-msg cc-msg-success" role="status">{{ info }}</p>
+}
+
+@if (loading) {
+  <p class="empty-hint">Lädt …</p>
+} @else if (filtered.length === 0) {
+  <p class="empty-hint">Keine Benutzer gefunden.</p>
+} @else {
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Benutzer</th>
+          <th>Mitglied seit</th>
+          <th>Rolle</th>
+          <th class="actions-col">Aktion</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of filtered; track u.id) {
+          <tr>
+            <td>
+              <a [routerLink]="['/users', u.id]" class="username">{{ u.username }}</a>
+              @if (isSelf(u)) { <span class="self">(du)</span> }
+            </td>
+            <td data-label="Mitglied seit" class="tnum">{{ formatDate(u.memberSince) }}</td>
+            <td data-label="Rolle">
+              <span class="role" [class.role-admin]="u.role === 'admin'">{{ u.role === 'admin' ? 'Admin' : 'User' }}</span>
+            </td>
+            <td class="actions-col">
+              @if (u.role === 'admin') {
+                <button type="button" class="cc-btn-danger cc-btn-sm"
+                        (click)="removeAdmin(u)"
+                        [disabled]="busyId === u.id || isLastAdmin(u)"
+                        [title]="isLastAdmin(u) ? 'Der letzte Admin kann nicht zurückgestuft werden' : ''"
+                        [attr.aria-label]="'Admin-Rechte von ' + u.username + ' entziehen'">
+                  {{ busyId === u.id ? '…' : 'Rechte entziehen' }}
+                </button>
+              } @else {
+                <button type="button" class="cc-btn-outline cc-btn-sm"
+                        (click)="makeAdmin(u)"
+                        [disabled]="busyId === u.id"
+                        [attr.aria-label]="u.username + ' zum Admin machen'">
+                  {{ busyId === u.id ? '…' : 'Zum Admin machen' }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
