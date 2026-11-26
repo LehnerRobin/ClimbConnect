@@ -7,14 +7,18 @@ import { Grade, GradeService, gradeLabel } from '../../services/grade.service';
 import { ActivatedRoute } from '@angular/router';
 import { CaseListComponent } from './moderation/case-list.component';
 import { FeedbackListComponent } from './feedback/feedback-list.component';
+import { AdminAppointmentsComponent } from './appointments/admin-appointments.component';
 import { PageBandComponent } from '../shared/page-band.component';
 
-type AdminTab = 'areas' | 'sectors' | 'routes' | 'reports' | 'moderation' | 'feedback';
+type AdminTab = 'areas' | 'sectors' | 'routes' | 'appointments' | 'reports' | 'moderation' | 'feedback';
+
+/** Alle Tabs – zum Prüfen von ?tab=… in der URL. */
+const ADMIN_TABS: AdminTab[] = ['areas', 'sectors', 'routes', 'appointments', 'reports', 'moderation', 'feedback'];
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, CaseListComponent, FeedbackListComponent, PageBandComponent],
+  imports: [CommonModule, FormsModule, CaseListComponent, FeedbackListComponent, AdminAppointmentsComponent, PageBandComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
@@ -62,7 +66,7 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     // ?tab=moderation öffnet direkt einen Tab (z. B. nach "Fall erledigen")
     const tab = this.route.snapshot.queryParamMap.get('tab') as AdminTab | null;
-    if (tab && ['areas', 'sectors', 'routes', 'reports', 'moderation', 'feedback'].includes(tab)) {
+    if (tab && ADMIN_TABS.includes(tab)) {
       this.setTab(tab);
     }
     this.loadAreas();

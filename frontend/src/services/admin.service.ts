@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
-import { Area, ClimbingRoute, Sector } from './areas.service';
+import { Appointment, Area, ClimbingRoute, Sector } from './areas.service';
 
 /** Formulardaten zum Anlegen oder Bearbeiten eines Gebiets. */
 export interface AreaSaveRequest {
@@ -42,6 +42,12 @@ export interface AdminReport {
   status: string;
   createdAtUtc: string;
   user?: { id: number; username: string } | null;
+}
+
+/** Ein Termin in der Admin-Liste (GET /api/admin/appointments, #223) – zusätzlich mit Ersteller. */
+export interface AdminAppointment extends Appointment {
+  createdByUserId: number;
+  createdByUsername: string;
 }
 
 /**
@@ -108,6 +114,17 @@ export class AdminService {
 
   resolveReport(id: number): Observable<void> {
     return this.http.put<void>(`${this.api}/reports/${id}/status`, { status: 'Resolved' });
+  }
+
+  // ── Termine (#223) ─────────────────────────────────────────────────────────
+
+  /**
+   * Alle Termine aller User für den Admin-Bereich, ohne Obergrenze und mit Ersteller.
+   * Standardmäßig nur kommende; mit all=true auch vergangene.
+   * Bearbeiten und Löschen laufen über den AreasService (gleiche Endpoints wie für User).
+   */
+  getAdminAppointments(all = false): Observable<AdminAppointment[]> {
+    return this.http.get<AdminAppointment[]>(`${this.api}/admin/appointments?all=${all}`);
   }
 
   // ── Backup ─────────────────────────────────────────────────────────────────

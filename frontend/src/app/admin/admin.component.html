@@ -4,7 +4,7 @@
     <div class="band-copy">
       <p class="cc-eyebrow">ClimbConnect · Verwaltung</p>
       <h1 class="cc-h1">Admin-<em>Bereich</em></h1>
-      <p class="cc-lead">Gebiete, Sektoren, Routen und Meldungen verwalten</p>
+      <p class="cc-lead">Gebiete, Sektoren, Routen, Termine und Meldungen verwalten</p>
     </div>
   </app-page-band>
 
@@ -32,6 +32,10 @@
     <button [class.active]="activeTab === 'routes'"  (click)="setTab('routes')">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21c3-5 2-9-1-11M19 3c-3 5-2 9 1 11M9 21c4-7 2-15 2-18M15 3c2 5 0 13-2 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       Routen
+    </button>
+    <button [class.active]="activeTab === 'appointments'" (click)="setTab('appointments')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      Termine
     </button>
     <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
@@ -381,6 +385,15 @@
           }
         </div>
       }
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: TERMINE (#223)                                                    -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'appointments') {
+    <section class="tab-content">
+      <app-admin-appointments />
     </section>
   }
 

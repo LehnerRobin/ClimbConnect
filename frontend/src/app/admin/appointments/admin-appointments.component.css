@@ -1,0 +1,150 @@
+/* Admin: alle Termine (#223). Tabelle im Stil der anderen Admin-Tabellen. */
+
+.section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.section-header h2 { margin: 0; }
+
+.count {
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cc-soft);
+}
+
+.empty-hint {
+  font-family: var(--cc-sans);
+  color: var(--cc-soft);
+}
+
+/* ── Filter ─────────────────────────────────────────────────────────────── */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px 18px;
+  margin-bottom: 22px;
+}
+
+.filters .cc-field { flex: 0 1 240px; margin: 0; }
+
+.past-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  font: 600 14px var(--cc-sans);
+  cursor: pointer;
+}
+
+.past-toggle input { width: 18px; height: 18px; accent-color: var(--cc-text); }
+
+/* ── Tabelle ────────────────────────────────────────────────────────────── */
+
+.table-wrap { overflow-x: auto; }
+
+.admin-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-family: var(--cc-sans);
+}
+
+.admin-table th {
+  padding: 14px 12px;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cc-soft);
+  border-bottom: 2px solid var(--cc-text);
+}
+
+.admin-table td {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--cc-line);
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+.admin-table tr:hover td { background: #FBF7EE; }
+
+/* Vergangene Termine etwas blasser */
+.admin-table tr.past td { color: var(--cc-soft); }
+
+.date { white-space: nowrap; }
+
+.title {
+  display: block;
+  font-family: var(--cc-serif);
+  font-weight: 400;
+  font-size: 19px;
+}
+
+.area {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--cc-soft);
+}
+
+.creator {
+  color: inherit;
+  font-weight: 700;
+}
+
+/* Spezifischer als ".admin-table th", sonst stünde die Überschrift links */
+.admin-table .actions-col { text-align: right; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* ── Handy ──────────────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .filters .cc-field { flex: 1 1 100%; }
+}
+
+/* Am Handy jeder Termin als Karte statt Tabellenzeile – kein seitliches Wischen nötig */
+@media (max-width: 700px) {
+  .admin-table { min-width: 0; }
+  .admin-table thead { display: none; }
+
+  .admin-table tbody,
+  .admin-table tr,
+  .admin-table td { display: block; }
+
+  .admin-table tr {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--cc-line);
+  }
+
+  .admin-table td {
+    padding: 3px 0;
+    border: 0;
+  }
+
+  .admin-table tr:hover td { background: none; }
+
+  /* Beschriftung aus data-label, weil die Spaltenköpfe fehlen */
+  .admin-table td[data-label]::before {
+    content: attr(data-label) " ";
+    font-size: 12px;
+    color: var(--cc-soft);
+  }
+
+  .admin-table .actions-col { text-align: left; }
+  .actions { justify-content: flex-start; margin-top: 10px; }
+}
