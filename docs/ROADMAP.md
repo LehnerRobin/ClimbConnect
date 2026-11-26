@@ -102,7 +102,7 @@ andere Robin Lehner.
 
 ## Sprint 3 – läuft
 
-GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP, davon 4 erledigt (✅).
+GitHub-Meilenstein **„Sprint 3"** – 8 Issues, 28 SP, davon 5 erledigt (✅).
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
@@ -113,6 +113,7 @@ GitHub-Meilenstein **„Sprint 3"** – 7 Issues, 26 SP, davon 4 erledigt (✅).
 | #251 | Fotos vergrößert im aktuellen Fenster öffnen | 2 | Faru |
 | #253 | Grad-Entwicklung pro Klettertag: Durchschnitt und Peak-Grad mit Link zur Route | 5 | Robin, Faru |
 | ✅ #245 | Pinnwand beim Termin mit automatischer Aktualisierung (nach #229) | 3 | Robin, Faru |
+| ✅ #239 | Gebietsliste zeigt Leute der nächsten 7 Tage (ab morgen) – aus dem Backlog nachgezogen | 2 | Robin, Mohamed |
 
 **Nachträge aus der Code-Prüfung des Terminkalenders (26.11.2026)** – alle erledigt:
 Zeitraum-Endpoint `GET /api/appointments?from=&to=` (#298), schnelles Blättern zeigt
