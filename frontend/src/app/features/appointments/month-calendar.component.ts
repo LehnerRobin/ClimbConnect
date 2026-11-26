@@ -1,6 +1,11 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { CalendarDay, monthGrid } from '../../shared/vienna-date';
 
+/** "3. Dezember 2026" – für den Vorlesetext. Einmal anlegen, Intl.DateTimeFormat ist teuer. */
+const ariaDateFormatter = new Intl.DateTimeFormat('de-AT', {
+  day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'
+});
+
 /** Zahlen für einen Kalendertag. */
 export interface DayStats {
   people: number;
@@ -62,10 +67,15 @@ export class MonthCalendarComponent implements OnChanges {
     return 1;
   }
 
-  /** Vorlesetext für Screenreader, z. B. "14. November: 8 Leute, 2 Termine". */
+  /**
+   * Vorlesetext für Screenreader, z. B. "14. November 2026: 8 Leute, 2 Termine".
+   * Das Datum kommt aus dem Tages-Schlüssel selbst – so haben auch die grauen
+   * Rand-Tage aus Vor- und Folgemonat den richtigen Monat (#296).
+   */
   ariaLabel(day: CalendarDay): string {
     const s = this.stats[day.key];
-    const base = `${day.day}. ${day.inMonth ? this.monthLabel : ''}`.trim();
+    const [y, m, d] = day.key.split('-').map(Number);
+    const base = ariaDateFormatter.format(new Date(Date.UTC(y, m - 1, d)));
     if (!s) return `${base}: keine Termine`;
     return `${base}: ${s.people} ${s.people === 1 ? 'Person' : 'Leute'}, ${s.appointments} ${s.appointments === 1 ? 'Termin' : 'Termine'}`;
   }

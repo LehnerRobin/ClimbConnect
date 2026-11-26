@@ -2,17 +2,22 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using ClimbConnect.API.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ClimbConnect.Tests;
 
 /// <summary>Integrationstests für die Terminliste eines Gebiets (Teilnehmerzahl und Beitritts-Status).</summary>
 public class AppointmentTests : IClassFixture<ClimbConnectFactory>
 {
+    private readonly ClimbConnectFactory _factory;
     private readonly HttpClient _client;
 
     public AppointmentTests(ClimbConnectFactory factory)
     {
-        _client = factory.CreateClient();
+        _factory = factory;
+        _client  = factory.CreateClient();
     }
 
     [Fact]
@@ -181,6 +186,77 @@ public class AppointmentTests : IClassFixture<ClimbConnectFactory>
         var saved = await FindAppointmentAsync(areaId, id, token);
 
         Assert.Equal("2030-06-05T16:00:00Z", saved.GetProperty("date").GetString());
+    }
+
+    // Zeitraum-Abfrage für den Terminkalender (#298)
+
+    [Fact]
+    public async Task GetInRange_LiefertNurTermineImZeitraum_SortiertMitGebiet()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+
+        var later   = await CreateAsync(areaId, token, "Zeitraum spät",    "2031-03-20T10:00:00Z");
+        var earlier = await CreateAsync(areaId, token, "Zeitraum früh",    "2031-03-10T10:00:00Z");
+        var atEnd   = await CreateAsync(areaId, token, "Zeitraum am Ende", "2031-04-01T00:00:00Z");
+        var before  = await CreateAsync(areaId, token, "Zeitraum davor",   "2031-02-28T23:59:00Z");
+
+        var response = await SendAsync(HttpMethod.Get,
+            "/api/appointments?from=2031-03-01T00:00:00Z&to=2031-04-01T00:00:00Z", token, content: null);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var list = (await response.Content.ReadFromJsonAsync<JsonElement>()).EnumerateArray().ToList();
+        var ids  = list.Select(a => a.GetProperty("id").GetInt32()).ToList();
+
+        // "to" zählt nicht mehr dazu, "from" schon
+        Assert.Equal(new[] { earlier, later }, ids.Where(id => id == earlier || id == later));
+        Assert.DoesNotContain(atEnd, ids);
+        Assert.DoesNotContain(before, ids);
+
+        // Gleiche Felder wie /upcoming: Gebiet, Teilnehmerzahl, eigener Status
+        var first = list.Single(a => a.GetProperty("id").GetInt32() == earlier);
+        Assert.False(string.IsNullOrEmpty(first.GetProperty("areaName").GetString()));
+        Assert.Equal(1, first.GetProperty("participantCount").GetInt32());
+        Assert.True(first.GetProperty("isSubscribed").GetBoolean());
+        Assert.True(first.GetProperty("isCreator").GetBoolean());
+    }
+
+    [Fact]
+    public async Task GetInRange_EnthaeltAuchVergangeneTermine_OhneLogin()
+    {
+        var areaId = await GetFirstAreaIdAsync();
+        var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+        var id     = await CreateAsync(areaId, token, "Vergangen", "2030-09-01T10:00:00Z");
+
+        // Über die API kann man keinen Termin in der Vergangenheit anlegen → direkt in der DB zurückdatieren
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var appointment = await db.Appointments.SingleAsync(a => a.Id == id);
+            appointment.Date = new DateTime(2020, 5, 15, 10, 0, 0, DateTimeKind.Utc);
+            await db.SaveChangesAsync();
+        }
+
+        var response = await SendAsync(HttpMethod.Get,
+            "/api/appointments?from=2020-05-01T00:00:00Z&to=2020-06-01T00:00:00Z", token: null, content: null);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var list  = (await response.Content.ReadFromJsonAsync<JsonElement>()).EnumerateArray().ToList();
+        var found = list.Single(a => a.GetProperty("id").GetInt32() == id);
+        Assert.False(found.GetProperty("isSubscribed").GetBoolean());
+    }
+
+    [Theory]
+    [InlineData("/api/appointments")]                                                            // beides fehlt
+    [InlineData("/api/appointments?from=2031-03-01T00:00:00Z")]                                  // "to" fehlt
+    [InlineData("/api/appointments?from=2031-03-01T00:00:00Z&to=2031-03-01T00:00:00Z")]          // to == from
+    [InlineData("/api/appointments?from=2031-04-01T00:00:00Z&to=2031-03-01T00:00:00Z")]          // to < from
+    [InlineData("/api/appointments?from=2031-01-01T00:00:00Z&to=2031-12-31T00:00:00Z")]          // zu lang
+    [InlineData("/api/appointments?from=kein-datum&to=2031-03-01T00:00:00Z")]                    // kein Datum
+    public async Task GetInRange_UngueltigerZeitraum_Gibt400(string url)
+    {
+        var response = await SendAsync(HttpMethod.Get, url, token: null, content: null);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     // Hilfsmethoden
