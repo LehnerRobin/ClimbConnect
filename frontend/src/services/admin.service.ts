@@ -44,6 +44,18 @@ export interface AdminReport {
   user?: { id: number; username: string } | null;
 }
 
+/** Rolle eines Benutzers. */
+export type UserRole = 'admin' | 'user';
+
+/** Ein Benutzer in der Admin-Liste (GET /api/admin/users, #237). */
+export interface AdminUser {
+  id: number;
+  username: string;
+  role: UserRole;
+  /** "YYYY-MM-DD" */
+  memberSince?: string;
+}
+
 /** Ein Termin in der Admin-Liste (GET /api/admin/appointments, #223) – zusätzlich mit Ersteller. */
 export interface AdminAppointment extends Appointment {
   createdByUserId: number;
@@ -114,6 +126,18 @@ export class AdminService {
 
   resolveReport(id: number): Observable<void> {
     return this.http.put<void>(`${this.api}/reports/${id}/status`, { status: 'Resolved' });
+  }
+
+  // ── Benutzer und Rollen (#237) ─────────────────────────────────────────────
+
+  /** Alle Benutzer mit Rolle (nur Admin). */
+  getUsersWithRoles(): Observable<AdminUser[]> {
+    return this.http.get<AdminUser[]>(`${this.api}/admin/users`);
+  }
+
+  /** Admin-Rechte vergeben ("admin") oder entziehen ("user"). Wirkt im Backend sofort. */
+  setUserRole(id: number, role: UserRole): Observable<AdminUser> {
+    return this.http.put<AdminUser>(`${this.api}/admin/users/${id}/role`, { role });
   }
 
   // ── Termine (#223) ─────────────────────────────────────────────────────────

@@ -4,7 +4,7 @@
     <div class="band-copy">
       <p class="cc-eyebrow">ClimbConnect · Verwaltung</p>
       <h1 class="cc-h1">Admin-<em>Bereich</em></h1>
-      <p class="cc-lead">Gebiete, Sektoren, Routen, Termine und Meldungen verwalten</p>
+      <p class="cc-lead">Gebiete, Routen, Termine, Benutzer und Meldungen verwalten</p>
     </div>
   </app-page-band>
 
@@ -36,6 +36,10 @@
     <button [class.active]="activeTab === 'appointments'" (click)="setTab('appointments')">
       <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       Termine
+    </button>
+    <button [class.active]="activeTab === 'users'" (click)="setTab('users')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.8a3.5 3.5 0 0 1 0 6.4M18.5 14.8c1.6.8 2.6 2.5 3 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      Benutzer
     </button>
     <button [class.active]="activeTab === 'reports'" (click)="setTab('reports')">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 1 21h22L12 3Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 10v5M12 18h.01" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
@@ -394,6 +398,15 @@
   @if (activeTab === 'appointments') {
     <section class="tab-content">
       <app-admin-appointments />
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: BENUTZER (#237)                                                   -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'users') {
+    <section class="tab-content">
+      <app-admin-users />
     </section>
   }
 

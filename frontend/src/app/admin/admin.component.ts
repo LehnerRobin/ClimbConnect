@@ -8,17 +8,18 @@ import { ActivatedRoute } from '@angular/router';
 import { CaseListComponent } from './moderation/case-list.component';
 import { FeedbackListComponent } from './feedback/feedback-list.component';
 import { AdminAppointmentsComponent } from './appointments/admin-appointments.component';
+import { AdminUsersComponent } from './users/admin-users.component';
 import { PageBandComponent } from '../shared/page-band.component';
 
-type AdminTab = 'areas' | 'sectors' | 'routes' | 'appointments' | 'reports' | 'moderation' | 'feedback';
+type AdminTab = 'areas' | 'sectors' | 'routes' | 'appointments' | 'users' | 'reports' | 'moderation' | 'feedback';
 
 /** Alle Tabs – zum Prüfen von ?tab=… in der URL. */
-const ADMIN_TABS: AdminTab[] = ['areas', 'sectors', 'routes', 'appointments', 'reports', 'moderation', 'feedback'];
+const ADMIN_TABS: AdminTab[] = ['areas', 'sectors', 'routes', 'appointments', 'users', 'reports', 'moderation', 'feedback'];
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, CaseListComponent, FeedbackListComponent, AdminAppointmentsComponent, PageBandComponent],
+  imports: [CommonModule, FormsModule, CaseListComponent, FeedbackListComponent, AdminAppointmentsComponent, AdminUsersComponent, PageBandComponent],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css']
 })
