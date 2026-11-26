@@ -15,8 +15,17 @@ public static class RouteEndpoints
         // Globale Routen-Suche über alle Sektoren.
         // Liefert zusätzlich Gebiet (AreaId, AreaName), damit die Suchtreffer im Frontend
         // ohne weitere Anfragen „Gebiet · Sektor" anzeigen können.
-        app.MapGet("/api/routes", async (string? search, string? scale, int? page, int? pageSize, AppDbContext db) =>
+        // Filter (#240), alle optional und kombinierbar mit "search":
+        //   minGrade/maxGrade – französische Grade, verglichen über den Rang der Grad-Tabelle
+        //   style             – Stil, ohne Groß-/Kleinschreibung
+        //   minLength/maxLength – Länge in Metern
+        app.MapGet("/api/routes", async (string? search, string? scale,
+            string? minGrade, string? maxGrade, string? style, int? minLength, int? maxLength,
+            int? page, int? pageSize, AppDbContext db) =>
         {
+            var filterError = ValidateFilter(minGrade, maxGrade, minLength, maxLength);
+            if (filterError is not null) return Results.BadRequest(new { error = filterError });
+
             var p  = Math.Max(1, page ?? 1);
             var ps = Math.Clamp(pageSize ?? 20, 1, 100);
 
@@ -32,6 +41,27 @@ public static class RouteEndpoints
                     r.Name.ToLower().Contains(term) ||
                     (r.Description != null && r.Description.ToLower().Contains(term)));
             }
+
+            // Grad: Grade werden als Text gespeichert ("6a+"). Der Vergleich "zwischen 6a und 6b"
+            // geht deshalb über die Grad-Tabelle – alle Grade von Rang "von" bis Rang "bis".
+            if (minGrade is not null || maxGrade is not null)
+            {
+                var allGrades = GradeConversionService.GetAllGrades();
+                var fromRank  = minGrade is null ? 0 : GradeConversionService.Rank(minGrade);
+                var toRank    = maxGrade is null ? allGrades.Count - 1 : GradeConversionService.Rank(maxGrade);
+                var allowed   = allGrades.Skip(fromRank).Take(toRank - fromRank + 1).ToList();
+                query = query.Where(r => r.Grade != null && allowed.Contains(r.Grade));
+            }
+
+            if (!string.IsNullOrWhiteSpace(style))
+            {
+                var wanted = style.Trim().ToLower();
+                query = query.Where(r => r.Style != null && r.Style.ToLower() == wanted);
+            }
+
+            // Routen ohne Längenangabe fallen bei einem Längenfilter heraus
+            if (minLength is not null) query = query.Where(r => r.LengthMeters != null && r.LengthMeters >= minLength);
+            if (maxLength is not null) query = query.Where(r => r.LengthMeters != null && r.LengthMeters <= maxLength);
 
             var total  = await query.CountAsync();
             var routes = await query
@@ -54,6 +84,31 @@ public static class RouteEndpoints
             return Results.Ok(new { Total = total, Page = p, PageSize = ps, Items = items });
         })
         .WithName("SearchRoutes")
+        .WithTags("Routes");
+
+        // Alle Stile, die bei Routen tatsächlich vorkommen – für die Stil-Auswahl im Filter (#240).
+        // Aus den Daten statt einer festen Liste, weil die Werte uneinheitlich sind
+        // (Seed: "Vorstieg"/"Toprope", Admin-Formular: "Sport", "Trad", …).
+        app.MapGet("/api/routes/styles", async (AppDbContext db) =>
+        {
+            var styles = await db.Routes
+                .Where(r => r.Style != null && r.Style != "")
+                .Select(r => r.Style!)
+                .Distinct()
+                .ToListAsync();
+
+            // "Sport" und "sport" nur einmal; alphabetisch nach deutscher Sortierung
+            var german = StringComparer.Create(new System.Globalization.CultureInfo("de-AT"), ignoreCase: true);
+            var result = styles
+                .Select(s => s.Trim())
+                .Where(s => s.Length > 0)
+                .GroupBy(s => s.ToLowerInvariant())
+                .Select(g => g.First())
+                .OrderBy(s => s, german)
+                .ToList();
+            return Results.Ok(result);
+        })
+        .WithName("GetRouteStyles")
         .WithTags("Routes");
 
         app.MapGet("/api/sectors/{id:int}/routes", async (int id, string? scale, AppDbContext db) =>
@@ -184,5 +239,25 @@ public static class RouteEndpoints
         })
         .WithName("GetCommunityGrade")
         .WithTags("Routes");
+    }
+
+    /// <summary>
+    /// Prüft die Filter der Routensuche (#240). Gibt die Fehlermeldung zurück oder null,
+    /// wenn alles passt.
+    /// </summary>
+    private static string? ValidateFilter(string? minGrade, string? maxGrade, int? minLength, int? maxLength)
+    {
+        if (minGrade is not null && !GradeConversionService.IsValid(minGrade))
+            return $"Unbekannter Grad '{minGrade}' – erwartet wird ein französischer Grad, z. B. 6a+";
+        if (maxGrade is not null && !GradeConversionService.IsValid(maxGrade))
+            return $"Unbekannter Grad '{maxGrade}' – erwartet wird ein französischer Grad, z. B. 6a+";
+        if (minGrade is not null && maxGrade is not null &&
+            GradeConversionService.Rank(minGrade) > GradeConversionService.Rank(maxGrade))
+            return "Der Grad 'von' darf nicht schwerer sein als 'bis'";
+        if (minLength < 0 || maxLength < 0)
+            return "Die Länge darf nicht negativ sein";
+        if (minLength is not null && maxLength is not null && minLength > maxLength)
+            return "Die Länge 'von' darf nicht größer sein als 'bis'";
+        return null;
     }
 }
