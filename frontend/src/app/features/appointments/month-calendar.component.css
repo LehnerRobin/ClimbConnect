@@ -1,0 +1,151 @@
+/* Eigener Monatskalender. Farben aus src/design.css (--cc-…). */
+
+.calendar {
+  padding: 22px;
+  border-radius: 26px;
+  background: var(--cc-paper-card);
+  box-shadow: 0 24px 50px rgba(28, 26, 22, 0.1);
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.month-label {
+  text-transform: capitalize;
+  text-align: center;
+}
+
+.nav-btn {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid var(--cc-line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cc-text);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.nav-btn:hover,
+.nav-btn:focus-visible { border-color: var(--cc-text); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.weekday {
+  padding: 4px 0 8px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cc-soft);
+}
+
+.day {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 92px;
+  padding: 8px;
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  background: var(--cc-paper);
+  color: var(--cc-text);
+  font-family: var(--cc-sans);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, transform .15s;
+}
+
+.day:hover { border-color: var(--cc-line); }
+.day:focus-visible { outline: 2px solid var(--cc-teal); outline-offset: 2px; }
+
+.day-number {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.day-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.day-stats strong { font-size: 13px; }
+
+/* Farbstufen: je mehr Leute, desto kräftiger */
+.day.level-1 { background: #FBEBD3; }
+.day.level-2 { background: #F2C47F; }
+.day.level-3 { background: var(--cc-rust); color: var(--cc-cream); }
+
+/* Tage aus dem Vor-/Folgemonat */
+.day.other-month { opacity: 0.45; }
+
+/* Heute: Ring in Petrol */
+.day.today { border-color: var(--cc-teal); }
+.day.today .day-number {
+  display: inline-grid;
+  place-items: center;
+  min-width: 26px;
+  height: 26px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--cc-teal);
+  color: #FFFDF8;
+}
+
+/* Ausgewählter Tag */
+.day.selected {
+  border-color: var(--cc-text);
+  box-shadow: 0 0 0 2px var(--cc-text);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 16px;
+  font-size: 12.5px;
+  color: var(--cc-soft);
+}
+
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.swatch.level-1 { background: #FBEBD3; }
+.swatch.level-2 { background: #F2C47F; }
+.swatch.level-3 { background: var(--cc-rust); }
+.swatch.today-swatch { border: 2px solid var(--cc-teal); }
+
+/* Handy: kleinere Zellen, nur die Zahl der Leute */
+@media (max-width: 640px) {
+  .calendar { padding: 14px; border-radius: 20px; }
+  .grid { gap: 4px; }
+  .day { min-height: 64px; padding: 6px 5px; border-radius: 10px; }
+  .day-stats span { display: none; }
+  .day-stats strong { font-size: 11px; }
+  .day-number { font-size: 13px; }
+}
