@@ -223,17 +223,17 @@ public static class UserEndpoints
 
     /// <summary>
     /// Löscht ein Konto mit allen zugehörigen Daten in einer Transaktion: Begehungen, Teilnahmen,
-    /// eigene Termine (samt deren Teilnehmern und Pinnwand), eigene Pinnwand-Beiträge, Kommentare
-    /// und Reports. Gibt die Foto-Links der gelöschten Kommentare und Reports zurück – die
+    /// eigene Termine (samt deren Teilnehmern und Pinnwand), eigene Pinnwand-Beiträge, Feedback
+    /// und Reports. Gibt die Foto-Links der gelöschten Feedback-Einträge und Reports zurück – die
     /// Dateien löscht der Aufrufer danach.
     /// Kopien in gemeldeten Fällen (#264) bleiben absichtlich bis zum Ablauf der 30 Tage erhalten
     /// (Schutz vor Missbrauch, sonst könnte man sich durch Löschen des Kontos der Meldung entziehen).
     /// </summary>
     internal static async Task<List<string?>> DeleteUserDataAsync(AppDbContext db, int userId)
     {
-        var comments = await db.Comments.Where(c => c.UserId == userId).ToListAsync();
+        var feedback = await db.Feedback.Where(f => f.UserId == userId).ToListAsync();
         var reports  = await db.Reports.Where(r => r.UserId == userId).ToListAsync();
-        var photoUrls = comments.Select(c => c.PhotoUrl).Concat(reports.Select(r => r.PhotoUrl)).ToList();
+        var photoUrls = feedback.Select(f => f.PhotoUrl).Concat(reports.Select(r => r.PhotoUrl)).ToList();
 
         // Eigene Termine verschwinden mit allem, was daran hängt
         var ownAppointmentIds = await db.Appointments
@@ -244,7 +244,7 @@ public static class UserEndpoints
         db.AppointmentUsers.RemoveRange(db.AppointmentUsers.Where(au => au.UserId == userId || ownAppointmentIds.Contains(au.AppointmentId)));
         db.Appointments.RemoveRange(db.Appointments.Where(a => a.CreatedByUserId == userId));
         db.Progresses.RemoveRange(db.Progresses.Where(p => p.UserId == userId));
-        db.Comments.RemoveRange(comments);
+        db.Feedback.RemoveRange(feedback);
         db.Reports.RemoveRange(reports);
         db.Users.Remove(await db.Users.FirstAsync(u => u.Id == userId));
 

@@ -28,12 +28,12 @@ public class AccountDeletionTests : IClassFixture<SqliteFactory>
         var areaId  = await GetFirstAreaIdAsync();
         var routeId = await GetFirstRouteIdAsync();
 
-        // Foto hochladen und in einem Kommentar verwenden
+        // Foto hochladen und in einem Feedback verwenden
         var photoUrl  = await UploadPngAsync(token);
         var photoPath = Path.Combine(_factory.TempDir, "uploads", Path.GetFileName(photoUrl));
         Assert.True(File.Exists(photoPath));
-        Assert.Equal(HttpStatusCode.Created, (await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", token,
-            JsonContent.Create(new { text = "Kommentar mit Foto", photoUrl }))).StatusCode);
+        Assert.Equal(HttpStatusCode.Created, (await SendAsync(HttpMethod.Post, "/api/feedback", token,
+            JsonContent.Create(new { text = "Feedback mit Foto", photoUrl, areaId }))).StatusCode);
 
         // Report, Begehung, eigener Termin mit fremdem Teilnehmer und Pinnwand-Beitrag
         Assert.Equal(HttpStatusCode.Created, (await SendAsync(HttpMethod.Post, "/api/reports", token,
@@ -69,9 +69,10 @@ public class AccountDeletionTests : IClassFixture<SqliteFactory>
         Assert.Equal(HttpStatusCode.OK, posts.StatusCode);
         Assert.Empty((await posts.Content.ReadFromJsonAsync<JsonElement>()).EnumerateArray());
 
-        // Kommentar und Report sind aus dem Gebiet verschwunden
-        var comments = await _client.GetStringAsync($"/api/areas/{areaId}/comments");
-        Assert.DoesNotContain("Kommentar mit Foto", comments);
+        // Feedback ist auch für den Admin verschwunden
+        var adminToken = await LoginAsync("admin@climbconnect.at", "Admin1234!");
+        var feedback = await (await SendAsync(HttpMethod.Get, "/api/feedback", adminToken, null)).Content.ReadAsStringAsync();
+        Assert.DoesNotContain("Feedback mit Foto", feedback);
 
         // In der Benutzerliste taucht der Name nicht mehr auf
         var users = await _client.GetStringAsync("/api/users");
@@ -117,12 +118,12 @@ public class AccountDeletionTests : IClassFixture<SqliteFactory>
         var keeper = await RegisterAsync("loesch-foto2");
         var areaId = await GetFirstAreaIdAsync();
 
-        // Beide Kommentare zeigen auf dasselbe Bild
+        // Beide Feedback-Einträge zeigen auf dasselbe Bild
         var photoUrl = await UploadPngAsync(owner);
-        await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", owner,
-            JsonContent.Create(new { text = "Original", photoUrl }));
-        await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", keeper,
-            JsonContent.Create(new { text = "Gleiches Foto", photoUrl }));
+        await SendAsync(HttpMethod.Post, "/api/feedback", owner,
+            JsonContent.Create(new { text = "Original", photoUrl, areaId }));
+        await SendAsync(HttpMethod.Post, "/api/feedback", keeper,
+            JsonContent.Create(new { text = "Gleiches Foto", photoUrl, areaId }));
 
         Assert.Equal(HttpStatusCode.NoContent, (await DeleteAccountAsync(owner, "Test1234!")).StatusCode);
 

@@ -118,7 +118,7 @@ public static class AreaEndpoints
             var area = await db.Areas.FindAsync(id);
             if (area is null) return Results.NotFound();
 
-            // Titelbild und Fotos aller Kommentare/Reports im Gebiet (auch an dessen Routen) – #238
+            // Titelbild und Fotos aller Feedback-Einträge/Reports im Gebiet (auch an dessen Routen) – #238
             var photoUrls = await UploadStorage.PhotoUrlsAsync(db,
                 c => c.AreaId == id || (c.Route != null && c.Route.Sector.AreaId == id),
                 r => r.AreaId == id || (r.Route != null && r.Route.Sector.AreaId == id));

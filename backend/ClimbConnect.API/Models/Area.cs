@@ -27,6 +27,6 @@ public class Area
     // Navigation
     public ICollection<Sector> Sectors { get; set; } = [];
     public ICollection<Appointment> Appointments { get; set; } = [];
-    public ICollection<Comment> Comments { get; set; } = [];
+    public ICollection<Feedback> Feedback { get; set; } = [];
     public ICollection<Report> Reports { get; set; } = [];
 }

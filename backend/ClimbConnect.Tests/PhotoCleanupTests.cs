@@ -7,7 +7,7 @@ namespace ClimbConnect.Tests;
 
 /// <summary>
 /// Integrationstests für #238: Bilder verschwinden mit den Einträgen, zu denen sie gehören –
-/// auch bei kaskadierenden Löschungen (Gebiet → Sektor → Route → Kommentare/Reports).
+/// auch bei kaskadierenden Löschungen (Gebiet → Sektor → Route → Feedback/Reports).
 /// Laufen gegen eine echte SQLite-Datei, weil nur dort die Kaskaden der Datenbank greifen.
 /// </summary>
 public class PhotoCleanupTests : IClassFixture<SqliteFactory>
@@ -22,35 +22,35 @@ public class PhotoCleanupTests : IClassFixture<SqliteFactory>
     }
 
     [Fact]
-    public async Task KommentarLoeschen_LoeschtFoto()
+    public async Task FeedbackLoeschen_LoeschtFoto()
     {
         var user   = await LoginAsync("user@climbconnect.at", "User1234!");
-        var areaId = (await CreateTreeAsync("Foto-Kommentar")).AreaId;
+        var areaId = (await CreateTreeAsync("Foto-Feedback")).AreaId;
 
-        var photo     = await UploadPngAsync(user);
-        var commentId = await CommentAsync($"/api/areas/{areaId}/comments", user, photo);
+        var photo      = await UploadPngAsync(user);
+        var feedbackId = await FeedbackAsync(user, photo, areaId: areaId);
         Assert.True(PhotoExists(photo));
 
-        var delete = await SendAsync(HttpMethod.Delete, $"/api/comments/{commentId}", user, null);
+        var delete = await SendAsync(HttpMethod.Delete, $"/api/feedback/{feedbackId}", await AdminAsync(), null);
         Assert.Equal(HttpStatusCode.NoContent, delete.StatusCode);
         Assert.False(PhotoExists(photo));
     }
 
     [Fact]
-    public async Task RouteLoeschen_LoeschtFotosVonKommentarenUndReports()
+    public async Task RouteLoeschen_LoeschtFotosVonFeedbackUndReports()
     {
         var user  = await LoginAsync("user@climbconnect.at", "User1234!");
         var admin = await AdminAsync();
         var tree  = await CreateTreeAsync("Foto-Route");
 
-        var commentPhoto = await UploadPngAsync(user);
+        var feedbackPhoto = await UploadPngAsync(user);
         var reportPhoto  = await UploadPngAsync(user);
-        await CommentAsync($"/api/routes/{tree.RouteId}/comments", user, commentPhoto);
+        await FeedbackAsync(user, feedbackPhoto, routeId: tree.RouteId);
         await ReportAsync(user, new { routeId = tree.RouteId, text = "Haken locker", severity = "High", photoUrl = reportPhoto });
 
         var delete = await SendAsync(HttpMethod.Delete, $"/api/routes/{tree.RouteId}", admin, null);
         Assert.Equal(HttpStatusCode.NoContent, delete.StatusCode);
-        Assert.False(PhotoExists(commentPhoto));
+        Assert.False(PhotoExists(feedbackPhoto));
         Assert.False(PhotoExists(reportPhoto));
     }
 
@@ -62,7 +62,7 @@ public class PhotoCleanupTests : IClassFixture<SqliteFactory>
         var tree  = await CreateTreeAsync("Foto-Sektor");
 
         var photo = await UploadPngAsync(user);
-        await CommentAsync($"/api/routes/{tree.RouteId}/comments", user, photo);
+        await FeedbackAsync(user, photo, routeId: tree.RouteId);
 
         var delete = await SendAsync(HttpMethod.Delete, $"/api/sectors/{tree.SectorId}", admin, null);
         Assert.Equal(HttpStatusCode.NoContent, delete.StatusCode);
@@ -81,8 +81,8 @@ public class PhotoCleanupTests : IClassFixture<SqliteFactory>
         var areaPhoto  = await UploadPngAsync(user);
         var routePhoto = await UploadPngAsync(user);
         var reportPhoto = await UploadPngAsync(user);
-        await CommentAsync($"/api/areas/{tree.AreaId}/comments", user, areaPhoto);
-        await CommentAsync($"/api/routes/{tree.RouteId}/comments", user, routePhoto);
+        await FeedbackAsync(user, areaPhoto, areaId: tree.AreaId);
+        await FeedbackAsync(user, routePhoto, routeId: tree.RouteId);
         await ReportAsync(user, new { areaId = tree.AreaId, text = "Steinschlag", severity = "Medium", photoUrl = reportPhoto });
 
         var delete = await SendAsync(HttpMethod.Delete, $"/api/areas/{tree.AreaId}", admin, null);
@@ -124,8 +124,8 @@ public class PhotoCleanupTests : IClassFixture<SqliteFactory>
         var stays = await CreateTreeAsync("Foto-Bleibt");
 
         var photo = await UploadPngAsync(user);
-        await CommentAsync($"/api/areas/{gone.AreaId}/comments", user, photo);
-        await CommentAsync($"/api/areas/{stays.AreaId}/comments", user, photo);
+        await FeedbackAsync(user, photo, areaId: gone.AreaId);
+        await FeedbackAsync(user, photo, areaId: stays.AreaId);
 
         await SendAsync(HttpMethod.Delete, $"/api/areas/{gone.AreaId}", admin, null);
         Assert.True(PhotoExists(photo));
@@ -158,10 +158,10 @@ public class PhotoCleanupTests : IClassFixture<SqliteFactory>
         return (areaId, sectorId, routeId);
     }
 
-    private async Task<int> CommentAsync(string url, string token, string photoUrl)
+    private async Task<int> FeedbackAsync(string token, string photoUrl, int? areaId = null, int? routeId = null)
     {
-        var response = await SendAsync(HttpMethod.Post, url, token,
-            JsonContent.Create(new { text = "Kommentar mit Foto", photoUrl }));
+        var response = await SendAsync(HttpMethod.Post, "/api/feedback", token,
+            JsonContent.Create(new { text = "Feedback mit Foto", photoUrl, areaId, routeId }));
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt32();
     }

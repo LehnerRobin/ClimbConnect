@@ -20,17 +20,19 @@ public class SecurityTests : IClassFixture<ClimbConnectFactory>
     }
 
     [Fact]
-    public async Task GetComments_EnthältWederPasswortHashNochEmail()
+    public async Task GetFeedback_EnthältWederPasswortHashNochEmail()
     {
         var areaId = await GetFirstAreaIdAsync();
         var token  = await LoginAsync("user@climbconnect.at", "User1234!");
+        var admin  = await LoginAsync("admin@climbconnect.at", "Admin1234!");
 
-        var create = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", token,
-            JsonContent.Create(new { text = "Schöner Fels" }));
+        var create = await SendAsync(HttpMethod.Post, "/api/feedback", token,
+            JsonContent.Create(new { text = "Schöner Fels", areaId }));
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
 
-        // Kommentare sind öffentlich → ohne Token abrufen
-        var json = await _client.GetStringAsync($"/api/areas/{areaId}/comments");
+        // Auch der Admin bekommt vom Verfasser nur den Benutzernamen
+        var response = await SendAsync(HttpMethod.Get, "/api/feedback", admin, null);
+        var json = await response.Content.ReadAsStringAsync();
 
         Assert.Contains("testuser", json);
         Assert.DoesNotContain("passwordHash", json, StringComparison.OrdinalIgnoreCase);
@@ -120,12 +122,11 @@ public class SecurityTests : IClassFixture<ClimbConnectFactory>
     [InlineData("https://tracker.example.com/pixel.png")]
     [InlineData("/uploads/gibt-es-nicht.png")]
     [InlineData("/uploads/../appsettings.json")]
-    public async Task Kommentar_FremderFotoLink_Gibt400(string photoUrl)
+    public async Task Feedback_FremderFotoLink_Gibt400(string photoUrl)
     {
-        var areaId = await GetFirstAreaIdAsync();
         var token  = await LoginAsync("user@climbconnect.at", "User1234!");
 
-        var response = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", token,
+        var response = await SendAsync(HttpMethod.Post, "/api/feedback", token,
             JsonContent.Create(new { text = "Mit fremdem Foto", photoUrl }));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -145,7 +146,7 @@ public class SecurityTests : IClassFixture<ClimbConnectFactory>
     }
 
     [Fact]
-    public async Task Kommentar_EigenesHochgeladenesFoto_WirdAngenommen()
+    public async Task Feedback_EigenesHochgeladenesFoto_WirdAngenommen()
     {
         var areaId = await GetFirstAreaIdAsync();
         var token  = await LoginAsync("user@climbconnect.at", "User1234!");
@@ -154,8 +155,8 @@ public class SecurityTests : IClassFixture<ClimbConnectFactory>
         var upload = await SendAsync(HttpMethod.Post, "/api/upload", token, FileContent(png, "foto.png", "image/png"));
         var url    = (await upload.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("url").GetString();
 
-        var response = await SendAsync(HttpMethod.Post, $"/api/areas/{areaId}/comments", token,
-            JsonContent.Create(new { text = "Mit eigenem Foto", photoUrl = url }));
+        var response = await SendAsync(HttpMethod.Post, "/api/feedback", token,
+            JsonContent.Create(new { text = "Mit eigenem Foto", photoUrl = url, areaId }));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }

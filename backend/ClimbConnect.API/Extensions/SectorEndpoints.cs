@@ -78,7 +78,7 @@ public static class SectorEndpoints
             var sector = await db.Sectors.FindAsync(id);
             if (sector is null) return Results.NotFound();
 
-            // Fotos der Kommentare/Reports an den Routen des Sektors – #238
+            // Fotos von Feedback/Reports an den Routen des Sektors – #238
             var photoUrls = await UploadStorage.PhotoUrlsAsync(db,
                 c => c.Route != null && c.Route.SectorId == id,
                 r => r.Route != null && r.Route.SectorId == id);

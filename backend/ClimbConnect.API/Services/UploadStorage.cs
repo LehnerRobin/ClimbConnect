@@ -43,7 +43,7 @@ public class UploadStorage
     }
 
     /// <summary>
-    /// Löscht die Bilddateien zu den angegebenen Foto-Links – aber nur, wenn kein Kommentar,
+    /// Löscht die Bilddateien zu den angegebenen Foto-Links – aber nur, wenn kein Feedback,
     /// kein Report und kein Gebiet mehr darauf zeigt (ein Link kann mehrfach verwendet werden).
     /// Muss NACH dem Speichern der Löschung in der Datenbank aufgerufen werden.
     /// Ein Fehler beim Löschen einer Datei wird nur geloggt: Der Eintrag ist dann trotzdem weg,
@@ -61,7 +61,7 @@ public class UploadStorage
             var fileName = ToFileName(url);
             if (fileName is null) continue;
 
-            var stillUsed = await db.Comments.AnyAsync(c => c.PhotoUrl == url)
+            var stillUsed = await db.Feedback.AnyAsync(f => f.PhotoUrl == url)
                          || await db.Reports.AnyAsync(r => r.PhotoUrl == url)
                          || await db.Areas.AnyAsync(a => a.ImageUrl == url);
             if (stillUsed) continue;
@@ -82,16 +82,16 @@ public class UploadStorage
     }
 
     /// <summary>
-    /// Sammelt die Foto-Links aller Kommentare und Reports, die gleich gelöscht werden –
+    /// Sammelt die Foto-Links aller Feedback-Einträge und Reports, die gleich gelöscht werden –
     /// VOR dem Löschen aufrufen, danach sind die Einträge weg.
     /// </summary>
     /// <param name="db">Datenbank.</param>
-    /// <param name="comments">Welche Kommentare betroffen sind.</param>
+    /// <param name="feedback">Welche Feedback-Einträge betroffen sind.</param>
     /// <param name="reports">Welche Reports betroffen sind.</param>
     public static async Task<List<string?>> PhotoUrlsAsync(AppDbContext db,
-        Expression<Func<Comment, bool>> comments, Expression<Func<Report, bool>> reports)
+        Expression<Func<Feedback, bool>> feedback, Expression<Func<Report, bool>> reports)
     {
-        var urls = await db.Comments.Where(comments).Where(c => c.PhotoUrl != null).Select(c => c.PhotoUrl).ToListAsync();
+        var urls = await db.Feedback.Where(feedback).Where(f => f.PhotoUrl != null).Select(f => f.PhotoUrl).ToListAsync();
         urls.AddRange(await db.Reports.Where(reports).Where(r => r.PhotoUrl != null).Select(r => r.PhotoUrl).ToListAsync());
         return urls;
     }
