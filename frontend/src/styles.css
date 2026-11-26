@@ -1,3 +1,6 @@
+/* Schriften lokal (#291) – vor allem anderen laden */
+@import './fonts.css';
+
 /* Neues Design: gemeinsame Bausteine (cc-…) – muss ganz oben stehen */
 @import './design.css';
 
