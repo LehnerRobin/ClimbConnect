@@ -26,13 +26,14 @@
             <strong class="author">{{ isOwn(post) ? 'Du' : post.authorUsername }}</strong>
             <time [attr.datetime]="post.createdAtUtc">{{ post.createdAtUtc | date:'dd.MM., HH:mm' }}</time>
 
-            @if (isOwn(post)) {
+            @if (canDelete(post)) {
+              <!-- Eigene Beiträge – der Admin darf alle löschen (#223) -->
               <button
                 type="button"
                 class="post-action delete"
                 [disabled]="deletingId === post.id"
                 (click)="deletePost(post)"
-                aria-label="Eigenen Beitrag löschen">
+                [attr.aria-label]="isOwn(post) ? 'Eigenen Beitrag löschen' : 'Beitrag von ' + post.authorUsername + ' löschen'">
                 {{ deletingId === post.id ? '…' : 'Löschen' }}
               </button>
             } @else if (canReport(post)) {
