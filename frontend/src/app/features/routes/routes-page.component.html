@@ -5,7 +5,7 @@
       <p class="cc-eyebrow">ClimbConnect · Routen</p>
       <h1 class="cc-h1">Route suchen,<br><em>schnell finden.</em></h1>
 
-      <form class="cc-search-toolbar cc-glass" role="search" (ngSubmit)="onSearchInput(searchTerm)">
+      <form class="cc-search-toolbar cc-glass" role="search" (ngSubmit)="onSearchInput(filter.search)">
         <label class="cc-search-box">
           <span class="sr-only">Routen suchen</span>
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -13,12 +13,12 @@
             name="routeSearch"
             type="search"
             autocomplete="off"
-            [ngModel]="searchTerm"
+            [ngModel]="filter.search"
             (ngModelChange)="onSearchInput($event)"
             placeholder="Routenname, z. B. Fingerkante ...">
         </label>
 
-        @if (searchTerm) {
+        @if (filter.search) {
           <button type="button" class="cc-btn-glass" (click)="clearSearch()">Zurücksetzen</button>
         }
       </form>
@@ -27,12 +27,75 @@
 
   <div class="cc-wrap routes-body">
 
-    @if (!hasSearchTerm) {
+    <!-- ================= Filter (#240) ================= -->
+    <form class="filters" aria-label="Routen filtern" (ngSubmit)="onFilterChange()">
+      <fieldset class="cc-field filter-group">
+        <legend class="cc-field-label">Grad</legend>
+        <div class="range">
+          <label>
+            <span class="sr-only">Grad von</span>
+            <select class="cc-input" name="minGrade" [(ngModel)]="filter.minGrade" (ngModelChange)="onFilterChange()">
+              <option [ngValue]="null">von</option>
+              @for (g of gradeOptions; track g.value) {
+                <option [ngValue]="g.value">{{ g.label }}</option>
+              }
+            </select>
+          </label>
+          <span class="range-dash" aria-hidden="true">–</span>
+          <label>
+            <span class="sr-only">Grad bis</span>
+            <select class="cc-input" name="maxGrade" [(ngModel)]="filter.maxGrade" (ngModelChange)="onFilterChange()">
+              <option [ngValue]="null">bis</option>
+              @for (g of gradeOptions; track g.value) {
+                <option [ngValue]="g.value" [disabled]="isBelowMinGrade(g)">{{ g.label }}</option>
+              }
+            </select>
+          </label>
+        </div>
+      </fieldset>
+
+      <label class="cc-field filter-group">
+        <span class="cc-field-label">Stil</span>
+        <select class="cc-input" name="style" [(ngModel)]="filter.style" (ngModelChange)="onFilterChange()">
+          <option [ngValue]="null">Alle Stile</option>
+          @for (s of styles; track s) {
+            <option [ngValue]="s">{{ s }}</option>
+          }
+        </select>
+      </label>
+
+      <fieldset class="cc-field filter-group">
+        <legend class="cc-field-label">Länge (m)</legend>
+        <div class="range">
+          <label>
+            <span class="sr-only">Länge von (Meter)</span>
+            <input class="cc-input length" type="number" min="0" inputmode="numeric" placeholder="von"
+                   name="minLength" [(ngModel)]="filter.minLength" (ngModelChange)="onFilterChange()">
+          </label>
+          <span class="range-dash" aria-hidden="true">–</span>
+          <label>
+            <span class="sr-only">Länge bis (Meter)</span>
+            <input class="cc-input length" type="number" min="0" inputmode="numeric" placeholder="bis"
+                   name="maxLength" [(ngModel)]="filter.maxLength" (ngModelChange)="onFilterChange()">
+          </label>
+        </div>
+      </fieldset>
+
+      @if (hasFilter) {
+        <button type="button" class="cc-btn-outline cc-btn-sm reset-filters" (click)="resetFilters()">Filter zurücksetzen</button>
+      }
+    </form>
+
+    @if (filterError) {
+
+      <p class="cc-msg cc-msg-error" role="alert">{{ filterError }}</p>
+
+    } @else if (!isActive) {
 
       <div class="cc-state">
         <h2 class="cc-h3">Welche Route suchst du?</h2>
         <p class="cc-small">
-          Gib mindestens {{ minLength }} Zeichen ein. Gesucht wird in allen Gebieten und Sektoren.
+          Gib mindestens {{ minLength }} Zeichen ein oder wähle einen Filter. Gesucht wird in allen Gebieten und Sektoren.
         </p>
         <a class="cc-link" routerLink="/areas">Lieber nach Gebieten stöbern →</a>
       </div>
@@ -56,8 +119,15 @@
 
       <div class="cc-state">
         <h2 class="cc-h3">Keine Routen gefunden</h2>
-        <p class="cc-small">Zu „{{ searchedTerm }}" gibt es keine Route. Prüfe die Schreibweise oder versuche einen kürzeren Begriff.</p>
-        <button type="button" class="cc-btn-dark" (click)="clearSearch()">Suche zurücksetzen</button>
+        <p class="cc-small">
+          @if (searchedTerm) {
+            Zu „{{ searchedTerm }}"{{ hasFilter ? ' mit diesen Filtern' : '' }} gibt es keine Route.
+            Prüfe die Schreibweise oder versuche einen kürzeren Begriff.
+          } @else {
+            Mit diesen Filtern gibt es keine Route. Versuche einen größeren Grad- oder Längenbereich.
+          }
+        </p>
+        <button type="button" class="cc-btn-dark" (click)="resetAll()">Suche zurücksetzen</button>
       </div>
 
     } @else {
@@ -66,7 +136,13 @@
         <div class="cc-section-head cc-section-head-ruled">
           <div>
             <p class="cc-eyebrow">Suchergebnis</p>
-            <h2 id="results-title" class="cc-h2">Routen zu <em>„{{ searchedTerm }}"</em></h2>
+            <h2 id="results-title" class="cc-h2">
+              @if (searchedTerm) {
+                Routen zu <em>„{{ searchedTerm }}"</em>
+              } @else {
+                Gefilterte <em>Routen</em>
+              }
+            </h2>
           </div>
           <span class="cc-chip tnum">{{ routes.length }} Treffer</span>
         </div>

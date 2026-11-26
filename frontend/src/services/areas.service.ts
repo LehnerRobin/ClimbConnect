@@ -44,6 +44,18 @@ export interface ClimbingRoute {
   description?: string | null;
 }
 
+/** Suche und Filter der Seite „Routen" (#227, #240). null bzw. '' = Filter nicht gesetzt. */
+export interface RouteFilter {
+  search: string;
+  /** Französischer Grad, z. B. "6a". */
+  minGrade: string | null;
+  maxGrade: string | null;
+  style: string | null;
+  /** Meter. */
+  minLength: number | null;
+  maxLength: number | null;
+}
+
 export interface SafetyReport {
   id: number;
   text: string;
@@ -230,11 +242,25 @@ export class AreasService {
     return this.http.get<ClimbingRoute[]>(`${this.apiUrl}/sectors/${sectorId}/routes?scale=${scale}`);
   }
 
-  /** Alle Routen, deren Name die Suche enthält (lädt alle Seiten nach). */
-  searchRoutes(search: string, scale = 'french'): Observable<ClimbingRoute[]> {
-    return fetchAllPages<ClimbingRoute>(
-      this.http, `${this.apiUrl}/routes?search=${encodeURIComponent(search)}&scale=${scale}`
-    );
+  /**
+   * Routen suchen und filtern (lädt alle Seiten nach). Leere Felder werden nicht mitgeschickt.
+   * Grade im Filter sind immer französisch; die Antwort kommt in `scale` (#240).
+   */
+  searchRoutes(filter: RouteFilter, scale = 'french'): Observable<ClimbingRoute[]> {
+    const params = new URLSearchParams();
+    if (filter.search)             params.set('search', filter.search);
+    if (filter.minGrade)           params.set('minGrade', filter.minGrade);
+    if (filter.maxGrade)           params.set('maxGrade', filter.maxGrade);
+    if (filter.style)              params.set('style', filter.style);
+    if (filter.minLength !== null) params.set('minLength', String(filter.minLength));
+    if (filter.maxLength !== null) params.set('maxLength', String(filter.maxLength));
+    params.set('scale', scale);
+    return fetchAllPages<ClimbingRoute>(this.http, `${this.apiUrl}/routes?${params}`);
+  }
+
+  /** Alle Stile, die bei Routen vorkommen – für die Stil-Auswahl im Filter (#240). */
+  getRouteStyles(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/routes/styles`);
   }
 
   /** Gesamtanzahl der Routen – fragt nur eine Seite mit einem Eintrag ab und liest `total`. */
