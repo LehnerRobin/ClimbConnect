@@ -1,0 +1,138 @@
+<section class="legal-page">
+
+  <app-page-band image="/assets/home/gebiet-fels-wald.jpg" position="center 40%">
+    <div class="legal-band">
+      <p class="cc-eyebrow">ClimbConnect · Rechtliches</p>
+      <h1 class="cc-h1">Daten&shy;schutz</h1>
+    </div>
+  </app-page-band>
+
+  <div class="cc-wrap legal-main">
+    <article class="cc-card legal-card">
+
+      <p class="legal-updated">Stand: {{ legal.privacyUpdated }}</p>
+
+      <h2 class="cc-h3">1. Wer ist verantwortlich?</h2>
+      <p>
+        {{ legal.name }}, {{ legal.place }}<br>
+        E-Mail: <a [href]="'mailto:' + legal.email">{{ legal.email }}</a>
+      </p>
+      <p>
+        ClimbConnect ist ein nicht-kommerzielles Diplomarbeitsprojekt an der {{ legal.school }}.
+        Es gibt keine Werbung, kein Tracking, keine Analyse-Tools und keine Cookies.
+      </p>
+
+      <h2 class="cc-h3">2. Welche Daten wir speichern und wozu</h2>
+
+      <h3>Ohne Konto</h3>
+      <p>
+        Gebiete, Routen, Termine und öffentliche Profile kannst du ohne Konto ansehen. Dabei
+        speichern wir keine Daten über dich. Deine Favoriten liegen nur in deinem Browser
+        (Local Storage) und werden nicht an uns übertragen.
+      </p>
+
+      <h3>Konto</h3>
+      <ul>
+        <li><strong>Benutzername und E-Mail-Adresse</strong> – für Anmeldung und Kontakt. Die
+          E-Mail-Adresse ist für andere nicht sichtbar.</li>
+        <li><strong>Passwort</strong> – nur als nicht umkehrbarer Hash (bcrypt), nie im Klartext.</li>
+        <li><strong>Profil</strong> – Bio und bevorzugte Gradskala, wenn du sie angibst.</li>
+        <li><strong>Anmelde-Token</strong> – liegt nach dem Login in deinem Browser (Local Storage),
+          damit du angemeldet bleibst. Beim Abmelden wird es gelöscht.</li>
+      </ul>
+
+      <h3>Was du selbst einträgst</h3>
+      <ul>
+        <li><strong>Begehungen</strong> (Route, Status, Begehungsart, Versuche, Notiz, eigene
+          Gradeinschätzung). Deine letzten Begehungen mit Gebiet und Grad sind in deinem
+          <strong>öffentlichen Profil</strong> sichtbar, ebenso Benutzername und „Mitglied seit".</li>
+        <li><strong>Termine und Teilnahmen</strong> – sichtbar für alle, inkl. der Benutzernamen der
+          Teilnehmer.</li>
+        <li><strong>Pinnwand-Beiträge</strong> bei Terminen – sichtbar nur für die Teilnehmer des
+          Termins.</li>
+        <li><strong>Kommentare und Safety-Reports</strong> mit optionalem Foto – öffentlich sichtbar.
+          Fotos werden so gespeichert, wie du sie hochlädst. <strong>Bitte prüfe vorher, ob sie
+          Standortdaten (GPS) enthalten</strong>, und lade keine Fotos hoch, auf denen andere
+          Personen erkennbar sind, ohne sie zu fragen.</li>
+      </ul>
+
+      <h3>Meldungen von Pinnwand-Beiträgen</h3>
+      <p>
+        Meldest du einen Pinnwand-Beitrag (z. B. wegen Beleidigung), wird der Verlauf dieser
+        Pinnwand als Kopie für den Admin aufbewahrt, damit er die Meldung im Zusammenhang beurteilen
+        kann. Dabei werden auch Beiträge anderer Teilnehmer dieses Termins kopiert. Gespeichert
+        werden außerdem, wer gemeldet hat, der Grund und der Zeitpunkt. Die Kopie bleibt auch dann
+        erhalten, wenn der Beitrag, der Termin oder das Konto des Verfassers gelöscht wird – sonst
+        könnte man sich einer Meldung einfach entziehen.
+      </p>
+
+      <h3>Technisch notwendige Daten</h3>
+      <p>
+        Bei jedem Aufruf wird deine IP-Adresse technisch übertragen. Zum Schutz gegen
+        Passwort-Raten zählen wir Anmelde- und Registrierungsversuche pro IP-Adresse; diese Zählung
+        liegt nur im Arbeitsspeicher und verfällt nach einer Minute. Unser Hosting-Anbieter
+        (siehe Punkt 4) verarbeitet Verbindungsdaten, um den Betrieb und die Sicherheit des
+        Servers zu gewährleisten.
+      </p>
+
+      <h2 class="cc-h3">3. Rechtsgrundlagen</h2>
+      <ul>
+        <li><strong>Vertrag</strong> (Art. 6 Abs. 1 lit. b DSGVO) – alles, was für dein Konto und die
+          Funktionen der App nötig ist.</li>
+        <li><strong>Berechtigtes Interesse</strong> (Art. 6 Abs. 1 lit. f DSGVO) – Schutz vor
+          Missbrauch (Passwort-Raten, gemeldete Beiträge), sicherer Betrieb des Servers und die
+          Anzeige der Karte.</li>
+      </ul>
+
+      <h2 class="cc-h3">4. Wo die Daten liegen und wer sie bekommt</h2>
+      <ul>
+        <li><strong>Hosting:</strong> Railway Corporation (USA). Server und Datenbank laufen in der
+          Region <strong>EU West (Amsterdam, Niederlande)</strong>. Da Railway ein US-Unternehmen
+          ist, kann ein Zugriff aus den USA nicht völlig ausgeschlossen werden.</li>
+        <li><strong>Karte:</strong> Die Kartenansicht lädt Kartenkacheln von OpenStreetMap
+          (OpenStreetMap Foundation, Vereinigtes Königreich). Dabei wird deine IP-Adresse an deren
+          Server übertragen – nur wenn du eine Seite mit Karte öffnest. Für das Vereinigte Königreich
+          gilt ein Angemessenheitsbeschluss der EU.</li>
+        <li><strong>Schriften</strong> werden von unserem eigenen Server geladen, nicht von Google.</li>
+      </ul>
+      <p>Darüber hinaus geben wir keine Daten weiter und verkaufen sie nicht.</p>
+
+      <h2 class="cc-h3">5. Wie lange wir Daten speichern</h2>
+      <ul>
+        <li>Konto und alle Einträge: bis du sie oder dein Konto löschst.</li>
+        <li>Pinnwand-Beiträge: bis du sie löschst oder der Termin gelöscht wird – danach gibt es
+          keine Kopie (außer bei einer Meldung, siehe oben).</li>
+        <li>Gemeldete Pinnwand-Verläufe: <strong>30 Tage nach der letzten Meldung</strong>
+          automatisch gelöscht, oder früher, wenn der Admin den Fall erledigt.</li>
+        <li>Fotos: werden mit dem Kommentar, Report oder Gebiet gelöscht, zu dem sie gehören.</li>
+        <li>Sicherungskopien (Backups) können gelöschte Daten noch so lange enthalten, bis die
+          jeweilige Sicherung selbst gelöscht wird.</li>
+      </ul>
+
+      <h2 class="cc-h3">6. Deine Rechte</h2>
+      <p>Du hast das Recht auf</p>
+      <ul>
+        <li><strong>Auskunft</strong> über deine gespeicherten Daten,</li>
+        <li><strong>Berichtigung</strong> falscher Daten,</li>
+        <li><strong>Löschung</strong> – dein Konto samt allen Daten kannst du jederzeit selbst im
+          <a routerLink="/profile">Profil</a> unter „Konto löschen" entfernen,</li>
+        <li><strong>Einschränkung</strong> der Verarbeitung,</li>
+        <li><strong>Datenübertragbarkeit</strong>,</li>
+        <li><strong>Widerspruch</strong> gegen Verarbeitungen auf Grund des berechtigten Interesses.</li>
+      </ul>
+      <p>
+        Schreib dafür einfach eine E-Mail an <a [href]="'mailto:' + legal.email">{{ legal.email }}</a>.
+      </p>
+      <p>
+        Du kannst dich außerdem bei der österreichischen Datenschutzbehörde beschweren:
+        Barichgasse 40–42, 1030 Wien,
+        <a href="https://www.dsb.gv.at" target="_blank" rel="noopener">www.dsb.gv.at</a>.
+      </p>
+
+      <p class="legal-foot">
+        Siehe auch das <a routerLink="/impressum">Impressum</a>.
+      </p>
+    </article>
+  </div>
+
+</section>

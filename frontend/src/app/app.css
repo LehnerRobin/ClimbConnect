@@ -44,6 +44,19 @@
   color: var(--cc-accent);
 }
 
+.app-footer-links {
+  display: flex;
+  gap: 20px;
+}
+
+.app-footer-links a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.app-footer-links a:hover { color: var(--cc-cream); }
+
 .app-footer-meta {
   display: flex;
   flex-wrap: wrap;

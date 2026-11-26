@@ -73,7 +73,8 @@ andere Robin Lehner.
 
 | Issue | Thema | SP | Zuständig |
 |---|---|---|---|
-| #231 | Impressum und Datenschutzerklärung | 2 | Robin, Mohamed |
+| ✅ #231 | Impressum und Datenschutzerklärung (Abstimmung mit Betreuer offen) | 2 | Robin, Mohamed |
+| ✅ #291 | Schriften lokal statt von Google Fonts (Datenschutz) | 1 | Robin |
 | ✅ #232 | Eigenes Konto löschen | 3 | Robin, Faru |
 | ✅ #233 | Schutz gegen Passwort-Raten beim Login | 2 | Robin |
 | ✅ #234 | Foto-Links nur auf eigene Uploads | 1 | Robin |

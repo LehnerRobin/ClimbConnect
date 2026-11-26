@@ -107,5 +107,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
   },
 
+  // Rechtliches (#231) – im Footer verlinkt
+  {
+    path: 'impressum',
+    loadComponent: () => import('./features/legal/impressum.component').then(m => m.ImpressumComponent)
+  },
+
+  {
+    path: 'datenschutz',
+    loadComponent: () => import('./features/legal/datenschutz.component').then(m => m.DatenschutzComponent)
+  },
+
   { path: '**', redirectTo: '/home' }
 ];
