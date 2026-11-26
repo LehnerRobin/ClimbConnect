@@ -1,0 +1,169 @@
+/* Terminübersicht (#230). Gemeinsame Bausteine (cc-…) kommen aus src/design.css. */
+
+.band-content {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  max-width: 860px;
+  margin-top: 40px;
+}
+
+.fallback-note { margin-bottom: 36px; }
+
+/* Liste links, großer Kalender rechts; am Handy untereinander */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.calendar-col {
+  position: sticky;
+  top: 96px;
+}
+
+.list-head { margin-bottom: 24px; }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.area-filter {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.today-btn { min-height: 52px; }
+
+.retry {
+  margin-left: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--cc-line);
+  border-top-color: var(--cc-rust);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- Tagesgruppen ---------- */
+.day-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.day-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-family: var(--cc-sans);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cc-rust);
+}
+
+.day-title.is-today { color: var(--cc-teal); }
+
+.today-chip {
+  padding: 3px 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.appointment-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appointment-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: var(--cc-paper-card);
+  box-shadow: 0 12px 26px rgba(28, 26, 22, 0.08);
+  color: var(--cc-text);
+  text-decoration: none;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.appointment-row:hover,
+.appointment-row:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(28, 26, 22, 0.14);
+}
+
+.appointment-row.past { opacity: 0.6; }
+
+.time {
+  font-family: var(--cc-serif);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+
+.area {
+  font-size: 13.5px;
+  color: var(--cc-soft);
+}
+
+.people {
+  justify-self: end;
+  font-size: 14px;
+}
+
+.arrow {
+  font-weight: 800;
+  color: var(--cc-rust);
+}
+
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; gap: 36px; }
+  /* Am Handy steht der Kalender oben, die Liste darunter */
+  .calendar-col { position: static; order: -1; }
+}
+
+@media (max-width: 560px) {
+  .appointment-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 6px 12px;
+  }
+  .people { grid-column: 2; justify-self: start; }
+  .arrow { display: none; }
+  .time { font-size: 20px; }
+}
