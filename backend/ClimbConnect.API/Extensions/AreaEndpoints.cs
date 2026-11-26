@@ -13,8 +13,10 @@ public static class AreaEndpoints
     {
         app.MapGet("/api/areas", async (string? search, int? page, int? pageSize, AppDbContext db) =>
         {
-            // "Heute" nach österreichischer Ortszeit, als UTC-Zeitraum (Termine sind in UTC gespeichert)
+            // "Heute" und "nächste 7 Tage" (ab morgen, #239) nach österreichischer Ortszeit,
+            // als UTC-Zeiträume (Termine sind in UTC gespeichert). Die Woche schließt direkt an heute an.
             var (todayStartUtc, todayEndUtc) = AppTime.TodayInViennaUtc();
+            var (_, weekEndUtc)              = AppTime.NextWeekInViennaUtc();
 
             var p  = Math.Max(1, page ?? 1);
             var ps = Math.Clamp(pageSize ?? 20, 1, 100);
@@ -36,16 +38,25 @@ public static class AreaEndpoints
                 .Take(ps)
                 .ToListAsync();
 
-            var todayAppointments = await db.Appointments
-                .Where(a => a.Date >= todayStartUtc && a.Date < todayEndUtc)
-                .Include(a => a.AppointmentUsers)
+            // Eine Abfrage für heute bis Ende der Woche – nur Gebiet, Datum und Teilnehmerzahl,
+            // nur für die Gebiete dieser Seite
+            var areaIds = areas.Select(a => a.Id).ToList();
+            var appointments = await db.Appointments
+                .Where(a => areaIds.Contains(a.AreaId) && a.Date >= todayStartUtc && a.Date < weekEndUtc)
+                .Select(a => new { a.AreaId, a.Date, People = a.AppointmentUsers.Count })
                 .ToListAsync();
+
+            var today    = appointments.Where(ap => ap.Date < todayEndUtc).ToList();
+            var nextWeek = appointments.Where(ap => ap.Date >= todayEndUtc).ToList();
 
             var result = areas.Select(a => new
             {
                 a.Id, a.Name, a.Location, a.Description, a.ImageUrl, a.Latitude, a.Longitude, a.CreatedAtUtc,
-                TodayVisitors     = todayAppointments.Where(ap => ap.AreaId == a.Id).Sum(ap => ap.AppointmentUsers.Count),
-                TodayAppointments = todayAppointments.Count(ap => ap.AreaId == a.Id)
+                TodayVisitors        = today.Where(ap => ap.AreaId == a.Id).Sum(ap => ap.People),
+                TodayAppointments    = today.Count(ap => ap.AreaId == a.Id),
+                // Leute, die in den nächsten 7 Tagen (ab morgen) kommen wollen (#239)
+                NextWeekVisitors     = nextWeek.Where(ap => ap.AreaId == a.Id).Sum(ap => ap.People),
+                NextWeekAppointments = nextWeek.Count(ap => ap.AreaId == a.Id)
             });
 
             return Results.Ok(new { Total = total, Page = p, PageSize = ps, Items = result });
