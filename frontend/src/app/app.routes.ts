@@ -36,6 +36,12 @@ export const routes: Routes = [
   },
 
   {
+    // Terminübersicht mit Monatskalender (#230)
+    path: 'appointments',
+    loadComponent: () => import('./features/appointments/appointments-page.component').then(m => m.AppointmentsPageComponent)
+  },
+
+  {
     path: 'appointments/:id',
     loadComponent: () => import('./features/appointments/appointment-detail.component').then(m => m.AppointmentDetailComponent)
   },
