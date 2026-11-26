@@ -46,6 +46,15 @@
         </a>
 
         <a
+          routerLink="/appointments"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="action-item"
+          (click)="closeMobileMenu()">
+          Termine
+        </a>
+
+        <a
           routerLink="/routes"
           routerLinkActive="active"
           class="action-item"
