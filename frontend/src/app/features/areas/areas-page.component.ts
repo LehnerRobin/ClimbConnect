@@ -44,6 +44,18 @@ export class AreasPageComponent implements OnInit {
     return this.areas.reduce((sum, area) => sum + (area.todayAppointments ?? 0), 0);
   }
 
+  /** Leute, die in den nächsten 7 Tagen (ab morgen) in eines der Gebiete wollen (#239). */
+  get totalVisitorsNextWeek(): number {
+    return this.areas.reduce((sum, area) => sum + (area.nextWeekVisitors ?? 0), 0);
+  }
+
+  /** Text für die Gebietskarte, z. B. "Nächste 7 Tage: 12 Leute" (#239). */
+  nextWeekLabel(area: Area): string {
+    const people = area.nextWeekVisitors ?? 0;
+    if (people === 0) return 'Nächste 7 Tage: noch niemand';
+    return `Nächste 7 Tage: ${people} ${people === 1 ? 'Person' : 'Leute'}`;
+  }
+
   loadAreas(search = this.searchTerm): void {
     this.loading = true;
     this.errorMessage = '';
