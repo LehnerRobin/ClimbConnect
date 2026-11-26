@@ -20,6 +20,6 @@ public class User
     public ICollection<Progress> Progresses { get; set; } = [];
     public ICollection<Appointment> CreatedAppointments { get; set; } = [];
     public ICollection<AppointmentUser> AppointmentUsers { get; set; } = [];
-    public ICollection<Comment> Comments { get; set; } = [];
+    public ICollection<Feedback> Feedback { get; set; } = [];
     public ICollection<Report> Reports { get; set; } = [];
 }

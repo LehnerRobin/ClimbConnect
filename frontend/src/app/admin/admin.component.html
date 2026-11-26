@@ -41,6 +41,10 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m0 0h11l-2 4 2 4H5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Pinnwand-Meldungen
     </button>
+    <button [class.active]="activeTab === 'feedback'" (click)="setTab('feedback')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      Feedback
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════════════════ -->
@@ -386,6 +390,15 @@
   @if (activeTab === 'moderation') {
     <section class="tab-content">
       <app-case-list />
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  <!-- TAB: FEEDBACK (#244)                                                   -->
+  <!-- ══════════════════════════════════════════════════════════════════════ -->
+  @if (activeTab === 'feedback') {
+    <section class="tab-content">
+      <app-feedback-list />
     </section>
   }
 

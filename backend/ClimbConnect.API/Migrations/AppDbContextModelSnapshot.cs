@@ -156,7 +156,7 @@ namespace ClimbConnect.API.Migrations
                     b.ToTable("CasePosts");
                 });
 
-            modelBuilder.Entity("ClimbConnect.API.Models.Comment", b =>
+            modelBuilder.Entity("ClimbConnect.API.Models.Feedback", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -167,6 +167,9 @@ namespace ClimbConnect.API.Migrations
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("TEXT");
@@ -189,7 +192,7 @@ namespace ClimbConnect.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Feedback", (string)null);
                 });
 
             modelBuilder.Entity("ClimbConnect.API.Models.ModerationCase", b =>
@@ -524,20 +527,20 @@ namespace ClimbConnect.API.Migrations
                     b.Navigation("Case");
                 });
 
-            modelBuilder.Entity("ClimbConnect.API.Models.Comment", b =>
+            modelBuilder.Entity("ClimbConnect.API.Models.Feedback", b =>
                 {
                     b.HasOne("ClimbConnect.API.Models.Area", "Area")
-                        .WithMany("Comments")
+                        .WithMany("Feedback")
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClimbConnect.API.Models.Route", "Route")
-                        .WithMany("Comments")
+                        .WithMany("Feedback")
                         .HasForeignKey("RouteId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ClimbConnect.API.Models.User", "User")
-                        .WithMany("Comments")
+                        .WithMany("Feedback")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -654,7 +657,7 @@ namespace ClimbConnect.API.Migrations
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("Comments");
+                    b.Navigation("Feedback");
 
                     b.Navigation("Reports");
 
@@ -673,7 +676,7 @@ namespace ClimbConnect.API.Migrations
 
             modelBuilder.Entity("ClimbConnect.API.Models.Route", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("Feedback");
 
                     b.Navigation("Progresses");
 
@@ -689,9 +692,9 @@ namespace ClimbConnect.API.Migrations
                 {
                     b.Navigation("AppointmentUsers");
 
-                    b.Navigation("Comments");
-
                     b.Navigation("CreatedAppointments");
+
+                    b.Navigation("Feedback");
 
                     b.Navigation("Progresses");
 

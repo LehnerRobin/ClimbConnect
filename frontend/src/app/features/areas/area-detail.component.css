@@ -336,66 +336,16 @@
 
 .owner-delete:hover { color: #F2A48A; }
 
-/* ---------- Kommentare ---------- */
-.comment-form {
+/* ---------- Feedback-Hinweis (#244, ersetzt die Kommentare) ---------- */
+.feedback-hint {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  padding: 24px 26px;
 }
 
-.comment-submit { align-self: flex-end; }
-
-.comment-list {
-  display: flex;
-  flex-direction: column;
-}
-
-.comment-card {
-  display: flex;
-  gap: 14px;
-  padding: 18px 0;
-  border-top: 1px solid var(--cc-line);
-}
-
-.comment-body {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
-  min-width: 0;
-}
-
-.comment-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px;
-}
-
-.comment-meta small {
-  font-weight: 600;
-  color: #9A9387;
-}
-
-.author-link {
-  font-weight: 800;
-  color: var(--cc-text);
-  text-decoration: none;
-}
-
-.author-link:hover { color: var(--cc-rust); }
-
-.comment-text {
-  margin: 0;
-  font-family: var(--cc-serif);
-  font-size: 17px;
-  line-height: 1.5;
-  color: var(--cc-muted);
-  overflow-wrap: anywhere;
-}
-
-.comment-card .owner-link { color: var(--cc-soft); }
-.comment-card .owner-delete:hover { color: var(--cc-rust); }
+.feedback-hint h2 { margin: 0; }
+.feedback-hint p { margin: 0; }
 
 @media (max-width: 900px) {
   .band-head { margin-top: 40px; }

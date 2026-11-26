@@ -40,27 +40,6 @@ export interface ClimbingRoute {
   description?: string | null;
 }
 
-export interface RouteComment {
-  id: number;
-  userId?: number;
-  text: string;
-  authorName?: string | null;
-  user?: { id?: number; username?: string | null };
-  photoUrl?: string | null;
-  createdAtUtc?: string | null;
-}
-
-export interface AreaComment {
-  id: number;
-  userId?: number;
-  text: string;
-  authorName?: string | null;
-  user?: { id?: number; username?: string | null };
-  authorPhotoUrl?: string | null;
-  createdAt?: string | null;
-  createdAtUtc?: string | null;
-}
-
 export interface SafetyReport {
   id: number;
   text: string;
@@ -205,10 +184,6 @@ export class AreasService {
     return this.http.get<Appointment[]>(`${this.apiUrl}/areas/${areaId}/appointments?all=${all}`);
   }
 
-  getCommentsByArea(areaId: number): Observable<AreaComment[]> {
-    return this.http.get<AreaComment[]>(`${this.apiUrl}/areas/${areaId}/comments`);
-  }
-
   createAppointment(areaId: number, appointment: AppointmentCreateRequest): Observable<Appointment> {
     return this.http.post<Appointment>(
       `${this.apiUrl}/areas/${areaId}/appointments`,
@@ -260,22 +235,6 @@ export class AreasService {
 
   getCommunityGrade(routeId: number, scale = 'french'): Observable<CommunityGrade> {
     return this.http.get<CommunityGrade>(`${this.apiUrl}/routes/${routeId}/community-grade?scale=${scale}`);
-  }
-
-  getRouteComments(routeId: number): Observable<RouteComment[]> {
-    return this.http.get<RouteComment[]>(`${this.apiUrl}/routes/${routeId}/comments`);
-  }
-
-  addAreaComment(areaId: number, text: string, photoUrl?: string | null): Observable<AreaComment> {
-    return this.http.post<AreaComment>(`${this.apiUrl}/areas/${areaId}/comments`, { text, photoUrl });
-  }
-
-  addRouteComment(routeId: number, text: string, photoUrl?: string | null): Observable<RouteComment> {
-    return this.http.post<RouteComment>(`${this.apiUrl}/routes/${routeId}/comments`, { text, photoUrl });
-  }
-
-  deleteComment(commentId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/comments/${commentId}`);
   }
 
   getRouteReports(routeId: number): Observable<SafetyReport[]> {

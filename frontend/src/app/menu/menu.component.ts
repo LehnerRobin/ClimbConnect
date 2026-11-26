@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { FeedbackService } from '../../services/feedback.service';
 
 @Component({
   selector: 'app-menu',
@@ -19,7 +20,8 @@ export class MenuComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private feedbackService: FeedbackService
   ) {
     // Menü beim Navigieren automatisch schließen (z. B. nach Tap auf einen Link).
     this.router.events.subscribe(event => {
@@ -48,6 +50,21 @@ export class MenuComponent {
   /** Erstes Zeichen des Usernamens für den Avatar-Chip. */
   get userInitial(): string {
     return (this.username || '?').charAt(0).toUpperCase();
+  }
+
+  /**
+   * Öffnet den Feedback-Dialog. Ist gerade ein Gebiet (/areas/5) oder eine Route (/routes/7)
+   * offen, wird der Bezug vorgeschlagen – der User kann ihn im Dialog abwählen.
+   */
+  openFeedback(): void {
+    this.closeMobileMenu();
+    const path = this.router.url.split(/[?#]/)[0];
+    const area  = /^\/areas\/(\d+)$/.exec(path);
+    const route = /^\/routes\/(\d+)$/.exec(path);
+    this.feedbackService.show({
+      areaId:  area  ? Number(area[1])  : undefined,
+      routeId: route ? Number(route[1]) : undefined
+    });
   }
 
   /** Prüft, ob eine URL die Startseite ist (Query-Parameter und Anker werden ignoriert). */

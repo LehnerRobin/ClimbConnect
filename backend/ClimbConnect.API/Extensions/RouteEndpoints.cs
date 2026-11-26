@@ -146,7 +146,7 @@ public static class RouteEndpoints
             var route = await db.Routes.FindAsync(id);
             if (route is null) return Results.NotFound();
 
-            // Fotos der Kommentare/Reports an dieser Route – #238
+            // Fotos von Feedback/Reports an dieser Route – #238
             var photoUrls = await UploadStorage.PhotoUrlsAsync(db, c => c.RouteId == id, r => r.RouteId == id);
 
             db.Routes.Remove(route);

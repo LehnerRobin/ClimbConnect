@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<Progress>        Progresses       => Set<Progress>();
     public DbSet<Appointment>     Appointments     => Set<Appointment>();
     public DbSet<AppointmentUser> AppointmentUsers => Set<AppointmentUser>();
-    public DbSet<Comment>         Comments         => Set<Comment>();
+    public DbSet<Feedback>        Feedback         => Set<Feedback>();
     public DbSet<Report>          Reports          => Set<Report>();
     public DbSet<PinnwandPost>    PinnwandPosts    => Set<PinnwandPost>();
     public DbSet<ModerationCase>  ModerationCases  => Set<ModerationCase>();
@@ -35,15 +35,19 @@ public class AppDbContext : DbContext
             .Property(a => a.Date)
             .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
-        // Kommentare und Reports hängen wahlweise an einem Gebiet oder einer Route.
-        // Wird das Gebiet bzw. die Route gelöscht, sollen sie mitgelöscht werden –
+        // Feedback (#244, früher Kommentare) und Reports hängen wahlweise an einem Gebiet oder
+        // einer Route. Wird das Gebiet bzw. die Route gelöscht, sollen sie mitgelöscht werden –
         // sonst scheitert das Löschen am Fremdschlüssel.
-        modelBuilder.Entity<Comment>()
-            .HasOne(c => c.Area).WithMany(a => a.Comments)
-            .HasForeignKey(c => c.AreaId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Comment>()
-            .HasOne(c => c.Route).WithMany(r => r.Comments)
-            .HasForeignKey(c => c.RouteId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Feedback>().ToTable("Feedback");
+        modelBuilder.Entity<Feedback>()
+            .HasOne(f => f.Area).WithMany(a => a.Feedback)
+            .HasForeignKey(f => f.AreaId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Feedback>()
+            .HasOne(f => f.Route).WithMany(r => r.Feedback)
+            .HasForeignKey(f => f.RouteId).OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Feedback>()
+            .Property(f => f.CreatedAtUtc)
+            .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         modelBuilder.Entity<Report>()
             .HasOne(r => r.Area).WithMany(a => a.Reports)
             .HasForeignKey(r => r.AreaId).OnDelete(DeleteBehavior.Cascade);

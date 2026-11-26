@@ -1,0 +1,52 @@
+<div class="section-header">
+  <h2>Feedback</h2>
+  <span class="count">{{ unreadCount }} ungelesen · {{ entries.length }} gesamt</span>
+</div>
+
+@if (error) {
+  <p class="cc-msg cc-msg-error" role="alert">{{ error }}</p>
+}
+
+@if (loading) {
+  <p class="empty-hint">Lädt …</p>
+} @else if (entries.length === 0) {
+  <p class="empty-hint">Noch kein Feedback vorhanden.</p>
+} @else {
+  <div class="feedback-list">
+    @for (entry of entries; track entry.id) {
+      <article class="feedback-item" [class.unread]="!entry.isRead">
+        <header class="feedback-meta">
+          @if (!entry.isRead) {
+            <span class="badge">Neu</span>
+          }
+          <a [routerLink]="['/users', entry.userId]" class="author">{{ entry.username }}</a>
+          <small>{{ entry.createdAtUtc | date:'dd.MM.yyyy, HH:mm' }}</small>
+          @if (entry.routeId) {
+            <a [routerLink]="['/routes', entry.routeId]" class="context">Route: {{ entry.routeName }}</a>
+          } @else if (entry.areaId) {
+            <a [routerLink]="['/areas', entry.areaId]" class="context">Gebiet: {{ entry.areaName }}</a>
+          } @else {
+            <span class="context context-general">Allgemein</span>
+          }
+        </header>
+
+        <p class="feedback-text">{{ entry.text }}</p>
+
+        @if (entry.photoUrl) {
+          <a [href]="entry.photoUrl" target="_blank" rel="noopener">
+            <img [src]="entry.photoUrl" alt="Foto zum Feedback" class="feedback-photo">
+          </a>
+        }
+
+        <div class="feedback-actions">
+          <button type="button" class="cc-btn-outline cc-btn-sm" (click)="toggleRead(entry)" [disabled]="busyId === entry.id">
+            {{ entry.isRead ? 'Als ungelesen markieren' : 'Als gelesen markieren' }}
+          </button>
+          <button type="button" class="cc-btn-danger cc-btn-sm" (click)="remove(entry)" [disabled]="busyId === entry.id">
+            Löschen
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+}

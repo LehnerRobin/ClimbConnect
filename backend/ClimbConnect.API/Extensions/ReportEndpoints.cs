@@ -23,7 +23,7 @@ public static class ReportEndpoints
             if (string.IsNullOrWhiteSpace(dto.Text))
                 return Results.BadRequest(new { error = "Text ist erforderlich" });
             if (!string.IsNullOrWhiteSpace(dto.PhotoUrl) && !storage.IsOwnUpload(dto.PhotoUrl.Trim()))
-                return Results.BadRequest(new { error = CommentEndpoints.PhotoUrlError });
+                return Results.BadRequest(new { error = FeedbackEndpoints.PhotoUrlError });
             if (dto.AreaId is null && dto.RouteId is null)
                 return Results.BadRequest(new { error = "AreaId oder RouteId muss angegeben werden" });
             if (dto.AreaId is not null && !await db.Areas.AnyAsync(a => a.Id == dto.AreaId))

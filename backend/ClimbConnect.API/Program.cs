@@ -262,7 +262,7 @@ api.MapSectorEndpoints();
 api.MapRouteEndpoints();
 api.MapProgressEndpoints();
 api.MapAppointmentEndpoints();
-api.MapCommentEndpoints();
+api.MapFeedbackEndpoints();
 api.MapReportEndpoints();
 api.MapUserEndpoints();
 api.MapUploadEndpoints();

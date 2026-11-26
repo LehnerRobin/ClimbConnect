@@ -79,6 +79,13 @@
           Profil
         </a>
 
+        <!-- Feedback an das Team (#244) – bezieht sich automatisch auf das offene Gebiet bzw. die Route -->
+        @if (authenticated) {
+          <button type="button" class="action-item action-button" (click)="openFeedback()">
+            Feedback
+          </button>
+        }
+
       </div>
 
       <div class="auth-area">
