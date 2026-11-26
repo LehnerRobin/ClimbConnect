@@ -81,6 +81,19 @@
   font-weight: 800;
 }
 
+/* Hinweis auf die Datenschutzerklärung bei der Registrierung (#231) */
+.auth-privacy {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #5A544A;
+}
+
+.auth-privacy a {
+  color: var(--cc-rust);
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .auth-card {
     padding: 28px 22px;

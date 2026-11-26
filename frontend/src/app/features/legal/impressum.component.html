@@ -1,0 +1,50 @@
+<section class="legal-page">
+
+  <app-page-band image="/assets/home/gebiet-grat.jpg" position="center 40%">
+    <div class="legal-band">
+      <p class="cc-eyebrow">ClimbConnect · Rechtliches</p>
+      <h1 class="cc-h1">Impressum</h1>
+    </div>
+  </app-page-band>
+
+  <div class="cc-wrap legal-main">
+    <article class="cc-card legal-card">
+
+      <h2 class="cc-h3">Offenlegung gemäß § 25 Mediengesetz</h2>
+      <p>
+        {{ legal.name }}, {{ legal.place }}<br>
+        Kontakt: <a [href]="'mailto:' + legal.email">{{ legal.email }}</a>
+      </p>
+
+      <h2 class="cc-h3">Über diese Website</h2>
+      <p>
+        ClimbConnect ist ein Diplomarbeitsprojekt an der {{ legal.school }}. Die Website ist
+        nicht kommerziell: Es gibt keine Werbung und keine Bezahlfunktionen.
+      </p>
+      <p>
+        Grundlegende Richtung: Informationen zu Klettergebieten und Routen in Oberösterreich
+        sowie eine Plattform, auf der Kletterer ihren Fortschritt festhalten und gemeinsame
+        Termine planen.
+      </p>
+
+      <h2 class="cc-h3">Inhalte von Benutzern</h2>
+      <p>
+        Kommentare, Fotos, Safety-Reports und Pinnwand-Beiträge stammen von den jeweiligen
+        Benutzern. Angaben zu Routen und Gebieten werden sorgfältig gepflegt, ersetzen aber nicht
+        die eigene Einschätzung vor Ort – Klettern erfolgt auf eigene Verantwortung.
+      </p>
+
+      <h2 class="cc-h3">Bilder</h2>
+      <p>
+        Fotos der Startseite und der Kopfbereiche: Unsplash (Unsplash-Lizenz).
+        Kartendaten: © OpenStreetMap-Mitwirkende.
+      </p>
+
+      <p class="legal-foot">
+        Wie wir mit deinen Daten umgehen, steht in der
+        <a routerLink="/datenschutz">Datenschutzerklärung</a>.
+      </p>
+    </article>
+  </div>
+
+</section>
