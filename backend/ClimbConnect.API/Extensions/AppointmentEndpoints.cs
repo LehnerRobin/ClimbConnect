@@ -10,6 +10,13 @@ namespace ClimbConnect.API.Extensions;
 /// <summary>Endpoints für Termine (Appointments) und Teilnahme-Verwaltung.</summary>
 public static class AppointmentEndpoints
 {
+    /// <summary>
+    /// Längster erlaubter Zeitraum für GET /api/appointments?from=&amp;to=. Ein Monatsraster im
+    /// Kalender sind höchstens 6 Wochen plus Puffer – zwei Monate reichen also locker und
+    /// verhindern, dass jemand mit einer Anfrage alle Termine auf einmal abruft.
+    /// </summary>
+    private static readonly TimeSpan MaxRange = TimeSpan.FromDays(62);
+
     public static void MapAppointmentEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("/api/areas/{id:int}/appointments", async (int id, bool? all, ClaimsPrincipal user, AppDbContext db) =>
@@ -66,6 +73,42 @@ public static class AppointmentEndpoints
             return Results.Ok(appointments);
         })
         .WithName("GetUpcomingAppointments")
+        .WithTags("Appointments");
+
+        // Alle Termine in einem Zeitraum über ALLE Gebiete – auch vergangene (für den Terminkalender, #298)
+        app.MapGet("/api/appointments", async (DateTimeOffset? from, DateTimeOffset? to, ClaimsPrincipal user, AppDbContext db) =>
+        {
+            if (from is null || to is null)
+                return Results.BadRequest(new { error = "Bitte 'from' und 'to' angeben" });
+            if (to <= from)
+                return Results.BadRequest(new { error = "'to' muss nach 'from' liegen" });
+            if (to - from > MaxRange)
+                return Results.BadRequest(new { error = $"Der Zeitraum darf höchstens {MaxRange.TotalDays} Tage lang sein" });
+
+            // Termine sind in UTC gespeichert (#198) → Grenzen ebenfalls in UTC vergleichen
+            var fromUtc = from.Value.UtcDateTime;
+            var toUtc   = to.Value.UtcDateTime;
+
+            // Öffentlich; ist jemand eingeloggt, wird mitgeliefert ob er teilnimmt
+            int? currentUserId = int.TryParse(user.FindFirstValue(ClaimTypes.NameIdentifier), out var uid) ? uid : null;
+
+            var appointments = await db.Appointments
+                .Where(a => a.Date >= fromUtc && a.Date < toUtc)
+                .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.Id, a.AreaId, a.CreatedByUserId, a.Title, a.Date, a.MeetingPoint, a.Description,
+                    a.MinParticipants, a.MaxParticipants, a.CreatedAtUtc,
+                    AreaName         = a.Area.Name,
+                    AreaLocation     = a.Area.Location,
+                    ParticipantCount = a.AppointmentUsers.Count,
+                    IsCreator        = currentUserId != null && a.CreatedByUserId == currentUserId,
+                    IsSubscribed     = currentUserId != null && a.AppointmentUsers.Any(au => au.UserId == currentUserId)
+                })
+                .ToListAsync();
+            return Results.Ok(appointments);
+        })
+        .WithName("GetAppointmentsInRange")
         .WithTags("Appointments");
 
         // Eigene Termine: selbst erstellte UND beigetretene (für das Profil)

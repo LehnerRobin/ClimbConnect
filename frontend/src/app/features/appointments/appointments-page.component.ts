@@ -46,8 +46,6 @@ export class AppointmentsPageComponent implements OnInit, OnDestroy {
 
   loading = true;
   errorMessage = '';
-  /** true, solange das Backend den Zeitraum-Endpoint noch nicht hat. */
-  usingFallback = false;
 
   readonly viennaTime = viennaTime;
 
@@ -89,11 +87,10 @@ export class AppointmentsPageComponent implements OnInit, OnDestroy {
     const visibleKeys = new Set(grid.map(d => d.key));
 
     this.loadSub = this.areasService.getAppointmentsInRange(from, to).subscribe({
-      next: ({ appointments, fallback }) => {
+      next: appointments => {
         this.appointments = appointments
           .filter(a => a.date && visibleKeys.has(viennaDayKey(a.date)))
           .sort((a, b) => (a.date ?? '').localeCompare(b.date ?? ''));
-        this.usingFallback = fallback;
         this.loading = false;
       },
       error: () => {
