@@ -15,6 +15,10 @@ export interface Area {
   longitude?: number | null;
   todayVisitors?: number;
   todayAppointments?: number;
+  /** Leute in den nächsten 7 Tagen nach Wiener Zeit, ab morgen – ohne heute (#239). */
+  nextWeekVisitors?: number;
+  /** Termine in den nächsten 7 Tagen, ab morgen (#239). */
+  nextWeekAppointments?: number;
   createdAtUtc?: string;
 }
 

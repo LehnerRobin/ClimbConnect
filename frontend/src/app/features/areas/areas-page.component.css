@@ -138,6 +138,20 @@
   gap: 10px;
 }
 
+/* Chips "Termine heute" und "Nächste 7 Tage" bleiben zusammen (#239) */
+.card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Kommen Leute, hebt sich der Wochen-Chip leicht ab */
+.next-week.has-people {
+  border-color: var(--cc-rust);
+  color: var(--cc-rust);
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .area-card-offset { padding-top: 0; }
   .area-card-offset .favorite-btn { top: 16px; }

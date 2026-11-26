@@ -9,6 +9,8 @@
         <span class="cc-chip-glass cc-glass"><strong class="tnum">{{ areas.length }}</strong> Gebiete</span>
         <span class="cc-chip-glass cc-glass"><strong class="tnum">{{ totalVisitorsToday }}</strong> Besucher heute</span>
         <span class="cc-chip-glass cc-glass"><strong class="tnum">{{ totalAppointmentsToday }}</strong> Termine heute</span>
+        <!-- Wer in den nächsten 7 Tagen (ab morgen) kommen will (#239) -->
+        <span class="cc-chip-glass cc-glass"><strong class="tnum">{{ totalVisitorsNextWeek }}</strong> Leute in den nächsten 7 Tagen</span>
       </div>
 
       <form class="cc-search-toolbar cc-glass" (ngSubmit)="searchAreas()">
@@ -130,7 +132,11 @@
                 <p class="cc-serif-text">{{ area.description || 'Keine Beschreibung vorhanden.' }}</p>
 
                 <div class="card-footer">
-                  <span class="cc-chip"><span class="cc-dot"></span>{{ area.todayAppointments ?? 0 }} Termine heute</span>
+                  <div class="card-chips">
+                    <span class="cc-chip"><span class="cc-dot"></span>{{ area.todayAppointments ?? 0 }} Termine heute</span>
+                    <!-- Wer in den nächsten 7 Tagen (ab morgen) kommen will (#239) -->
+                    <span class="cc-chip next-week" [class.has-people]="(area.nextWeekVisitors ?? 0) > 0">{{ nextWeekLabel(area) }}</span>
+                  </div>
                   <a class="cc-link" [routerLink]="['/areas', area.id]">Gebiet ansehen →</a>
                 </div>
               </article>
